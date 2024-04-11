@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>FreezeUI</title>
+	<meta property="og:title" content="FreezeUI">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="http://hotel-larisa.com/">
+
+	<link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono|Raleway:400,500,600" rel="stylesheet">
+    <link href="./style.css" type="text/css" rel="stylesheet">
+    <link href="./freeze-ui.css" type="text/css" rel="stylesheet">
+    <script>
+        window.addEventListener('load', () => {            
+            document.querySelector('.action-demo').addEventListener('click', () => { 
+                FreezeUI(); 
+                setTimeout(() => { UnFreezeUI(); }, 3000);    
+            });
+        });
+    </script>
+</head>
+<body>
+    <nav class="navigation">
+        <a class="button" href="https://github.com/alexradulescu/FreezeUI">GitHub</a>
+        <a class="button" href="#spread-the-love">Spread the &nbsp;&#10084;</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-center-content">
+            <h1 class="title">FreezeUI</h1>
+            <h3 class="heading-3">
+                Lightweight, vanilla javascript, micro plugin for freezing/blocking the UI.
+                <br/>
+                No jQuery needed.
+            </h3>
+            <button class="button action-demo">See it in action</button>
+            <a class="button" href="#documentation">Documentation &amp; Download</a>
+        </div>
+    </section>
+
+    <article class="hero" id="documentation">
+        <div class="hero-content">
+            <h2 class="heading-2">Documentation</h2>
+            <section class="section">
+                <h3 class="heading-3">1. Installation</h3>
+                <p class="text">
+                    Download the desire version (ES5 pr ES6, minified or development) from GitHub and add the CSS and the script to your project:
+                </p>
+                <a class="button" href="https://github.com/alexradulescu/FreezeUI/">GitHub</a>
+                <script async src="https://jsfiddle.net/76yd6oyn/33/embed/html/dark/"></script>
+            </section>
+            <section class="section">
+                <h3 class="heading-3">2. Usage</h3>
+                <script async src="https://jsfiddle.net/60umkrrd/2/embed/js,html,result/dark/"></script>
+            </section>
+            <section class="section">
+                <h3 class="heading-3">3. Options</h3>
+                <p class="text">
+                    Optionally, you can pass in an a targeted selector where the freezing will be limited. And a custom loading text.
+                    <br/>
+                    <strong><code>FreezeUI({selector: '.class-name', text: 'Custom text'})</code></strong>
+                    <br/>
+                    The <strong><code>UnFreezeUI()</code></strong> function has no options
+                </p>
+                <script async src="https://jsfiddle.net/yyqk9L5t/1/embed/js/dark/"></script>
+            </section>
+            <section class="section">
+                <h3 class="heading-3">4. More</h3>
+                <p class="text">
+                    You can submit bugfixes or questions on GitHub, and see the small Roadmap also.
+                </p>
+                <a class="button" href="https://github.com/alexradulescu/FreezeUI/issues">Issues &amp; Questions</a>
+                <a class="button" href="https://github.com/alexradulescu/FreezeUI/projects/1">Roadmap</a>
+                <p class="text">
+                    Thanks to <strong><a href="http://carlosroso.com/notyf/" class="link" target="_blank">Notyf</a></strong> and <strong><a href="https://yeun.github.io/open-color/" class="link" target="_blank">OpenColor</a></strong> for the inspiration. Both are awesome projects.
+                </p>
+                <a class="button" target="_blank" href="http://carlosroso.com/notyf/">Notyf</a>
+                <a class="button" target="_blank" href="https://yeun.github.io/open-color/">OpenColor</a>
+            </section>
+        </div>
+    </article>
+
+    <section class="hero" id="spread-the-love">
+        <div class="hero-center-content">
+            <h2 class="heading-2">Spread the &nbsp;&#10084;</h2>
+            <h4 class="heading-4">
+                If you like the plugin, feel free to share it forward.
+                <br/>
+                And if it was useful in any projects, especially commercial ones, think about donating something(money or time) to a good cause :-).
+            </h4>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <a href="http://alexradulescu.github.io" class="footer-link">Made by <strong>Alex Radulescu</strong></a> 
+        <a href="http://octus.com.sg" class="footer-link" target="_blank">at <strong>Octus</strong></a> 
+    </footer>
+
+    <script src="./freeze-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Models;
+
+use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Room extends Model
+{
+    use HasFactory, Sluggable;
+
+    protected $guarded = ['id'];
+    protected $with = ['roomPrice', 'roomFacility', 'roomPicture', 'home', 'category'];
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'number_room'
+            ]
+        ];
+    }
+
+    function roomPrice()
+    {
+        return $this->hasMany(RoomPrice::class);
+    }
+
+    function roomFacility()
+    {
+        return $this->hasMany(RoomFacility::class);
+    }
+
+    function roomPicture()
+    {
+        return $this->hasMany(RoomPicture::class);
+    }
+
+    function home()
+    {
+        return $this->belongsTo(Home::class);
+    }
+
+    function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    function scopeSearch($query, array $params)
+    {
+        $query->when($params['search'] ?? false, fn ($query, $search) => ($query->where('number_room', "LIKE", "%$search%")->orWhereHas('home', function ($query) use ($search) {
+            return $query->where("name", "LIKE", "%$search%");
+        })->orWhereHas('category', function ($query) use ($search) {
+            return $query->where("name", "LIKE", "%$search%");
+        })));
+
+        return $query;
+    }
+}
