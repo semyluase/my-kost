@@ -51,54 +51,6 @@ const fnRole = {
                 fnRole.init.modals.modalRole.show();
             });
     },
-
-    onDelete: async (slug, csrf) => {
-        swalWithBootstrapButtons
-            .fire({
-                title: "Are you sure?",
-                text: "You want to delete this data?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!",
-            })
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    blockUI();
-
-                    const results = await onSaveJson(
-                        `${baseUrl}/settings/roles/${slug}`,
-                        JSON.stringify({
-                            _token: csrf,
-                        }),
-                        "delete"
-                    );
-
-                    unBlockUI();
-
-                    if (results.data.status) {
-                        swalWithBootstrapButtons
-                            .fire("success", results.data.message, "success")
-                            .then(async (result) => {
-                                if (result.isConfirmed) {
-                                    fnFoodSnack.init.tables.tbFoodSnack.ajax
-                                        .url(
-                                            `${baseUrl}/settings/roles/get-all-data`
-                                        )
-                                        .draw();
-                                }
-                            });
-                    } else {
-                        swalWithBootstrapButtons.fire(
-                            "Failed",
-                            results.data.message,
-                            "error"
-                        );
-                    }
-                }
-            });
-    },
 };
 
 fnRole.init.buttons.btnAdd.addEventListener("click", () => {

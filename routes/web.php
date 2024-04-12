@@ -9,6 +9,7 @@ use App\Http\Controllers\MasterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Utils\DropdownController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/settings/role-menus/get-menu-data', [RoleMenuController::class, 'getMenuData']);
     Route::resource('/settings/role-menus', RoleMenuController::class);
+
+    Route::get('/settings/users/get-all-data', [UserController::class, 'getAllData']);
+    Route::resource('/settings/users', UserController::class);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 

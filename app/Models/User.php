@@ -12,19 +12,24 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $with = ['role'];
+    protected $with = ['role', 'location'];
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $guraded = [
+    protected $guarded = [
         'id'
     ];
 
     function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    function location()
+    {
+        return $this->belongsTo(Home::class, 'home_id', 'id');
     }
 
     /**
@@ -48,5 +53,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    function scopeSearch($query, array $params)
+    {
+        $query->when($params['search'] ?? false, fn ($query, $search) => ($query->where('name', "LIKE", "%$search%")->orWhere('username', "LIKE", "%$search%")->orWhereHas('role', function ($query) use ($search) {
+            return $query->where('name', 'LIKE', "%$search%");
+        })->orWhereHas('location', function ($query) use ($search) {
+            return $query->where('name', "LIKE", "%$search%")->orWhere('city', 'LIKE', "%$search%");
+        })));
+
+        return $query;
     }
 }

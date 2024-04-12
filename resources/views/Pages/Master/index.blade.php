@@ -28,7 +28,9 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a href="#tabs-home" class="nav-link active" data-bs-toggle="tab" aria-selected="true"
+                                <a href="#tabs-home"
+                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    data-bs-toggle="tab" aria-selected="true"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -42,8 +44,9 @@
                                     Identitas Kos</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a href="#tabs-category" class="nav-link" data-bs-toggle="tab" aria-selected="false"
-                                    tabindex="-1"
+                                <a href="#tabs-category"
+                                    class="nav-link {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    data-bs-toggle="tab" aria-selected="false" tabindex="-1"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/user -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -58,8 +61,9 @@
                                     Kategori</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a href="#tabs-room" class="nav-link" data-bs-toggle="tab" aria-selected="false"
-                                    tabindex="-1"
+                                <a href="#tabs-room"
+                                    class="nav-link {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    data-bs-toggle="tab" aria-selected="false" tabindex="-1"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
