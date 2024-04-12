@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\Utils\DropdownController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/masters/food-snacks/upload-picture', [FoodSnackController::class, 'uploadPicture']);
     Route::delete('/masters/food-snacks/delete-picture/{foodSnack}', [FoodSnackController::class, 'destroyPicture']);
     Route::resource('/masters/food-snacks', FoodSnackController::class);
+
+    Route::get('/settings/roles/get-all-data', [RoleController::class, 'getAllData']);
+    Route::resource('/settings/roles', RoleController::class);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 

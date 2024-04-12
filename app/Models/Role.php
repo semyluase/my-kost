@@ -20,4 +20,16 @@ class Role extends Model
             ]
         ];
     }
+
+    function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    function scopeSearch($query, array $params)
+    {
+        $query->when($params['search'] ?? false, fn ($query, $search) => ($query->where('name', 'LIKE', "%$search%")));
+
+        return $query;
+    }
 }
