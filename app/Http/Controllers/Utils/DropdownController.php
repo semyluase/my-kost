@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Home;
 use App\Models\Location;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class DropdownController extends Controller
@@ -42,6 +43,26 @@ class DropdownController extends Controller
                     $results[] = [
                         'label' =>  $value->name,
                         'value' =>  $value->id
+                    ];
+                }
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getRole()
+    {
+        $roles = collect(Role::get())->chunk(10);
+
+        $results = array();
+
+        if ($roles) {
+            foreach ($roles as $key => $chunk) {
+                foreach ($chunk as $key => $value) {
+                    $results[] = [
+                        'label' =>  $value->name,
+                        'value' =>  $value->id,
                     ];
                 }
             }

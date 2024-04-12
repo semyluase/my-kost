@@ -7,6 +7,7 @@ use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\Utils\DropdownController;
 use Illuminate\Support\Facades\Route;
@@ -44,10 +45,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/settings/roles/get-all-data', [RoleController::class, 'getAllData']);
     Route::resource('/settings/roles', RoleController::class);
 
+    Route::get('/settings/role-menus/get-menu-data', [RoleMenuController::class, 'getMenuData']);
+    Route::resource('/settings/role-menus', RoleMenuController::class);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/utils/dropdowns/get-homes', [DropdownController::class, 'getHome']);
     Route::get('/utils/dropdowns/get-categories', [DropdownController::class, 'getCategory']);
+    Route::get('/utils/dropdowns/get-roles', [DropdownController::class, 'getRole']);
 });
 
 Route::middleware(['guest'])->group(function () {
