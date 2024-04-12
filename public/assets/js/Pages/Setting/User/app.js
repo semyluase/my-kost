@@ -30,6 +30,9 @@ const fnUser = {
                 ajax: {
                     url: `${baseUrl}/settings/users/get-all-data`,
                 },
+                search: {
+                    return: true,
+                },
             }),
         },
     },
