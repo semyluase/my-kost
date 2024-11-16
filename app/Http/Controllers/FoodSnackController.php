@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\FoodSnack;
 use App\Helper\Helper;
 use App\Models\FoodSnackPicture;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
+
+use function App\Helper\generateCounter;
 
 class FoodSnackController extends Controller
 {
@@ -57,7 +60,7 @@ class FoodSnackController extends Controller
             ]);
         }
 
-        $counter = Helper::generateCounter('food-snack', $request->category);
+        $counter = generateCounter('food-snack', $request->category);
 
         $data = [
             'name'  =>  Str::title($request->name),
@@ -67,6 +70,11 @@ class FoodSnackController extends Controller
         ];
 
         if (FoodSnack::create($data)) {
+            Stock::create([
+                'code_item' =>  $counter,
+                'harga_jual' =>  $request->price,
+            ]);
+
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,

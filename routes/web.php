@@ -6,9 +6,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TransactionRentController;
+use App\Http\Controllers\TransactionServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Utils\DropdownController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +46,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/masters/food-snacks/delete-picture/{foodSnack}', [FoodSnackController::class, 'destroyPicture']);
     Route::resource('/masters/food-snacks', FoodSnackController::class);
 
+    Route::resource('/transactions/rent-rooms', TransactionRentController::class);
+
+    // Route::get('/inventories/receipts/create', [ReceiptController::class, 'create']);
+    Route::get('/inventories/receipts/get-detail-data', [ReceiptController::class, 'getDetailData']);
+    Route::post('/inventories/receipts/posting', [ReceiptController::class, 'posting']);
+    Route::delete('/inventories/receipts/details/{detail}', [ReceiptController::class, 'deleteDetail']);
+    Route::resource('/inventories/receipts', ReceiptController::class);
+
+    Route::resource('/transactions/orders', TransactionServiceController::class);
+
     Route::get('/settings/roles/get-all-data', [RoleController::class, 'getAllData']);
     Route::resource('/settings/roles', RoleController::class);
 
@@ -50,6 +63,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/settings/role-menus', RoleMenuController::class);
 
     Route::get('/settings/users/get-all-data', [UserController::class, 'getAllData']);
+    Route::get('/settings/users/profiles', [UserController::class, 'profile']);
     Route::resource('/settings/users', UserController::class);
 
     Route::post('/logout', [AuthController::class, 'logout']);

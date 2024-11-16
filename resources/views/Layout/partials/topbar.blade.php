@@ -158,7 +158,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" bis_skin_checked="1">
                     <a href="#" class="dropdown-item">Status</a>
-                    <a href="./profile.html" class="dropdown-item">Profile</a>
+                    <a href="{{ url('/settings/users/profiles') }}" class="dropdown-item">Profile</a>
                     <a href="#" class="dropdown-item">Feedback</a>
                     <div class="dropdown-divider" bis_skin_checked="1"></div>
                     <a href="./settings.html" class="dropdown-item">Settings</a>

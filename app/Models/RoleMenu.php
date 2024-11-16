@@ -43,6 +43,7 @@ class RoleMenu extends Model
         $active = '';
         $dataMenu = RoleMenu::getMenu(0, auth()->user()->role_id)->orderBy('index')->get();
 
+        // dd($dataMenu);
         if ($dataMenu) {
             foreach ($dataMenu as $row) {
                 $active = request()->is($row->active_value) ? 'active' : '';

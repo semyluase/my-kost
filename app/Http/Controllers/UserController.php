@@ -20,6 +20,14 @@ class UserController extends Controller
         ]);
     }
 
+    public function profile()
+    {
+        return view('Pages.Setting.Profile.index', [
+            'title' =>  'Profile',
+            'pageTitle' =>  'Profile'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
