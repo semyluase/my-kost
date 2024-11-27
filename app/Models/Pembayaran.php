@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Models\Member;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TopUp extends Model
+class Pembayaran extends Model
 {
     use HasFactory;
 
     protected $connection = 'mysql';
-    protected $table = 'tb_member_credit';
+    protected $table = 'payments';
     protected $guarded = ['id'];
 }

@@ -54,6 +54,27 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/inventories/receipts/details/{detail}', [ReceiptController::class, 'deleteDetail']);
     Route::resource('/inventories/receipts', ReceiptController::class);
 
+    # laundry
+    Route::get('/transactions/orders/laundry', [TransactionServiceController::class, 'indexLaundry']);
+    Route::get('/transactions/orders/laundry/create', [TransactionServiceController::class, 'createLaundry']);
+    Route::get('/transactions/orders/laundry/get-detail', [TransactionServiceController::class, 'getDetailLaundry']);
+    Route::get('/transactions/orders/laundry/get-all-data', [TransactionServiceController::class, 'getAllDataLaundry']);
+    Route::post('/transactions/orders/laundry', [TransactionServiceController::class, 'storeLaundry']);
+
+    # cleaning
+    Route::get('/transactions/orders/cleaning', [TransactionServiceController::class, 'indexCleaning']);
+    Route::get('/transactions/orders/cleaning/create', [TransactionServiceController::class, 'createCleaning']);
+    Route::get('/transactions/orders/cleaning/get-detail', [TransactionServiceController::class, 'getDetailCleaning']);
+    Route::get('/transactions/orders/cleaning/get-all-data', [TransactionServiceController::class, 'getAllDataCleaning']);
+    Route::post('/transactions/orders/cleaning', [TransactionServiceController::class, 'storeCleaning']);
+    Route::post('/transactions/orders/cleaning/start', [TransactionServiceController::class, 'startCleaning']);
+    Route::post('/transactions/orders/cleaning/stop', [TransactionServiceController::class, 'stopCleaning']);
+
+    # top up
+    Route::get('/transactions/orders/top-up', [TransactionServiceController::class, 'indexTopUp']);
+    Route::get('/transactions/orders/top-up/detail', [TransactionServiceController::class, 'detailTopUp']);
+    Route::post('/transactions/orders/top-up', [TransactionServiceController::class, 'storeTopUp']);
+
     Route::resource('/transactions/orders', TransactionServiceController::class);
 
     Route::get('/settings/roles/get-all-data', [RoleController::class, 'getAllData']);
@@ -71,6 +92,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-homes', [DropdownController::class, 'getHome']);
     Route::get('/utils/dropdowns/get-categories', [DropdownController::class, 'getCategory']);
     Route::get('/utils/dropdowns/get-roles', [DropdownController::class, 'getRole']);
+    Route::get('/utils/dropdowns/get-room', [DropdownController::class, 'getRoom']);
 });
 
 Route::middleware(['guest'])->group(function () {

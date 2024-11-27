@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Home;
 use App\Models\Location;
 use App\Models\Role;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class DropdownController extends Controller
@@ -65,6 +66,25 @@ class DropdownController extends Controller
                         'value' =>  $value->id,
                     ];
                 }
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getRoom()
+    {
+        $rooms = Room::where('home_id', auth()->user()->home_id)
+            ->get();
+
+        $results = array();
+
+        if ($rooms) {
+            foreach ($rooms as $key => $value) {
+                $results[] = [
+                    'label' =>  $value->number_room,
+                    'value' =>  $value->slug,
+                ];
             }
         }
 
