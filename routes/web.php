@@ -10,6 +10,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TransactionFoodSnackController;
 use App\Http\Controllers\TransactionRentController;
 use App\Http\Controllers\TransactionServiceController;
 use App\Http\Controllers\UserController;
@@ -74,6 +75,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/transactions/orders/top-up', [TransactionServiceController::class, 'indexTopUp']);
     Route::get('/transactions/orders/top-up/detail', [TransactionServiceController::class, 'detailTopUp']);
     Route::post('/transactions/orders/top-up', [TransactionServiceController::class, 'storeTopUp']);
+
+    # food snack
+    Route::get('/transactions/orders/food-snack', [TransactionFoodSnackController::class, 'index']);
+    Route::get('/transactions/orders/food-snack/get-all-data', [TransactionFoodSnackController::class, 'getAllData']);
+    Route::get('/transactions/orders/food-snack/get-list-menu', [TransactionFoodSnackController::class, 'getListMenu']);
+    Route::get('/transactions/orders/food-snack/payments/{header}', [TransactionFoodSnackController::class, 'getPayment']);
+    Route::get('/transactions/orders/food-snack/receipt', [TransactionFoodSnackController::class, 'receipt']);
+    Route::get('/transactions/orders/food-snack/{id}/edit', [TransactionFoodSnackController::class, 'edit']);
+    Route::get('/transactions/orders/food-snack/create', [TransactionFoodSnackController::class, 'create']);
+    Route::post('/transactions/orders/food-snack', [TransactionFoodSnackController::class, 'store']);
+    Route::post('/transactions/orders/food-snack/payments', [TransactionFoodSnackController::class, 'storePayment']);
+    Route::put('/transactions/orders/food-snack', [TransactionFoodSnackController::class, 'update']);
+    Route::delete('/transactions/orders/food-snack/{detail}', [TransactionFoodSnackController::class, 'destroyDetail']);
 
     Route::resource('/transactions/orders', TransactionServiceController::class);
 

@@ -24,6 +24,11 @@ class TransactionHeader extends Model
         return $this->hasMany(TransactionDetail::class, 'nobukti', 'nobukti');
     }
 
+    function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id', 'id');
+    }
+
     function scopeGetDataLaundry($query, $startDate, $endDate)
     {
         return $query->select('*')
@@ -57,5 +62,17 @@ class TransactionHeader extends Model
                     on ttd.user_id = u.id
                     where tth.tanggal = '$tgl'
                     and is_topup = true) tb");
+    }
+
+    function scopeGetDataTransaction($query, $startDate, $endDate)
+    {
+        return $query->select('*')
+            ->fromRaw("(select tth.nobukti, tth.tanggal, tth.status, tth.created_at, tth.updated_at,
+                    r.number_room, tth.total, tth.tipe_pembayaran, tth.pembayaran,
+                    tth.kembalian from tr_transaction_h tth
+                    left join rooms r
+                    on tth.room_id = r.id
+                    where tth.tanggal between '$startDate' and '$endDate'
+                    and tth.is_order = true) tb");
     }
 }

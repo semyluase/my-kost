@@ -1,5 +1,5 @@
 <div class="col-3">
-    <a href="{{ url('') }}/transactions/orders/create?service=food-snack" class="text-dark">
+    <a href="{{ url('') }}/transactions/orders/food-snack" class="text-dark">
         <div class="card">
             <div class="row row-0">
                 <div class="col-3">
