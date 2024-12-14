@@ -9,6 +9,7 @@ use App\Models\SharedFacility;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -39,6 +40,7 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'city'  =>  'required',
@@ -77,8 +79,6 @@ class HomeController extends Controller
 
         $data = [
             'name'  =>  Str::upper($request->name),
-            'langitute' =>  trim(explode(',', $request->langLong)[0]),
-            'longitute' =>  trim(explode(',', $request->langLong)[1]),
             'slug'  =>  $slug,
             'city'  =>  Str::upper($request->city),
             'address'  =>  Str::title($request->address),
@@ -109,6 +109,7 @@ class HomeController extends Controller
 
             if (SharedFacility::insert($dataSharedFacilites)) {
                 if (HomeRule::insert($dataRules)) {
+                    DB::commit();
                     return response()->json([
                         'data'  =>  [
                             'status'    =>  true,
@@ -117,6 +118,7 @@ class HomeController extends Controller
                     ]);
                 }
 
+                DB::rollBack();
                 return response()->json([
                     'data'  =>  [
                         'status'    =>  false,
@@ -125,6 +127,7 @@ class HomeController extends Controller
                 ]);
             }
 
+            DB::rollBack();
             return response()->json([
                 'data'  =>  [
                     'status'    =>  false,
@@ -133,6 +136,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
@@ -143,6 +147,7 @@ class HomeController extends Controller
 
     function uploadPicture(Request $request)
     {
+        DB::beginTransaction();
         $home = Home::where('slug', $request->slugUploadHome)->first();
 
         $files = $request->file('files');
@@ -161,6 +166,7 @@ class HomeController extends Controller
         }
 
         if (HomePicture::insert($data)) {
+            DB::commit();
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -169,6 +175,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
@@ -229,6 +236,7 @@ class HomeController extends Controller
      */
     public function update(Request $request, Home $home)
     {
+        DB::beginTransaction();
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'city'  =>  'required',
@@ -307,6 +315,7 @@ class HomeController extends Controller
 
             if (SharedFacility::insert($dataSharedFacilites)) {
                 if (HomeRule::insert($dataRules)) {
+                    DB::commit();
                     return response()->json([
                         'data'  =>  [
                             'status'    =>  true,
@@ -314,6 +323,7 @@ class HomeController extends Controller
                         ]
                     ]);
                 }
+                DB::rollBack();
 
                 return response()->json([
                     'data'  =>  [
@@ -322,6 +332,7 @@ class HomeController extends Controller
                     ]
                 ]);
             }
+            DB::rollBack();
 
             return response()->json([
                 'data'  =>  [
@@ -331,6 +342,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
@@ -344,11 +356,13 @@ class HomeController extends Controller
      */
     public function activatedData(Home $home)
     {
+        DB::beginTransaction();
         $status = $home->is_active ? false : true;
 
         if (Home::find($home->id)->update([
             'is_active' =>  $status
         ])) {
+            DB::commit();
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -357,6 +371,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
@@ -367,6 +382,7 @@ class HomeController extends Controller
 
     public function destroy(Home $home)
     {
+        DB::beginTransaction();
         if (Home::find($home->id)->delete()) {
             SharedFacility::where('home_id', $home->id)->delete();
             HomeRule::where('home_id', $home->id)->delete();
@@ -379,6 +395,8 @@ class HomeController extends Controller
                 HomePicture::where('home_id', $home->id)->delete();
             }
 
+            DB::commit();
+
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -387,6 +405,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
@@ -397,15 +416,17 @@ class HomeController extends Controller
 
     public function destroyPicture(Home $home)
     {
+        DB::beginTransaction();
         $dataPicture = HomePicture::where('home_id', $home->id)->get();
 
-        if ($dataPicture) {
-            foreach ($dataPicture as $key => $value) {
-                File::delete($value->file_location);
-            }
-        }
 
         if (HomePicture::where('home_id', $home->id)->delete()) {
+            DB::commit();
+            if ($dataPicture) {
+                foreach ($dataPicture as $key => $value) {
+                    File::delete($value->file_location);
+                }
+            }
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -414,6 +435,7 @@ class HomeController extends Controller
             ]);
         }
 
+        DB::rollBack();
         return response()->json([
             'data'  =>  [
                 'status'    =>  true,
@@ -495,7 +517,6 @@ class HomeController extends Controller
                     $results[] = [
                         $no,
                         $value->name,
-                        $value->langitute ? $value->langitute . ', ' . $value->longitute : '-',
                         $value->city . '</br>' . $value->address,
                         $homeRules,
                         $picture,

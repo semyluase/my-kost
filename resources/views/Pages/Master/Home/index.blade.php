@@ -26,7 +26,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nama</th>
-                                <th>Pin Identitas Kos</th>
                                 <th>Kota - Alamat</th>
                                 <th>Aturan Kos</th>
                                 <th>Gambar Kos</th>
@@ -52,12 +51,6 @@
                         <label for="name-home" class="form-label">Nama</label>
                         <input type="text" name="name-home" id="name-home" class="form-control">
                         <input type="hidden" name="slug-home" id="slug-home" class="form-control">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <label for="lang-long-home" class="form-label">Pin Identitas Kos</label>
-                        <input type="text" name="lang-long-home" id="lang-long-home" class="form-control">
                     </div>
                 </div>
                 <div class="row mb-3">

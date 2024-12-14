@@ -1,6 +1,5 @@
 const nameHome = document.querySelector("#name-home");
 const slugHome = document.querySelector("#slug-home");
-const langLongHome = document.querySelector("#lang-long-home");
 const cityHome = document.querySelector("#city-home");
 const addressHome = document.querySelector("#address-home");
 const slugUploadHome = document.querySelector("#slug-upload-home");
@@ -156,8 +155,6 @@ const fnHome = {
             .then((response) => {
                 nameHome.value = response.name;
                 slugHome.value = response.slug;
-                langLongHome.value =
-                    response.langitute + "," + response.longitute;
                 cityHome.value = response.city;
                 addressHome.value = response.address;
 
@@ -305,7 +302,6 @@ const fnHome = {
 fnHome.init.buttons.btnAdd.addEventListener("click", () => {
     nameHome.value = "";
     slugHome.value = "";
-    langLongHome.value = "";
     cityHome.value = "";
     addressHome.value = "";
 
@@ -358,7 +354,6 @@ fnHome.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 name: nameHome.value,
-                langLong: langLongHome.value,
                 city: cityHome.value,
                 address: addressHome.value,
                 sharedFacilities: sharedFacilities,
@@ -374,7 +369,6 @@ fnHome.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 name: nameHome.value,
-                langLong: langLongHome.value,
                 city: cityHome.value,
                 address: addressHome.value,
                 sharedFacilities: sharedFacilities,
