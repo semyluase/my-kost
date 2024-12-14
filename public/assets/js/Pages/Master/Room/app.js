@@ -7,16 +7,11 @@ const yearlyPriceRoom = document.querySelector("#room-price-yearly");
 const slugUploadRoom = document.querySelector("#slug-upload-room");
 const viewGambarRoom = document.querySelector("#view-gambar-kamar");
 
-let files = Array();
-
 const fnRoom = {
     init: {
         buttons: {
             btnAdd: document.querySelector("#btn-add-room"),
             btnSave: document.querySelector("#btn-save-room"),
-            btnSaveUploadPictureRoom: document.querySelector(
-                "#btn-save-upload-room"
-            ),
         },
         dropdowns: {
             homeDropdown: new Choices(document.querySelector("#home-room")),
@@ -24,27 +19,9 @@ const fnRoom = {
                 document.querySelector("#category-room")
             ),
         },
-        dropzones: {
-            uploadRoomDropzone: new Dropzone("#dropzone-room-picture", {
-                url: `${baseUrl}/masters/rooms/upload-picture`,
-                method: "POST",
-                paramName: "files",
-                autoProcessQueue: true,
-                acceptedFiles: ".jpeg,.jpg,.png,.gif",
-                maxFiles: 100,
-                maxFilesize: 5, // MB
-                uploadMultiple: true,
-                parallelUploads: 100, // use it with uploadMultiple
-                createImageThumbnails: true,
-                addRemoveLinks: true,
-            }),
-        },
         modals: {
             modalRoom: new bootstrap.Modal(
                 document.querySelector("#modal-room")
-            ),
-            modalUploadRoomPicture: new bootstrap.Modal(
-                document.querySelector("#modal-upload-picture-room")
             ),
             modalViewRoomPicture: new bootstrap.Modal(
                 document.querySelector("#modal-view-picture-room")
@@ -61,30 +38,6 @@ const fnRoom = {
                 scrollX: true,
             }),
         },
-    },
-
-    uploadPicture: async (slug) => {
-        await fetch(`${baseUrl}/masters/rooms/upload-picture/${slug}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(
-                        swalWithBootstrapButtons.fire(
-                            "Terjadi kesalahan",
-                            "Saat mengambil data",
-                            "error"
-                        )
-                    );
-                }
-
-                return response.json();
-            })
-            .then((response) => {
-                slugUploadRoom.value = response.slug;
-
-                fnRoom.init.dropzones.uploadRoomDropzone.removeAllFiles(true);
-                files = Array();
-                fnRoom.init.modals.modalUploadRoomPicture.show();
-            });
     },
 
     viewPicture: async (slug) => {
@@ -147,18 +100,6 @@ const fnRoom = {
                     response.category_id
                 );
 
-                const roomFacility = document.querySelectorAll(
-                    "input[name='room-facility']"
-                );
-
-                roomFacility.forEach((rf) => {
-                    response.room_facility.forEach((rr) => {
-                        if (rr.facility_id == rf.value) {
-                            rf.checked = true;
-                        }
-                    });
-                });
-
                 fnRoom.init.buttons.btnSave.setAttribute(
                     "data-type",
                     "edit-data"
@@ -217,55 +158,6 @@ const fnRoom = {
                 }
             });
     },
-
-    deletePicture: async (slug, csrf) => {
-        swalWithBootstrapButtons
-            .fire({
-                title: "Apakah anda yakin?",
-                text: "Anda akan menghapus data ini?",
-                icon: "warning",
-                showCancelButton: true,
-                cancelButtonText: "Tidak",
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!",
-            })
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    blockUI();
-
-                    const results = await onSaveJson(
-                        `${baseUrl}/masters/rooms/delete-picture/${slug}`,
-                        JSON.stringify({
-                            _token: csrf,
-                        }),
-                        "delete"
-                    );
-
-                    unBlockUI();
-
-                    if (results.data.status) {
-                        swalWithBootstrapButtons
-                            .fire("success", results.data.message, "success")
-                            .then(async (result) => {
-                                if (result.isConfirmed) {
-                                    fnRoom.init.tables.tbRoom.ajax
-                                        .url(
-                                            `${baseUrl}/masters/rooms/get-all-data`
-                                        )
-                                        .draw();
-                                }
-                            });
-                    } else {
-                        swalWithBootstrapButtons.fire(
-                            "Failed",
-                            results.data.message,
-                            "error"
-                        );
-                    }
-                }
-            });
-    },
 };
 
 fnRoom.init.buttons.btnAdd.addEventListener("click", async () => {
@@ -286,16 +178,6 @@ fnRoom.init.buttons.btnAdd.addEventListener("click", async () => {
         "Category",
         ""
     );
-
-    const roomFacility = document.querySelectorAll(
-        "input[name='room-facility']"
-    );
-
-    roomFacility.forEach((rf) => {
-        if (rf.checked) {
-            rf.checked = false;
-        }
-    });
 
     fnRoom.init.buttons.btnSave.setAttribute("data-type", "add-data");
     fnRoom.init.modals.modalRoom.show();
@@ -323,11 +205,6 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
                 name: nameRoom.value,
                 category: fnRoom.init.dropdowns.categoryDropdown.getValue(true),
                 home: fnRoom.init.dropdowns.homeDropdown.getValue(true),
-                roomFacilities: roomFacilities,
-                dailyPrice: dailyPriceRoom.value,
-                weeklyPrice: weeklyPriceRoom.value,
-                monthlyPrice: monthlyPriceRoom.value,
-                yearlyPrice: yearlyPriceRoom.value,
                 _token: fnRoom.init.buttons.btnSave.dataset.csrf,
             });
 
@@ -443,29 +320,3 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
         }
     }
 });
-
-fnRoom.init.dropzones.uploadRoomDropzone.on("removedfile", function (file) {});
-
-fnRoom.init.dropzones.uploadRoomDropzone.on(
-    "successmultiple",
-    (file, response) => {
-        if (response.data.status) {
-            swalWithBootstrapButtons
-                .fire("Berhasil", response.data.message, "success")
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        fnRoom.init.modals.modalUploadRoomPicture.hide();
-                        fnRoom.init.tables.tbRoom.ajax
-                            .url(`${baseUrl}/masters/rooms/get-all-data`)
-                            .draw();
-                    }
-                });
-        } else {
-            swalWithBootstrapButtons.fire(
-                "Terjadi kesalahan",
-                response.data.message,
-                "error"
-            );
-        }
-    }
-);

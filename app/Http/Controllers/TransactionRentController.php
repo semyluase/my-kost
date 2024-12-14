@@ -71,7 +71,7 @@ class TransactionRentController extends Controller
                 ->first();
         }
 
-        $room = Room::with(['roomPrice'])->where('slug', $request->room)
+        $room = Room::with(['category.prices'])->where('slug', $request->room)
             ->where('home_id', auth()->user()->home_id)
             ->first();
 
@@ -110,22 +110,22 @@ class TransactionRentController extends Controller
         if (!$rent) {
             switch ($request->durasi) {
                 case 'mingguan':
-                    $price = $room->roomPrice[1]->price;
+                    $price = $room->category->prices[1]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->addWeek(1)->isoFormat("YYYY-MM-DD");
                     break;
 
                 case 'bulanan':
-                    $price = $room->roomPrice[2]->price;
+                    $price = $room->category->prices[2]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->addMonth(1)->isoFormat("YYYY-MM-DD");
                     break;
 
                 case 'tahunan':
-                    $price = $room->roomPrice[3]->price;
+                    $price = $room->category->prices[3]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->addYear(1)->isoFormat("YYYY-MM-DD");
                     break;
 
                 default:
-                    $price = $room->roomPrice[0]->price;
+                    $price = $room->category->prices[0]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->addDay(1)->isoFormat("YYYY-MM-DD");
                     break;
             }

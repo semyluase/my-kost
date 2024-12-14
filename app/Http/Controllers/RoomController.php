@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Facility;
+use App\Models\CategoryPicture;
 use App\Models\Room;
-use App\Models\RoomFacility;
-use App\Models\RoomPicture;
-use App\Models\RoomPrice;
-use App\Models\RoomRule;
-use App\Models\Rule;
-use App\Models\SharedFacility;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
@@ -44,16 +36,16 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
+
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'category'  =>  'required',
             'home'  =>  'required',
-            'roomFacilities'    =>  'required',
         ], [
             'name.required' =>  "Nomor Kamar wajib diisi",
             'category.required' =>  "Kategori Kamar wajib dipilih",
             'home.required' =>  "Lokasi Kost wajib dipilih",
-            'roomFacilities.required' =>  "Fasilitas Kamar wajib dipilih",
         ]);
 
         if ($validator->fails()) {
@@ -89,126 +81,23 @@ class RoomController extends Controller
             'slug'  =>  $slug,
         ];
 
-        $room = Room::create($data);
-
-        if ($room) {
-            $dataRoomFacilities = array();
-            $dataRoomPrice = array();
-            foreach ($request->roomFacilities as $key => $value) {
-                $dataRoomFacilities[] = [
-                    'room_id'   =>  $room->id,
-                    'facility_id'   =>  $value,
-                    'created_at' => Carbon::now('Asia/Jakarta'),
-                    'updated_at' => Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->dailyPrice && $request->dailyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'daily',
-                    'price' =>  $request->dailyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->weeklyPrice && $request->weeklyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'weekly',
-                    'price' =>  $request->weeklyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->monthlyPrice && $request->monthlyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'monthly',
-                    'price' =>  $request->monthlyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->yearlyPrice && $request->yearlyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'yearly',
-                    'price' =>  $request->yearlyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if (RoomFacility::insert($dataRoomFacilities)) {
-                if (RoomPrice::insert($dataRoomPrice)) {
-                    return response()->json([
-                        'data'  =>  [
-                            'status'    =>  true,
-                            'message'   =>  'Kamar berhasil disimpan',
-                        ]
-                    ]);
-                }
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  'Kamar gagal disimpan, terjadi kesalahan saat menyimpan harga kamar',
-                    ]
-                ]);
-            }
+        if (Room::create($data)) {
+            DB::commit();
 
             return response()->json([
                 'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  'Kamar gagal disimpan, terjadi kesalahan pada saat menyimpan fasiltias kamar',
+                    'status'    =>  true,
+                    'message'   =>  'Kamar berhasil disimpan',
                 ]
             ]);
         }
+
+        DB::rollBack();
 
         return response()->json([
             'data'  =>  [
                 'status'    =>  false,
                 'message'   =>  'Kamar gagal disimpan',
-            ]
-        ]);
-    }
-
-    function uploadPicture(Request $request)
-    {
-        $room = Room::where('slug', $request->slugUploadRoom)->first();
-
-        $files = $request->file('files');
-        $data = array();
-        foreach ($files as $key => $value) {
-            $dataUpload = $value->store('upload/room');
-
-            $data[] = [
-                'room_id'   =>  $room->id,
-                'blob'  =>  base64_encode(file_get_contents(public_path('assets/' . $dataUpload))),
-                'file_location' =>  base_path($dataUpload),
-                'file_name' =>  basename($dataUpload),
-                'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-            ];
-        }
-
-        if (RoomPicture::insert($data)) {
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  true,
-                    'message'   =>  'Gambar kamar,berhasil diunggah'
-                ]
-            ]);
-        }
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  'Gambar kamar,gagal diunggah'
             ]
         ]);
     }
@@ -223,13 +112,14 @@ class RoomController extends Controller
 
     public function showPicture(Room $room)
     {
-        $picture = RoomPicture::where('room_id', $room->id)->get();
+        $room->load('category');
+        $picture = CategoryPicture::where('category_id', $room->category->id)->get();
 
         $data = '<div id="carousel-indicators-thumb" class="carousel slide carousel-fade" data-bs-ride="carousel">
                     <div class="carousel-indicators carousel-indicators-thumb">';
         if ($picture) {
             foreach ($picture as $key => $value) {
-                $data .= '<a href="javascript:;" type="button" data-bs-target="#carousel-indicators-thumb" data-bs-slide-to="' . $key . '" class="ratio ratio-4x3 active" style="background-image: url(' . asset('assets/upload/room/' . $value->file_name) . ')"></a>';
+                $data .= '<a href="javascript:;" type="button" data-bs-target="#carousel-indicators-thumb" data-bs-slide-to="' . $key . '" class="ratio ratio-4x3 active" style="background-image: url(' . asset('assets/upload/category/' . $value->file_name) . ')"></a>';
             }
         }
         $data .= '</div>
@@ -237,7 +127,7 @@ class RoomController extends Controller
         if ($picture) {
             foreach ($picture as $key => $value) {
                 $data .= '<div class="carousel-item ' . ($key == 0 ? 'active' : '') . '">
-                                            <img class="d-block w-100" alt="" src="' . asset('assets/upload/room/' . $value->file_name) . '" />
+                                            <img class="d-block w-100" alt="" src="' . asset('assets/upload/category/' . $value->file_name) . '" />
                                         </div>';
             }
         }
@@ -265,16 +155,16 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
+        DB::beginTransaction();
+
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'category'  =>  'required',
             'home'  =>  'required',
-            'roomFacilities'    =>  'required',
         ], [
             'name.required' =>  "Nomor Kamar wajib diisi",
             'category.required' =>  "Kategori Kamar wajib dipilih",
             'home.required' =>  "Lokasi Kost wajib dipilih",
-            'roomFacilities.required' =>  "Fasilitas Kamar wajib dipilih",
         ]);
 
         if ($validator->fails()) {
@@ -313,84 +203,17 @@ class RoomController extends Controller
         ];
 
         if (Room::find($room->id)->update($data)) {
-            RoomFacility::where('room_id', $room->id)->delete();
-            RoomPrice::where('room_id', $room->id)->delete();
-            $dataRoomFacilities = array();
-            $dataRoomPrice = array();
-            foreach ($request->roomFacilities as $key => $value) {
-                $dataRoomFacilities[] = [
-                    'room_id'   =>  $room->id,
-                    'facility_id'   =>  $value,
-                    'created_at' => Carbon::now('Asia/Jakarta'),
-                    'updated_at' => Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->dailyPrice && $request->dailyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'daily',
-                    'price' =>  $request->dailyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->weeklyPrice && $request->weeklyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'weekly',
-                    'price' =>  $request->weeklyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->monthlyPrice && $request->monthlyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'monthly',
-                    'price' =>  $request->monthlyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if ($request->yearlyPrice && $request->yearlyPrice > 0) {
-                $dataRoomPrice[] = [
-                    'room_id'   =>  $room->id,
-                    'type'  =>  'yearly',
-                    'price' =>  $request->yearlyPrice,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                ];
-            }
-
-            if (RoomFacility::insert($dataRoomFacilities)) {
-                if (RoomPrice::insert($dataRoomPrice)) {
-                    return response()->json([
-                        'data'  =>  [
-                            'status'    =>  true,
-                            'message'   =>  'Kamar berhasil diubah',
-                        ]
-                    ]);
-                }
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  'Kamar gagal diubah, terjadi kesalahan saat menyimpan harga kamar',
-                    ]
-                ]);
-            }
+            DB::commit();
 
             return response()->json([
                 'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  'Kamar gagal diubah, terjadi kesalahan pada saat menyimpan fasiltias kamar',
+                    'status'    =>  true,
+                    'message'   =>  'Kamar berhasil diubah',
                 ]
             ]);
         }
+
+        DB::rollBack();
 
         return response()->json([
             'data'  =>  [
@@ -405,64 +228,25 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        if (RoomPrice::where('room_id', $room->id)->delete()) {
-            if (RoomFacility::where('room_id', $room->id)->delete()) {
-                if (Room::find($room->id)->delete()) {
-                    return response()->json([
-                        'data'  =>  [
-                            'status'    =>  true,
-                            'message'   =>  'Kamar berhasil dihapus'
-                        ]
-                    ]);
-                }
+        DB::beginTransaction();
 
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  'Kamar gagal dihapus'
-                    ]
-                ]);
-            }
+        if (Room::find($room->id)->delete()) {
+            DB::commit();
 
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
-                    'message'   =>  'Kamar gagal dihapus, terjadi kesalahan saat menghapus fasilitas kamar'
+                    'message'   =>  'Kamar berhasil dihapus'
                 ]
             ]);
         }
+
+        DB::rollBack();
 
         return response()->json([
             'data'  =>  [
                 'status'    =>  true,
                 'message'   =>  'Kamar gagal dihapus, terjadi kesalahan saat menghapus harga kamar'
-            ]
-        ]);
-    }
-
-    public function destroyPicture(Room $room)
-    {
-        $dataPicture = RoomPicture::where('room_id', $room->id)->get();
-
-        if ($dataPicture) {
-            foreach ($dataPicture as $key => $value) {
-                File::delete($value->file_location);
-            }
-        }
-
-        if (RoomPicture::where('room_id', $room->id)->delete()) {
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  true,
-                    'message'   =>  'Gambar Kamar berhasil dihapus'
-                ]
-            ]);
-        }
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  true,
-                'message'   =>  'Gambar Kamar gagal dihapus'
             ]
         ]);
     }
@@ -474,7 +258,7 @@ class RoomController extends Controller
         $filterRooms = Room::search(['search' => $request->search['value']])
             ->count();
 
-        $rooms = collect(Room::search(['search' => $request->search['value']])
+        $rooms = collect(Room::with(['category.prices', 'category.facilities', 'category.pictures'])->search(['search' => $request->search['value']])
             ->skip($request->start)
             ->limit($request->length)
             ->orderBy('number_room')
@@ -486,19 +270,13 @@ class RoomController extends Controller
         if ($rooms) {
             foreach ($rooms as $key => $chunk) {
                 foreach ($chunk as $key => $value) {
-                    $roomFacility = 'Tidak ada fasilitas kamar yang dipilih';
+                    $categoryFacilities = 'Tidak ada fasilitas kamar yang dipilih';
                     $sharedFacility = 'Tidak ada fasilitas kos yang dipilih';
                     $prices = 'Belum ada harga untuk kamar ini';
 
-                    $btnUpload = '<a href="javascript:;" class="btn-action text-primary" title="Unggah Foto" onclick="fnRoom.uploadPicture(\'' . $value->slug . '\')">
-                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
-                                </a>';
-
-                    if (collect($value->roomPicture)->count() > 0) {
-                        $btnUpload = '<a href="javascript:;" class="btn-action text-danger" title="Hapus Foto" onclick="fnRoom.deletePicture(\'' . $value->slug . '\',\'' . csrf_token() . '\')">
-                                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-photo-minus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8h.01" /><path d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v9" /><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l2 2" /><path d="M16 19h6" /></svg>
-                                </a>
-                                <a href="javascript:;" class="btn-action text-primary" title="Lihat Foto" onclick="fnRoom.viewPicture(\'' . $value->slug . '\')">
+                    $btnUpload = '';
+                    if (collect($value->category->pictures)->count() > 0) {
+                        $btnUpload = '<a href="javascript:;" class="btn-action text-primary" title="Lihat Foto" onclick="fnRoom.viewPicture(\'' . $value->slug . '\')">
                                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-album"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M12 4v7l2 -2l2 2v-7" /></svg>
                                 </a>';
                     }
@@ -506,20 +284,20 @@ class RoomController extends Controller
                     $btnAction = '<div class="d-flex gap-2">
                                     ' . $btnUpload . '
                                     <a href="javascript:;" class="btn-action text-warning" title="Ubah Kamar" onclick="fnRoom.onEdit(\'' . $value->slug . '\')">
-                                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-photo-minus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8h.01" /><path d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v9" /><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l2 2" /><path d="M16 19h6" /></svg>
+                                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
                                     </a>
                                     <a href="javascript:;" class="btn-action text-danger" title="Hapus Kamar" onclick="fnRoom.onDelete(\'' . $value->slug . '\',\'' . csrf_token() . '\')">
                                         <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eraser"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" /><path d="M18 13.3l-6.3 -6.3" /></svg>
                                     </a>
                                 </div>';
 
-                    if ($value->roomPrice) {
+                    if ($value->category->prices) {
                         $prices = '<div class="row g-1">';
 
-                        $roomPrices = collect($value->roomPrice)->chunk(10);
+                        $categoryPrices = collect($value->category->prices)->chunk(10);
 
-                        if ($roomPrices) {
-                            foreach ($roomPrices as $key => $chunkPrice) {
+                        if ($categoryPrices) {
+                            foreach ($categoryPrices as $key => $chunkPrice) {
                                 foreach ($chunkPrice as $key => $valuePrice) {
                                     $type = 'Harian';
 
@@ -579,15 +357,15 @@ class RoomController extends Controller
                         }
                     }
 
-                    if ($value->roomFacility) {
-                        $roomFacility = '<div class="row g-1">';
+                    if ($value->category->facilities) {
+                        $categoryFacilities = '<div class="row g-1">';
 
-                        $roomFacilities = collect($value->roomFacility)->chunk(10);
+                        $facilities = collect($value->category->facilities)->chunk(10);
 
-                        if ($roomFacilities) {
-                            foreach ($roomFacilities as $key => $chunkFacility) {
+                        if ($facilities) {
+                            foreach ($facilities as $key => $chunkFacility) {
                                 foreach ($chunkFacility as $key => $valueFacility) {
-                                    $roomFacility .= '<div class="col-6">
+                                    $categoryFacilities .= '<div class="col-6">
                                     <div class="row g-1 align-items-center">
                                       <div class="col">
                                         <div class="text-reset d-block">' . $valueFacility->facility->name . '</div>
@@ -598,7 +376,7 @@ class RoomController extends Controller
                             }
                         }
 
-                        $roomFacility .= '</div>';
+                        $categoryFacilities .= '</div>';
                     }
 
                     $results[] = [
@@ -606,7 +384,7 @@ class RoomController extends Controller
                         $value->number_room,
                         $value->home->name,
                         $value->category->name,
-                        $roomFacility,
+                        $categoryFacilities,
                         $sharedFacility,
                         $prices,
                         $btnAction

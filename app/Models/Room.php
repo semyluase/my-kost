@@ -23,21 +23,6 @@ class Room extends Model
         ];
     }
 
-    function roomPrice()
-    {
-        return $this->hasMany(RoomPrice::class);
-    }
-
-    function roomFacility()
-    {
-        return $this->hasMany(RoomFacility::class);
-    }
-
-    function roomPicture()
-    {
-        return $this->hasMany(RoomPicture::class);
-    }
-
     function home()
     {
         return $this->belongsTo(Home::class);

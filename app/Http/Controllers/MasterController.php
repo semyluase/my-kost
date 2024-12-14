@@ -15,7 +15,7 @@ class MasterController extends Controller
             ->orderBy('name')
             ->get();
 
-        $roomFacilities = Facility::where('is_room_facility', true)
+        $categoryFacilities = Facility::where('is_room_facility', true)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
@@ -28,7 +28,7 @@ class MasterController extends Controller
             'title' =>  'Master',
             'pageTitle' =>  'Master',
             'sharedFacilities'    =>  $sharedFacilities,
-            'roomFacilities'    =>  $roomFacilities,
+            'categoryFacilities'    =>  $categoryFacilities,
             'rules' =>  $rules
         ]);
     }

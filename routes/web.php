@@ -31,14 +31,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/masters/homes', HomeController::class);
 
     Route::get('/masters/categories/get-all-data', [CategoryController::class, 'getAllData']);
+    Route::get('/masters/categories/upload-picture/{category}', [CategoryController::class, 'getDataUpload']);
+    Route::get('/masters/categories/view-picture/{category}', [CategoryController::class, 'showPicture']);
+    Route::post('/masters/categories/upload-picture', [CategoryController::class, 'uploadPicture']);
     Route::post('/masters/categories/{category}', [CategoryController::class, 'activatedData']);
+    Route::delete('/masters/categories/delete-picture/{category}', [CategoryController::class, 'destroyPicture']);
     Route::resource('/masters/categories', CategoryController::class);
 
     Route::get('/masters/rooms/get-all-data', [RoomController::class, 'getAllData']);
-    Route::get('/masters/rooms/upload-picture/{room}', [RoomController::class, 'getDataUpload']);
     Route::get('/masters/rooms/view-picture/{room}', [RoomController::class, 'showPicture']);
-    Route::post('/masters/rooms/upload-picture', [RoomController::class, 'uploadPicture']);
-    Route::delete('/masters/rooms/delete-picture/{room}', [RoomController::class, 'destroyPicture']);
     Route::resource('/masters/rooms', RoomController::class);
 
     Route::get('/masters/food-snacks/get-all-data', [FoodSnackController::class, 'getAllData']);

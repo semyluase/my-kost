@@ -28,8 +28,23 @@ class Category extends Model
 
     function scopeSearch($query, array $params)
     {
-        $query->when($params['search'] ?? false, fn ($query, $search) => ($query->where('name', "LIKE", "%$search%")));
+        $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('name', "LIKE", "%$search%")));
 
         return $query;
+    }
+
+    function facilities()
+    {
+        return $this->hasMany(CategoryFacility::class);
+    }
+
+    function pictures()
+    {
+        return $this->hasMany(CategoryPicture::class);
+    }
+
+    function prices()
+    {
+        return $this->hasMany(CategoryPrice::class);
     }
 }

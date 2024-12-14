@@ -166,7 +166,7 @@ class TransactionServiceController extends Controller
             'nobukti'   =>  $nobukti,
             'is_service'    =>  true,
             'tgl_masuk' =>  Carbon::now('Asia/Jakarta'),
-            'tgl_selesai'   =>  $request->kategori == 'reguler' ? Carbon::now('Asia/Jakarta')->addDays(3) : Carbon::now('Asia/Jakarta')->addHour(6),
+            'tgl_selesai'   =>  $request->kategori == 'reguler' ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta')->addHour(6),
             'room_id'   =>  $room->id,
             'no_room'   =>  $room->number_room,
             'is_express'    =>  $request->kategori == 'reguler' ? false : true,
