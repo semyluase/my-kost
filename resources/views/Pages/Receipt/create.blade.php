@@ -48,6 +48,6 @@
         <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/bundle.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/toastify/toastify.js') }}?{{ rand() }}"></script>
-        <script src="{{ asset('assets/js/pages/Receipt/create.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/js/Pages/Receipt/create.js') }}?{{ rand() }}"></script>
     @endpush
 @endsection

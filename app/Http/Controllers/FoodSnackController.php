@@ -43,8 +43,8 @@ class FoodSnackController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
-            'hargaFoodSnack' =>  'required',
-            'categoryFoodSnack'  =>  'required'
+            'price' =>  'required',
+            'category'  =>  'required'
         ], [
             'name.required' =>  "Nama barang wajib diisi",
             'price.required' =>  "Harga barang wajib diisi",

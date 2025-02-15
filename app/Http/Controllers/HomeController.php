@@ -155,6 +155,7 @@ class HomeController extends Controller
         foreach ($files as $key => $value) {
             $dataUpload = $value->store('upload/home');
 
+            // dd(public_path());
             $data[] = [
                 'home_id'   =>  $home->id,
                 'blob'  =>  base64_encode(file_get_contents(public_path('assets/' . $dataUpload))),

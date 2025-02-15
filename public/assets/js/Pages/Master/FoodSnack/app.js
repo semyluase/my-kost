@@ -97,10 +97,10 @@ const fnFoodSnack = {
                 nameFoodSnack.value = response.name;
                 hargaFoodSnack.value = response.price;
                 codeFoodSnack.value = response.code_item;
-                fotoFoodSnack.value = "";
-                viewFotoFoodSnack.src = response.picture
-                    ? `${baseUrl}/assets/upload/foodSnack/${response.picture.file_name}`
-                    : `${baseUrl}/assets/image/nocontent.jpg`;
+                // fotoFoodSnack.value = "";
+                // viewFotoFoodSnack.src = response.picture
+                //     ? `${baseUrl}/assets/upload/foodSnack/${response.picture.file_name}`
+                //     : `${baseUrl}/assets/image/nocontent.jpg`;
 
                 await createDropdown(
                     [
@@ -232,9 +232,8 @@ fnFoodSnack.init.buttons.btnAdd.addEventListener("click", async () => {
     nameFoodSnack.value = "";
     codeFoodSnack.value = "";
     hargaFoodSnack.value = "";
-    fotoFoodSnack.value = "";
 
-    viewFotoFoodSnack.src = `${baseUrl}/assets/image/nocontent.jpg`;
+    // viewFotoFoodSnack.src = `${baseUrl}/assets/image/nocontent.jpg`;
     await createDropdown(
         [
             {
