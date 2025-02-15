@@ -48,6 +48,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/masters/food-snacks/delete-picture/{foodSnack}', [FoodSnackController::class, 'destroyPicture']);
     Route::resource('/masters/food-snacks', FoodSnackController::class);
 
+    Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
+    Route::get('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'detailPayment']);
+    Route::post('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'saveDetailPayment']);
     Route::resource('/transactions/rent-rooms', TransactionRentController::class);
 
     // Route::get('/inventories/receipts/create', [ReceiptController::class, 'create']);

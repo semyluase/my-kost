@@ -1,0 +1,22 @@
+services:
+    app:
+        build:
+            context: .
+            target: development
+            args:
+                # UID and GID must be set as environment variables on the host machine
+                USER_ID: 1001
+                GROUP_ID: 1001
+        container_name: app-kost
+        restart: unless-stopped
+        environment:
+            - COMPOSER_HOME=~/.composer
+        ports:
+            - 8003:8080
+        volumes:
+            - .:/var/www/html
+
+networks:
+    default:
+        external: true
+        name: laravel

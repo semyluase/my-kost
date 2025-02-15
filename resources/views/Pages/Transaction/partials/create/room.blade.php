@@ -9,9 +9,9 @@
     </div>
     <div class="datagrid-item">
         <div class="datagrid-title">Harga Kamar</div>
-        @if (collect($room->roomPrice)->count() > 0)
+        @if (collect($room->category->prices)->count() > 0)
             <div class="datagrid g-0">
-                @foreach ($room->roomPrice as $price)
+                @foreach ($room->category->prices as $price)
                     <div class="datagrid-item m-0 g-0 p-0">
                         @switch($price->type)
                             @case('daily')

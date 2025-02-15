@@ -37,6 +37,7 @@ class TransactionRentController extends Controller
     public function create(Request $request)
     {
         $room = Room::where('slug', $request->room)->first();
+
         return view('Pages.Transaction.createRent', [
             'title' =>  'Sewa Kamar',
             'pageTitle' =>  'Sewa Kamar',
@@ -59,7 +60,7 @@ class TransactionRentController extends Controller
         $member = Member::where('phone_number', makePhoneNumber($request->noHP))
             ->first();
 
-        $room = Room::with(['roomPrice'])->where('slug', $request->room)
+        $room = Room::with(['category.prices'])->where('slug', $request->room)
             ->where('home_id', auth()->user()->home_id)
             ->first();
 
@@ -70,10 +71,6 @@ class TransactionRentController extends Controller
                 ->where('start_date', Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD"))
                 ->first();
         }
-
-        $room = Room::with(['category.prices'])->where('slug', $request->room)
-            ->where('home_id', auth()->user()->home_id)
-            ->first();
 
         $dataUser = array();
         $dataMember = array();
@@ -91,6 +88,12 @@ class TransactionRentController extends Controller
 
         if (collect($dataUser)->count() > 0) {
             $user = User::create($dataUser);
+        } else {
+            if ($user->home_id == null) {
+                User::find($user->id)->update([
+                    'home_id'   =>  auth()->user()->home_id,
+                ]);
+            }
         }
 
         if (!$member) {
@@ -143,27 +146,14 @@ class TransactionRentController extends Controller
             $rent = TransactionRent::create($dataRent);
         }
 
-        $deposit = Deposite::where('room_id', $room->id)
-            ->where('user_id', $user->id)
-            ->where('rent_id', $rent->id)
-            ->first();
-
-        if (!$deposit) {
-            Deposite::create([
-                'room_id'   =>  $room->id,
-                'user_id'   =>  $user->id,
-                'rent_id'   =>  $rent->id,
-                'jumlah'    =>  $dataRent['price'],
-            ]);
-        }
-
         if ($rent) {
             DB::commit();
 
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
-                    'message'   =>  'Transaksi sewa kamar berhasil disimpan'
+                    'message'   =>  'Transaksi sewa kamar berhasil disimpan',
+                    'noKamar'   =>  $room->slug,
                 ]
             ]);
         }
@@ -208,5 +198,63 @@ class TransactionRentController extends Controller
     public function destroy(TransactionRent $transactionRent)
     {
         //
+    }
+
+    function detailPayment(Room $room)
+    {
+
+        $dataRent = TransactionRent::where('room_id', $room->id)
+            ->latest()
+            ->first();
+
+        return view('Pages.Transaction.detailRent', [
+            'title' =>  "Detail Sewa Kamar",
+            'pageTitle' =>  "Detail Sewa Kamar",
+            'rent'  =>  $dataRent
+        ]);
+    }
+
+    function saveDetailPayment(Room $room)
+    {
+        DB::beginTransaction();
+
+        $dataRent = TransactionRent::with(['member'])->where('room_id', $room->id)
+            ->latest()
+            ->first();
+
+        $deposit = Deposite::where('room_id', $dataRent->id)
+            ->where('user_id', $dataRent->member->user->id)
+            ->first();
+
+        if (TransactionRent::find($dataRent->id)->update([
+            'is_approve'   =>  true,
+        ])) {
+            if (!$deposit) {
+                Deposite::create([
+                    'room_id'   =>  $room->id,
+                    'user_id'   =>  $dataRent->member->user->id,
+                    'rent_id'   =>  $dataRent->id,
+                    'jumlah'    =>  $dataRent->price,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  true,
+                    'message'   =>  "Transaksi berhasil disimpan",
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  "Transaksi gagal disimpan",
+            ]
+        ]);
     }
 }

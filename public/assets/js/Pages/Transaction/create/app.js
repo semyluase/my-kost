@@ -162,13 +162,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
     unBlockUI();
 
     if (results.data.status) {
-        swalWithBootstrapButtons
-            .fire("Success", results.data.message, "success")
-            .then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `${baseUrl}/transactions/rent-rooms`;
-                }
-            });
+        window.location.href = `${baseUrl}/transactions/rent-rooms/detail-rents/${results.data.noKamar}`;
     } else {
         swalWithBootstrapButtons.fire(
             "Something wrong",

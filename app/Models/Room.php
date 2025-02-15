@@ -35,7 +35,7 @@ class Room extends Model
 
     function rent()
     {
-        return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("end_date", '>=', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM"));
+        return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("end_date", '>=', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"));
     }
 
     function getRouteKeyName()

@@ -1,8 +1,11 @@
+@php
+    $room->category->load('prices');
+@endphp
 <div class="row mb-3">
     <div class="col-12 mb-3">
         <label for="" class="form-label">Durasi Sewa</label>
-        @if (collect($room->roomPrice)->count() > 0)
-            @foreach ($room->roomPrice as $price)
+        @if (collect($room->category->prices)->count() > 0)
+            @foreach ($room->category->prices as $price)
                 @switch($price->type)
                     @case('daily')
                         <label class="form-check form-check-inline">
@@ -42,7 +45,7 @@
             <input class="form-control" placeholder="Select a date" id="start-rent">
         </div>
     </div>
-    <div class="col-6 mb-3">
+    <div class="col-6 mb-3 d-none">
         <label for="end-rent" class="form-label">Tanggal Keluar</label>
         <div class="input-icon mb-2">
             <input class="form-control bg-gray-500" placeholder="Select a date" readonly id="end-rent">

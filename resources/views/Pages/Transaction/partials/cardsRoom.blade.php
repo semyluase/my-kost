@@ -8,20 +8,22 @@
                     </div>
                     <div class="col-md-auto">
                         <div class="mt-3 badges">
-                            <div
-                                class="badge badge-outline {{ collect($room->transaction)->count() > 0 ? 'text-danger' : 'text-success' }} fw-normal badge-pill">
-                                @if (collect($room->transaction)->count() > 0)
-                                    @foreach ($room->transaction as $transaction)
-                                        @if ($transaction->is_approve)
-                                            Tidak tersedia
-                                        @else
-                                            Perlu Persetujuan
-                                        @endif
-                                    @endforeach
-                                @else
+                            @if ($room->rent)
+                                <div
+                                    class="badge badge-outline {{ $room->rent->is_approved ? 'text-danger' : 'text-success' }} fw-normal badge-pill">
+                                    @if ($room->rent->is_approve)
+                                        Tidak tersedia
+                                    @elseif ($room->rent->is_approved == false)
+                                        Perlu Persetujuan
+                                    @else
+                                        Tersedia
+                                    @endif
+                                </div>
+                            @else
+                                <div class="badge badge-outline text-success fw-normal badge-pill">
                                     Tersedia
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -33,13 +35,10 @@
                                     class="badge badge-outline text-primary fw-semibold badge-pill">Sewa Kamar</a>
                             @else
                                 @if (!$room->rent->is_approve)
-                                    <a href="{{ url('/transactions/rent-rooms/approved') }}?room={{ $room->slug }}"
-                                        class="badge badge-outline text-primary fw-semibold badge-pill">Approve</a>
+                                    <a href="{{ url('/transactions/rent-rooms/detail-rents/' . $room->slug) }}"
+                                        class="badge badge-outline text-primary fw-semibold badge-pill">Detail
+                                        Pembayaran</a>
                                 @else
-                                    <a href="{{ url('/transactions/rent-rooms/orders') }}?room={{ $room->slug }}"
-                                        class="badge badge-outline text-primary fw-semibold badge-pill">Pesanan</a>
-                                    <a href="{{ url('/transactions/rent-rooms/topups') }}?room={{ $room->slug }}"
-                                        class="badge badge-outline text-primary fw-semibold badge-pill">Top Up</a>
                                     <a href="{{ url('/transactions/rent-rooms/change-room') }}?room={{ $room->slug }}"
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Pindah
                                         Kamar</a>
