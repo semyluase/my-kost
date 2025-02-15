@@ -253,7 +253,7 @@ const fnHome = {
         swalWithBootstrapButtons
             .fire({
                 title: "Apakah anda yakin?",
-                text: "Anda akan menghapus data ini?",
+                text: "Anda akan menghapus data gambar ini?",
                 icon: "warning",
                 showCancelButton: true,
                 cancelButtonText: "Tidak",
