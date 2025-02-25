@@ -4,16 +4,15 @@
             <div class="col-lg-6 col-sm-12 mb-3">
                 <label for="nomor-handphone" class="form-label">Nomor HP <sub>(harus terkoneksi wa)</sub></label>
                 <input type="text" name="nomor-handphone" id="nomor-handphone" class="form-control">
+                <small class="form-hint">Tekan enter untuk mencari data member</small>
             </div>
             <div class="col-lg-6 col-sm-12 mb-3">
                 <label for="name" class="form-label">Nama Penyewa</label>
                 <input type="text" name="name" id="name" class="form-control">
             </div>
             <div class="col-lg-6 col-sm-12 mb-3">
-                <label for="date-of-birth" class="form-label">Tanggal Lahir</label>
-                <div class="input-icon mb-2">
-                    <input class="form-control" placeholder="Select a date" id="date-of-birth">
-                </div>
+                <label for="tanggal-lahir" class="form-label">Tanggal Lahir</label>
+                <input class="form-control " placeholder="Select a date" id="tanggal-lahir">
             </div>
             <div class="col-lg-6 col-sm-12 mb-3">
                 <label for="jenis-identitas" class="form-label">Jenis Identitas</label>
@@ -29,8 +28,21 @@
                 <input type="text" name="nomor-identitas" id="nomor-identitas" class="form-control">
             </div>
             <div class="col-lg-8 col-sm-12 mb-3">
-                <label for="alamat" class="form-label">Alamat</label>
-                <textarea name="alamat" id="alamat" rows="5" class="form-control"></textarea>
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Foto Identitas</h3>
+                        <form class="dropzone dz-clickable" id="dropzone-foto"
+                            action="{{ url('/transactions/rent-rooms/upload-identity') }}" autocomplete="off"
+                            novalidate="">
+                            @csrf
+                            <div id="fileFoto"></div>
+
+                            <div class="dz-default dz-message"><button class="dz-button" type="button">Drop files
+                                    here
+                                    to upload</button></div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

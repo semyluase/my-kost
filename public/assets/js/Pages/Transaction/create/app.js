@@ -5,7 +5,14 @@ const alamatInput = document.querySelector("#alamat");
 const durasiInput = document.querySelectorAll("input[type=radio][name=durasi]");
 const endRentDate = document.querySelector("#end-rent");
 
-let url, data, method, durasi;
+let url,
+    data,
+    method,
+    durasi,
+    uploaded,
+    tokenFoto,
+    startDateRent = moment(),
+    tglLahir = moment("1990-01-01");
 
 const fnTransaction = {
     init: {
@@ -18,21 +25,6 @@ const fnTransaction = {
             ),
         },
         datePicker: {
-            dobPicker: new Litepicker({
-                element: document.querySelector("#date-of-birth"),
-                buttonText: {
-                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
-                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
-                },
-                format: "DD-MM-YYYY",
-                singleMode: true,
-                startDate: moment("01-01-1990", "DD-MM-YYYY").format(
-                    "YYYY-MM-DD"
-                ),
-                lang: "id-ID",
-            }),
             startRentPicker: new Litepicker({
                 element: document.querySelector("#start-rent"),
                 buttonText: {
@@ -43,20 +35,84 @@ const fnTransaction = {
                 },
                 format: "DD-MM-YYYY",
                 singleMode: true,
-                startDate: moment().format("YYYY-MM-DD"),
+                startDate: startDateRent,
                 lang: "id-ID",
+            }),
+            tanggalLahir: new Litepicker({
+                element: document.querySelector("#tanggal-lahir"),
+                buttonText: {
+                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+                },
+                format: "DD/MM/YYYY",
+                singleMode: true,
+                startDate: tglLahir,
+                lang: "id-ID",
+            }),
+        },
+        dropzones: {
+            dropzoneFotoIdentitas: new Dropzone("#dropzone-foto", {
+                url: `${baseUrl}/transactions/rent-rooms/upload-identity`,
+                maxFiles: 1,
+                method: "post",
+                paramName: "userfile",
+                addRemoveLinks: true,
+                success: function (file, response) {
+                    // var data = JSON.parse(response);
+                    tokenFoto = response.token;
+                },
             }),
         },
     },
 };
+
+noHPInput.addEventListener("keyup", async (event) => {
+    if (event.key == "Enter") {
+        blockUI();
+
+        await fetch(
+            `${baseUrl}/transactions/rent-rooms/search-member?phoneNumber=${noHPInput.value}`
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    unBlockUI();
+
+                    throw new Error(
+                        swal.fire(
+                            `Terjadi kesalahan`,
+                            "Saat mengambil data",
+                            "error"
+                        )
+                    );
+                }
+
+                return response.json();
+            })
+            .then((response) => {
+                nameInput.value = response.name;
+                fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
+                    response.member.type_identity
+                );
+                nomorIdentitasInput.value = response.member.identity;
+                fnTransaction.init.datePicker.tanggalLahir.setDate(
+                    moment(response.member.dob)
+                );
+
+                unBlockUI();
+            });
+    }
+});
 
 durasiInput.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
             case "harian":
                 endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 )
                     .add(1, "day")
                     .format("DD-MM-YYYY");
@@ -64,8 +120,9 @@ durasiInput.forEach((item) => {
 
             case "mingguan":
                 endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 )
                     .add(1, "week")
                     .format("DD-MM-YYYY");
@@ -73,8 +130,9 @@ durasiInput.forEach((item) => {
 
             case "bulanan":
                 endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 )
                     .add(1, "month")
                     .format("DD-MM-YYYY");
@@ -82,8 +140,9 @@ durasiInput.forEach((item) => {
 
             case "tahunan":
                 endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 )
                     .add(1, "year")
                     .format("DD-MM-YYYY");
@@ -106,19 +165,22 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
             data = JSON.stringify({
                 noHP: noHPInput.value,
                 name: nameInput.value,
+                tanggalLahir: moment(
+                    fnTransaction.init.datePicker.tanggalLahir
+                        .getDate()
+                        .toJSDate()
+                ).format("YYYY-MM-DD"),
                 identity:
                     fnTransaction.init.dropdowns.jenisIdentitasDropdown.getValue(
                         true
                     ),
                 identityNumber: nomorIdentitasInput.value,
-                address: alamatInput.value,
+                tokenFoto: tokenFoto,
                 room: room,
                 startRentDate: moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
-                ).format("YYYY-MM-DD"),
-                dob: moment(
-                    fnTransaction.init.datePicker.dobPicker.getDate.toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 ).format("YYYY-MM-DD"),
                 durasi: durasi,
                 _token: fnTransaction.init.buttons.btnSave.dataset.csrf,
@@ -133,19 +195,22 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
             data = JSON.stringify({
                 noHP: noHPInput.value,
                 name: nameInput.value,
+                tanggalLahir: moment(
+                    fnTransaction.init.datePicker.tanggalLahir
+                        .getDate()
+                        .toJSDate()
+                ).format("YYYY-MM-DD"),
                 identity:
                     fnTransaction.init.dropdowns.jenisIdentitasDropdown.getValue(
                         true
                     ),
                 identityNumber: nomorIdentitasInput.value,
-                address: alamatInput.value,
+                tokenFoto: tokenFoto,
                 room: room,
                 startRentDate: moment(
-                    fnTransaction.init.datePicker.startRentPicker.getDate
-                        .toJSDate
-                ).format("YYYY-MM-DD"),
-                dob: moment(
-                    fnTransaction.init.datePicker.dobPicker.getDate.toJSDate
+                    fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
                 ).format("YYYY-MM-DD"),
                 durasi: durasi,
                 _token: fnTransaction.init.buttons.btnSave.dataset.csrf,

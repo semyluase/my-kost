@@ -28,9 +28,24 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a href="#tabs-home"
+                                <a href="#tabs-rules"
                                     class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
                                     data-bs-toggle="tab" aria-selected="true"
+                                    role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-mark">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M12 19v.01" />
+                                        <path d="M12 15v-10" />
+                                    </svg>
+                                    Aturan Kos</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="#tabs-home"
+                                    class="nav-link {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    data-bs-toggle="tab" aria-selected="false"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -96,7 +111,10 @@
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active show" id="tabs-home" role="tabpanel">
+                            <div class="tab-pane active show" id="tabs-rules" role="tabpanel">
+                                @include('Pages.Master.Rules.index')
+                            </div>
+                            <div class="tab-pane" id="tabs-home" role="tabpanel">
                                 @include('Pages.Master.Home.index')
                             </div>
                             <div class="tab-pane" id="tabs-category" role="tabpanel">
@@ -121,17 +139,20 @@
                 tab.addEventListener('shown.bs.tab', () => {
                     switch (i) {
                         case 0:
-                            fnHome.init.tables.tbHome.columns.adjust();
+                            fnRules.init.tables.tbRules.columns.adjust();
                             break;
                         case 1:
+                            fnHome.init.tables.tbHome.columns.adjust();
+                            break;
+                        case 2:
                             fnCategory.init.tables.tbCategory.columns.adjust();
                             break;
 
-                        case 2:
+                        case 3:
                             fnRoom.init.tables.tbRoom.columns.adjust();
                             break;
 
-                        case 3:
+                        case 4:
                             fnFoodSnack.init.tables.tbFoodSnack.columns.adjust();
                             break;
 

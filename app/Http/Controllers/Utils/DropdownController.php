@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Home;
 use App\Models\Location;
+use App\Models\Member;
 use App\Models\Role;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DropdownController extends Controller
@@ -84,6 +86,24 @@ class DropdownController extends Controller
                 $results[] = [
                     'label' =>  $value->number_room,
                     'value' =>  $value->slug,
+                ];
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getMember()
+    {
+        $members = User::where('role_id', 3)->get();
+
+        $results = array();
+
+        if ($members) {
+            foreach ($members as $key => $value) {
+                $results[] = [
+                    'label' =>  $value->phone_number,
+                    'value' =>  $value->phone_number,
                 ];
             }
         }

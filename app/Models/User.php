@@ -32,6 +32,11 @@ class User extends Authenticatable
         return $this->belongsTo(Home::class, 'home_id', 'id');
     }
 
+    function member()
+    {
+        return $this->belongsTo(Member::class, 'id', 'user_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

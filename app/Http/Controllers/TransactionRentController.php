@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Deposite;
 use App\Models\Member;
 use App\Models\Room;
+use App\Models\TMP\UserIdentity;
 use App\Models\TransactionRent;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -60,6 +61,8 @@ class TransactionRentController extends Controller
         $member = Member::where('phone_number', makePhoneNumber($request->noHP))
             ->first();
 
+        $userIdentify = UserIdentity::where('token', $request->tokenFoto)->first();
+
         $room = Room::with(['category.prices'])->where('slug', $request->room)
             ->where('home_id', auth()->user()->home_id)
             ->first();
@@ -82,7 +85,7 @@ class TransactionRentController extends Controller
                 'home_id'   =>  auth()->user()->home_id,
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'name'  =>  Str::title($request->name),
-                'password'  =>  bcrypt(Carbon::parse($request->dob)->isoFormat("DDMMYYYY")),
+                'password'  =>  bcrypt(Carbon::parse($request->tanggalLahir)->isoFormat("DDMMYYYY")),
             ];
         }
 
@@ -103,11 +106,26 @@ class TransactionRentController extends Controller
                 'identity'  =>  $request->identityNumber,
                 'address'   =>  $request->address,
                 'phone_number'  =>  makePhoneNumber($request->noHP),
+                'dob'   =>  Carbon::parse($request->tanggalLahir)->isoFormat("YYYY-MM-DD"),
+                'identity_id'   =>  $userIdentify->id,
+            ];
+        } else {
+            $dataMember = [
+                'type_identity' =>  $request->identity,
+                'identity'  =>  $request->identityNumber,
+                'address'   =>  $request->address,
+                'phone_number'  =>  makePhoneNumber($request->noHP),
+                'dob'   =>  Carbon::parse($request->tanggalLahir)->isoFormat("YYYY-MM-DD"),
+                'identity_id'   =>  $userIdentify->id,
             ];
         }
 
         if (collect($dataMember)->count() > 0) {
-            $member = Member::create($dataMember);
+            if (!$member) {
+                $member = Member::create($dataMember);
+            } else {
+                Member::find($member->id)->update($dataMember);
+            }
         }
 
         if (!$rent) {
@@ -256,5 +274,14 @@ class TransactionRentController extends Controller
                 'message'   =>  "Transaksi gagal disimpan",
             ]
         ]);
+    }
+
+    function searchMember(Request $request)
+    {
+        $member = User::with(['member'])->where('phone_number', makePhoneNumber($request->phoneNumber))
+            ->first();
+
+
+        return response()->json($member);
     }
 }

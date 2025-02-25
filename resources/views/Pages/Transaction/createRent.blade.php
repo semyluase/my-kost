@@ -3,6 +3,7 @@
 @section('content')
     @push('mystyles')
         <link rel="stylesheet" href="{{ asset('assets/vendor/choicesjs/styles/choices.min.css') }}?{{ rand() }}">
+        <link rel="stylesheet" href="{{ asset('assets/vendor/tabler/libs/dropzone/dist/dropzone.css') }}?{{ rand() }}">
         <link rel="stylesheet"
             href="{{ asset('assets/vendor/tabler/libs/litepicker/dist/css/litepicker.css') }}?{{ rand() }}">
     @endpush
@@ -90,8 +91,9 @@
             let room = "{{ request()->room ? request()->room : '' }}"
         </script>
         <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
-        <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/js/main.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/litepicker.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/tabler/libs/dropzone/dist/dropzone-min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/js/Pages/Transaction/create/app.js') }}?{{ rand() }}"></script>
     @endpush
 @endsection
