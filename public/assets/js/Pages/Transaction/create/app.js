@@ -91,14 +91,19 @@ noHPInput.addEventListener("keyup", async (event) => {
                 return response.json();
             })
             .then((response) => {
-                nameInput.value = response.name;
-                fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
-                    response.member.type_identity
-                );
-                nomorIdentitasInput.value = response.member.identity;
-                fnTransaction.init.datePicker.tanggalLahir.setDate(
-                    moment(response.member.dob)
-                );
+                if (response.id) {
+                    nameInput.value = response.name;
+                    fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
+                        response.member.type_identity
+                    );
+                    nomorIdentitasInput.value = response.member.identity;
+                    fnTransaction.init.datePicker.tanggalLahir.setDate(
+                        moment(response.member.dob)
+                    );
+                } else {
+                    nameInput.value = "";
+                    nomorIdentitasInput.value = "";
+                }
 
                 unBlockUI();
             });
