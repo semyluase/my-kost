@@ -29,7 +29,7 @@
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a href="#tabs-rules"
-                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }} d-none"
                                     data-bs-toggle="tab" aria-selected="true"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -44,7 +44,7 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a href="#tabs-home"
-                                    class="nav-link {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
                                     data-bs-toggle="tab" aria-selected="false"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -107,14 +107,46 @@
                                     </svg>
                                     Makanan & Minuman</a>
                             </li>
+                            {{-- <li class="nav-item" role="presentation">
+                                <a href="#tabs-price-cleaning" class="nav-link" data-bs-toggle="tab"
+                                    aria-selected="false" tabindex="-1"
+                                    role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-cup">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M5 11h14v-3h-14z" />
+                                        <path d="M17.5 11l-1.5 10h-8l-1.5 -10" />
+                                        <path d="M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
+                                        <path d="M15 5v-2" />
+                                    </svg>
+                                    Price Cleaning</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="#tabs-price-laundry" class="nav-link" data-bs-toggle="tab"
+                                    aria-selected="false" tabindex="-1"
+                                    role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-cup">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M5 11h14v-3h-14z" />
+                                        <path d="M17.5 11l-1.5 10h-8l-1.5 -10" />
+                                        <path d="M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
+                                        <path d="M15 5v-2" />
+                                    </svg>
+                                    Price Laundry</a>
+                            </li> --}}
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active show" id="tabs-rules" role="tabpanel">
+                            <div class="tab-pane" id="tabs-rules" role="tabpanel">
                                 @include('Pages.Master.Rules.index')
                             </div>
-                            <div class="tab-pane" id="tabs-home" role="tabpanel">
+                            <div class="tab-pane active show" id="tabs-home" role="tabpanel">
                                 @include('Pages.Master.Home.index')
                             </div>
                             <div class="tab-pane" id="tabs-category" role="tabpanel">
