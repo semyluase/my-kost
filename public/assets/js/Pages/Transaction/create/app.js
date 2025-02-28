@@ -4,6 +4,9 @@ const nomorIdentitasInput = document.querySelector("#nomor-identitas");
 const alamatInput = document.querySelector("#alamat");
 const durasiInput = document.querySelectorAll("input[type=radio][name=durasi]");
 const endRentDate = document.querySelector("#end-rent");
+const uploadIdentity = document.querySelector("#upload-identity");
+const showIdentity = document.querySelector("#show-identity");
+const imgIdentity = document.querySelector("#image-identity");
 
 let url,
     data,
@@ -100,6 +103,10 @@ noHPInput.addEventListener("keyup", async (event) => {
                     fnTransaction.init.datePicker.tanggalLahir.setDate(
                         moment(response.member.dob)
                     );
+                    tokenFoto = response.member.user_identity.token;
+                    uploadIdentity.classList.add("d-none");
+                    showIdentity.classList.remove("d-none");
+                    imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
                 } else {
                     nameInput.value = "";
                     nomorIdentitasInput.value = "";

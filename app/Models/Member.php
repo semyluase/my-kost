@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Member\TopUp;
+use App\Models\TMP\UserIdentity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,5 +23,10 @@ class Member extends Model
     function memberCredit()
     {
         return $this->belongsTo(TopUp::class, 'user_id', 'user_id');
+    }
+
+    function userIdentity()
+    {
+        return $this->belongsTo(UserIdentity::class, 'identity_id', 'id');
     }
 }

@@ -27,7 +27,7 @@
                 <label for="nomor-identitas" class="form-label">Nomor Identitas</label>
                 <input type="text" name="nomor-identitas" id="nomor-identitas" class="form-control">
             </div>
-            <div class="col-lg-8 col-sm-12 mb-3">
+            <div class="col-lg-8 col-sm-12 mb-3" id="upload-identity">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Foto Identitas</h3>
@@ -41,6 +41,14 @@
                                     here
                                     to upload</button></div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-sm-12 mb-3 d-none" id="show-identity">
+                <div class="card card-sm">
+                    <div class="d-block">
+                        <img src="" alt="" class="card-img-top"
+                            style="max-height: 15rem; max-width:27rem;" id="image-identity">
                     </div>
                 </div>
             </div>
