@@ -58,10 +58,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/masters/cleaning-price', CleaningController::class);
 
     Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
+    Route::get('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'changeRoom']);
     Route::get('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'detailPayment']);
     Route::get('/transactions/rent-rooms/search-member', [TransactionRentController::class, 'searchMember']);
     Route::post('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'saveDetailPayment']);
     Route::post('/transactions/rent-rooms/upload-identity', [UserIdentityController::class, 'uploadIdentity']);
+    Route::post('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'storeChangeRoom']);
     Route::resource('/transactions/rent-rooms', TransactionRentController::class);
 
     // Route::get('/inventories/receipts/create', [ReceiptController::class, 'create']);
@@ -122,6 +124,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-categories', [DropdownController::class, 'getCategory']);
     Route::get('/utils/dropdowns/get-roles', [DropdownController::class, 'getRole']);
     Route::get('/utils/dropdowns/get-room', [DropdownController::class, 'getRoom']);
+    Route::get('/utils/dropdowns/get-room-by-category', [DropdownController::class, 'getRoomByCategory']);
     Route::get('/utils/dropdowns/get-member', [DropdownController::class, 'getMember']);
 });
 

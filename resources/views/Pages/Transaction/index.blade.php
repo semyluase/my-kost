@@ -47,7 +47,7 @@
                                                     <div class="accordion-body pt-0">
                                                         @php
                                                             $rooms = collect(
-                                                                Room::with(['rent'])
+                                                                Room::with(['rent', 'rent.oldRoom'])
                                                                     ->where('home_id', auth()->user()->home_id)
                                                                     ->where('category_id', $value->id)
                                                                     ->get(),

@@ -142,10 +142,12 @@
             element.clearStore();
             element.clearChoices();
 
-            element.setChoices([{
-                label: placeholder,
-                value: "",
-            }, ]);
+            if (placeholder != "") {
+                element.setChoices([{
+                    label: placeholder,
+                    value: "",
+                }, ]);
+            }
 
             if (typeof url == "object") {
                 element.setChoices(url);

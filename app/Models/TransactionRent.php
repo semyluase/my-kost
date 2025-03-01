@@ -23,4 +23,9 @@ class TransactionRent extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    function oldRoom()
+    {
+        return $this->belongsTo(Room::class, 'old_room_id', 'id');
+    }
 }

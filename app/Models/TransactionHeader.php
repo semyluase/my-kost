@@ -49,7 +49,7 @@ class TransactionHeader extends Model
                     left join tr_transaction_d ttd
                     on tth.nobukti = ttd.nobukti
                     where ttd.tgl_request_cleaning between '$startDate' and '$endDate'
-                    and is_cleaning = true) tb");
+                    and ttd.is_cleaning = true) tb");
     }
 
     function scopeGetDataTopup($query, $tgl)

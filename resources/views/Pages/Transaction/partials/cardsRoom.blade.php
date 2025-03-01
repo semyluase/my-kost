@@ -39,6 +39,8 @@
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Detail
                                         Pembayaran</a>
                                 @else
+                                    <a href="{{ url('/transactions/rent-rooms/checkout') }}?room={{ $room->slug }}"
+                                        class="badge badge-outline text-primary fw-semibold badge-pill">Checkout</a>
                                     <a href="{{ url('/transactions/rent-rooms/change-room') }}?room={{ $room->slug }}"
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Pindah
                                         Kamar</a>

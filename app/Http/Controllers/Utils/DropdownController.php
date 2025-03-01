@@ -93,6 +93,27 @@ class DropdownController extends Controller
         return response()->json($results);
     }
 
+    function getRoomByCategory(Request $request)
+    {
+        $rooms = Room::where('home_id', auth()->user()->home_id)
+            ->where('category_id', $request->category)
+            ->whereDoesntHave('rent')
+            ->get();
+
+        $results = array();
+
+        if ($rooms) {
+            foreach ($rooms as $key => $value) {
+                $results[] = [
+                    'label' =>  $value->number_room,
+                    'value' =>  $value->slug,
+                ];
+            }
+        }
+
+        return response()->json($results);
+    }
+
     function getMember()
     {
         $members = User::where('role_id', 3)->get();
