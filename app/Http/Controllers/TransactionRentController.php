@@ -281,8 +281,6 @@ class TransactionRentController extends Controller
         $member = User::with(['member', 'member.userIdentity'])->where('phone_number', makePhoneNumber($request->phoneNumber))
             ->first();
 
-        $foto = asset('assets/upload/userIdentity/' . $member->member->userIdentity->file_name);
-
         return response()->json(
             $member
         );
