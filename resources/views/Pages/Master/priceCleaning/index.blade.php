@@ -47,15 +47,17 @@
             <div class="modal-body">
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="category" class="form-label">Kategori</label>
-                        <select name="category" id="category" class="form-select choices"></select>
-                        <input type="hidden" name="kode-item" id="kode-item" class="form-control">
+                        <label for="category-price-cleaning" class="form-label">Kategori</label>
+                        <select name="category-price-cleaning" id="category-price-cleaning"
+                            class="form-select choices"></select>
+                        <input type="hidden" name="kode-item-price-cleaning" id="kode-item-price-cleaning"
+                            class="form-control">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="price" class="form-label">Harga</label>
-                        <input type="text" name="price" id="price" class="form-control">
+                        <label for="price-cleaning" class="form-label">Harga</label>
+                        <input type="text" name="price-cleaning" id="price-cleaning" class="form-control">
                     </div>
                 </div>
             </div>

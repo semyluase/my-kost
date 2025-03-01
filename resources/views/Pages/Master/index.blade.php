@@ -114,12 +114,14 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-cup">
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 11h14v-3h-14z" />
-                                        <path d="M17.5 11l-1.5 10h-8l-1.5 -10" />
-                                        <path d="M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
-                                        <path d="M15 5v-2" />
+                                        <path
+                                            d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" />
+                                        <path d="M8 3l2 3" />
+                                        <path d="M16 3l-2 3" />
+                                        <path d="M9 13v-2" />
+                                        <path d="M15 11v2" />
                                     </svg>
                                     Price Cleaning</a>
                             </li>
@@ -130,12 +132,15 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-cup">
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-wash-machine">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 11h14v-3h-14z" />
-                                        <path d="M17.5 11l-1.5 10h-8l-1.5 -10" />
-                                        <path d="M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
-                                        <path d="M15 5v-2" />
+                                        <path
+                                            d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+                                        <path d="M12 14m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                        <path d="M8 6h.01" />
+                                        <path d="M11 6h.01" />
+                                        <path d="M14 6h2" />
+                                        <path d="M8 14c1.333 -.667 2.667 -.667 4 0c1.333 .667 2.667 .667 4 0" />
                                     </svg>
                                     Price Laundry</a>
                             </li>

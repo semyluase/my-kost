@@ -12,6 +12,11 @@ class Cleaning extends Model
 
     protected $guarded = ['id'];
 
+    function getRouteKeyName()
+    {
+        return 'kode_item';
+    }
+
     function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
