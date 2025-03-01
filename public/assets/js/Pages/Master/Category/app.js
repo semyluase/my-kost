@@ -362,7 +362,7 @@ fnCategory.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 name: nameCategory.value,
-                categoryFacilities: categoryFacilities.value,
+                categoryFacilities: categoryFacilities,
                 dailyPrice: priceDailyCategoryInput.value,
                 weeklyPrice: priceWeeklyCategoryInput.value,
                 monthlyPrice: priceMonthlyCategoryInput.value,
