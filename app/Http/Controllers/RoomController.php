@@ -6,6 +6,7 @@ use App\Models\CategoryPicture;
 use App\Models\Room;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -253,27 +254,17 @@ class RoomController extends Controller
 
     function getAllData(Request $request)
     {
-        $totalRooms = Room::count();
-
-        $filterRooms = Room::search(['search' => $request->search['value']])
-            ->count();
-
-        $rooms = collect(Room::with(['category.prices', 'category.facilities', 'category.pictures'])->search(['search' => $request->search['value']])
-            ->skip($request->start)
-            ->limit($request->length)
+        $rooms = collect(Room::with(['rent', 'rent.member', 'rent.member.user'])->searchCategory($request->category)
             ->orderBy('number_room')
             ->get())->chunk(10);
 
         $results = array();
-        $no = $request->start + 1;
+        $no = 1;
 
         if ($rooms) {
             foreach ($rooms as $key => $chunk) {
                 foreach ($chunk as $key => $value) {
-                    $categoryFacilities = 'Tidak ada fasilitas kamar yang dipilih';
-                    $sharedFacility = 'Tidak ada fasilitas kos yang dipilih';
-                    $prices = 'Belum ada harga untuk kamar ini';
-
+                    // dd($value);
                     $btnUpload = '';
                     if (collect($value->category->pictures)->count() > 0) {
                         $btnUpload = '<a href="javascript:;" class="btn-action text-primary" title="Lihat Foto" onclick="fnRoom.viewPicture(\'' . $value->slug . '\')">
@@ -291,92 +282,14 @@ class RoomController extends Controller
                                     </a>
                                 </div>';
 
-                    if ($value->category->prices) {
-                        $prices = '<div class="row g-1">';
+                    $status = '<span class="badge bg-blue-lt">Tersedia</span>';
 
-                        $categoryPrices = collect($value->category->prices)->chunk(10);
-
-                        if ($categoryPrices) {
-                            foreach ($categoryPrices as $key => $chunkPrice) {
-                                foreach ($chunkPrice as $key => $valuePrice) {
-                                    $type = 'Harian';
-
-                                    switch ($valuePrice->type) {
-                                        case 'weekly':
-                                            $type = 'Mingguan';
-                                            break;
-
-                                        case 'monthly':
-                                            $type = 'Bulanan';
-                                            break;
-
-                                        case 'yearly':
-                                            $type = 'Tahunan';
-                                            break;
-
-                                        default:
-                                            # code...
-                                            break;
-                                    }
-                                    $prices .= '<div class="col-12">
-                                    <div class="row g-1 align-items-center">
-                                      <div class="col">
-                                        <div class="text-reset d-block">' . $type . '</div>
-                                        <div class="text-secondary mt-n1">' . $valuePrice->price . '</div>
-                                      </div>
-                                    </div>
-                                  </div>';
-                                }
-                            }
+                    if ($value->rent) {
+                        if ($value->rent->is_approve) {
+                            $status = '<span class="badge bg-green-lt">Sudah Disewa</span>';
+                        } else {
+                            $status = '<span class="badge bg-red-lt">Perlu Approval</span>';
                         }
-
-                        $prices .= '</div>';
-                    }
-
-                    if ($value->home) {
-                        if ($value->home->sharedFacility) {
-                            $sharedFacility = '<div class="row g-1">';
-
-                            $sharedFacilities = collect($value->home->sharedFacility)->chunk(10);
-
-                            if ($sharedFacilities) {
-                                foreach ($sharedFacilities as $key => $chunkFacility) {
-                                    foreach ($chunkFacility as $key => $valueFacility) {
-                                        $sharedFacility .= '<div class="col-6">
-                                        <div class="row g-1 align-items-center">
-                                          <div class="col">
-                                            <div class="text-reset d-block">' . $valueFacility->facility->name . '</div>
-                                          </div>
-                                        </div>
-                                      </div>';
-                                    }
-                                }
-                            }
-
-                            $sharedFacility .= '</div>';
-                        }
-                    }
-
-                    if ($value->category->facilities) {
-                        $categoryFacilities = '<div class="row g-1">';
-
-                        $facilities = collect($value->category->facilities)->chunk(10);
-
-                        if ($facilities) {
-                            foreach ($facilities as $key => $chunkFacility) {
-                                foreach ($chunkFacility as $key => $valueFacility) {
-                                    $categoryFacilities .= '<div class="col-6">
-                                    <div class="row g-1 align-items-center">
-                                      <div class="col">
-                                        <div class="text-reset d-block">' . $valueFacility->facility->name . '</div>
-                                      </div>
-                                    </div>
-                                  </div>';
-                                }
-                            }
-                        }
-
-                        $categoryFacilities .= '</div>';
                     }
 
                     $results[] = [
@@ -384,9 +297,9 @@ class RoomController extends Controller
                         $value->number_room,
                         $value->home->name,
                         $value->category->name,
-                        $categoryFacilities,
-                        $sharedFacility,
-                        $prices,
+                        $value->rent ? $value->rent->member->user->name : "-",
+                        $value->rent ? Carbon::parse($value->rent->start_date)->isoFormat("DD MMMM YYYY") . ' - ' . Carbon::parse($value->rent->end_date)->isoFormat("DD MMMM YYYY") : "-",
+                        $status,
                         $btnAction
                     ];
 
@@ -396,9 +309,6 @@ class RoomController extends Controller
         }
 
         return response()->json([
-            'draw'  =>  $request->draw,
-            'recordsTotal'  =>  $totalRooms,
-            'recordsFiltered'   =>  $filterRooms,
             'data'  =>  $results
         ]);
     }

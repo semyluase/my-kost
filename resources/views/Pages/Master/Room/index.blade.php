@@ -18,23 +18,25 @@
         </div>
     </div>
     <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-3">
+                <select name="search-room-category" id="search-room-category" class="form-select choices"></select>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
                     <table class="table table-vcard-center card-table table-striped" id="tb-room" style="width:100%">
                         <thead>
                             <tr class="text-center">
-                                <th rowspan="2">#</th>
-                                <th rowspan="2">Name</th>
-                                <th rowspan="2">Kos</th>
-                                <th rowspan="2">Kategori</th>
-                                <th colspan="2">Fasilitas</th>
-                                <th rowspan="2">Daftar Harga</th>
-                                <th rowspan="2">#</th>
-                            </tr>
-                            <tr class="text-center">
-                                <th>Kamar</th>
-                                <th>Bersama</th>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Kos</th>
+                                <th>Kategori</th>
+                                <th>Penyewa</th>
+                                <th>Tanggal Sewa</th>
+                                <th>Status</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                     </table>

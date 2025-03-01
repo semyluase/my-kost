@@ -43,6 +43,11 @@ class Room extends Model
         return 'slug';
     }
 
+    function scopeSearchCategory($query, $category)
+    {
+        return $query->when($category ?? false, fn($query, $category) => ($query->where('category_id', $category)));
+    }
+
     function scopeSearch($query, array $params)
     {
         $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('number_room', "LIKE", "%$search%")->orWhereHas('home', function ($query) use ($search) {

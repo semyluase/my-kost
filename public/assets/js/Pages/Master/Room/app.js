@@ -18,6 +18,9 @@ const fnRoom = {
             categoryDropdown: new Choices(
                 document.querySelector("#category-room")
             ),
+            searchRoomCategory: new Choices(
+                document.querySelector("#search-room-category")
+            ),
         },
         modals: {
             modalRoom: new bootstrap.Modal(
@@ -30,14 +33,23 @@ const fnRoom = {
         tables: {
             tbRoom: $("#tb-room").DataTable({
                 ajax: {
-                    url: `${baseUrl}/masters/rooms/get-all-data`,
+                    url: `${baseUrl}/masters/rooms/get-all-data?category=`,
                 },
                 processing: true,
-                serverSide: true,
                 ordering: false,
+                paging: false,
                 scrollX: true,
             }),
         },
+    },
+
+    onLoad: async () => {
+        await createDropdown(
+            `${baseUrl}/utils/dropdowns/get-categories`,
+            fnRoom.init.dropdowns.searchRoomCategory,
+            "Search Category",
+            ""
+        );
     },
 
     viewPicture: async (slug) => {
@@ -159,6 +171,21 @@ const fnRoom = {
             });
     },
 };
+
+fnRoom.onLoad();
+
+fnRoom.init.dropdowns.searchRoomCategory.passedElement.element.addEventListener(
+    "change",
+    () => {
+        fnRoom.init.tables.tbRoom.ajax
+            .url(
+                `${baseUrl}/masters/rooms/get-all-data?category=${fnRoom.init.dropdowns.searchRoomCategory.getValue(
+                    true
+                )}`
+            )
+            .load();
+    }
+);
 
 fnRoom.init.buttons.btnAdd.addEventListener("click", async () => {
     blockUI();

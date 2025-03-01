@@ -56,7 +56,7 @@ class DropdownController extends Controller
 
     function getRole()
     {
-        $roles = collect(Role::get())->chunk(10);
+        $roles = collect(Role::whereNot('slug', 'member')->get())->chunk(10);
 
         $results = array();
 
