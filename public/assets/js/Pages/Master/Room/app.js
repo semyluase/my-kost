@@ -218,11 +218,6 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
                 name: nameRoom.value,
                 category: fnRoom.init.dropdowns.categoryDropdown.getValue(true),
                 home: fnRoom.init.dropdowns.homeDropdown.getValue(true),
-                roomFacilities: roomFacilities,
-                dailyPrice: dailyPriceRoom.value,
-                weeklyPrice: weeklyPriceRoom.value,
-                monthlyPrice: monthlyPriceRoom.value,
-                yearlyPrice: yearlyPriceRoom.value,
                 _token: fnRoom.init.buttons.btnSave.dataset.csrf,
             });
 
