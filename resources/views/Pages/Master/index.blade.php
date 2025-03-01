@@ -28,8 +28,8 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a href="#tabs-rules"
-                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }} d-none"
+                                <a href="#tabs-aturan"
+                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
                                     data-bs-toggle="tab" aria-selected="true"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -44,8 +44,8 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a href="#tabs-home"
-                                    class="nav-link active {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
-                                    data-bs-toggle="tab" aria-selected="false"
+                                    class="nav-link {{ auth()->user()->role->slug == 'super-admin' ? '' : 'd-none' }}"
+                                    data-bs-toggle="tab" aria-selected="false" tabindex="-1"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -107,7 +107,7 @@
                                     </svg>
                                     Makanan & Minuman</a>
                             </li>
-                            {{-- <li class="nav-item" role="presentation">
+                            <li class="nav-item" role="presentation">
                                 <a href="#tabs-price-cleaning" class="nav-link" data-bs-toggle="tab"
                                     aria-selected="false" tabindex="-1"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
@@ -138,15 +138,15 @@
                                         <path d="M15 5v-2" />
                                     </svg>
                                     Price Laundry</a>
-                            </li> --}}
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane" id="tabs-rules" role="tabpanel">
+                            <div class="tab-pane active show" id="tabs-aturan" role="tabpanel">
                                 @include('Pages.Master.Rules.index')
                             </div>
-                            <div class="tab-pane active show" id="tabs-home" role="tabpanel">
+                            <div class="tab-pane" id="tabs-home" role="tabpanel">
                                 @include('Pages.Master.Home.index')
                             </div>
                             <div class="tab-pane" id="tabs-category" role="tabpanel">
@@ -158,6 +158,9 @@
                             <div class="tab-pane" id="tabs-food-snack" role="tabpanel">
                                 @include('Pages.Master.FoodSnack.index')
                             </div>
+                            <div class="tab-pane" id="tabs-price-cleaning" role="tabpanel">
+                                @include('Pages.Master.priceCleaning.index')
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,15 +170,18 @@
     @push('myscript')
         <script>
             const tabMaster = document.querySelectorAll('a[data-bs-toggle="tab"]')
+
             tabMaster.forEach((tab, i) => {
                 tab.addEventListener('shown.bs.tab', () => {
                     switch (i) {
                         case 0:
-                            fnRules.init.tables.tbRules.columns.adjust();
+                            fnAturan.init.tables.tbRule.columns.adjust();
                             break;
+
                         case 1:
                             fnHome.init.tables.tbHome.columns.adjust();
                             break;
+
                         case 2:
                             fnCategory.init.tables.tbCategory.columns.adjust();
                             break;
@@ -186,6 +192,10 @@
 
                         case 4:
                             fnFoodSnack.init.tables.tbFoodSnack.columns.adjust();
+                            break;
+
+                        case 5:
+                            fnPriceCleaning.init.tables.tbPriceCleaning.columns.adjust();
                             break;
 
                         default:

@@ -319,7 +319,7 @@ class FoodSnackController extends Controller
 
                     $results[] = [
                         $no,
-                        '<img src="' . $image . '" class="img-responsive pt-0" style="width:10rem; height 10rem;">',
+                        '<img src="' . $image . '" class="img-responsive pt-0" style="max-width:5rem !important; max-height 7rem !important;">',
                         $value->name,
                         $category,
                         Number::currency($value->price, in: 'IDR', locale: 'id'),

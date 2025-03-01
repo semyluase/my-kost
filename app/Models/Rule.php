@@ -10,6 +10,8 @@ class Rule extends Model
 {
     use HasFactory, Sluggable;
 
+    protected $guarded = ['id'];
+
     public function sluggable(): array
     {
         return [
@@ -17,5 +19,10 @@ class Rule extends Model
                 'source' => 'name'
             ]
         ];
+    }
+
+    function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

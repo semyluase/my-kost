@@ -5,6 +5,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Master\RuleController;
+use App\Http\Controllers\Master\Service\CleaningController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
@@ -22,6 +24,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::get('/masters', [MasterController::class, 'index']);
+
+    Route::get('/masters/rules/get-all-data', [RuleController::class, 'getAllData']);
+    Route::resource('/masters/rules', RuleController::class);
 
     Route::get('/masters/homes/get-all-data', [HomeController::class, 'getAllData']);
     Route::get('/masters/homes/upload-picture/{home}', [HomeController::class, 'getDataUpload']);
@@ -48,6 +53,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/masters/food-snacks/upload-picture', [FoodSnackController::class, 'uploadPicture']);
     Route::delete('/masters/food-snacks/delete-picture/{foodSnack}', [FoodSnackController::class, 'destroyPicture']);
     Route::resource('/masters/food-snacks', FoodSnackController::class);
+
+    Route::get('/masters/cleaning-price/get-all-data', [CleaningController::class, 'getAllData']);
+    Route::resource('/masters/cleaning-price', CleaningController::class);
 
     Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
     Route::get('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'detailPayment']);
