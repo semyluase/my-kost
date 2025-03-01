@@ -98,16 +98,24 @@ noHPInput.addEventListener("keyup", async (event) => {
                 if (response.id) {
                     nameInput.value = response.name;
                     fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
-                        response.member.type_identity
+                        response.member == null
+                            ? ""
+                            : response.member.type_identity
                     );
                     nomorIdentitasInput.value = response.member.identity;
                     fnTransaction.init.datePicker.tanggalLahir.setDate(
-                        moment(response.member.dob)
+                        response.member == null
+                            ? moment("1990-01-01")
+                            : moment(response.member.dob)
                     );
-                    tokenFoto = response.member.user_identity.token;
+                    tokenFoto = response.member
+                        ? response.member.user_identity.token
+                        : "";
                     uploadIdentity.classList.add("d-none");
                     showIdentity.classList.remove("d-none");
-                    imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
+                    if (response.member) {
+                        imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
+                    }
                 } else {
                     nameInput.value = "";
                     nomorIdentitasInput.value = "";
