@@ -94,6 +94,7 @@ noHPInput.addEventListener("keyup", async (event) => {
                 return response.json();
             })
             .then((response) => {
+                unBlockUI();
                 if (response.id) {
                     nameInput.value = response.name;
                     fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
