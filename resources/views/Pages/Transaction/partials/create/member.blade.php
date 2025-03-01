@@ -20,7 +20,7 @@
                     <option value="">Pilih Jenis Identitas</option>
                     <option value="ktm">Kartu Mahasiswa</option>
                     <option value="ktp">Kartu Tanda Penduduk</option>
-                    <option value="sim">SIM</option>
+                    <option value="paspor">Paspor</option>
                 </select>
             </div>
             <div class="col-lg-6 col-sm-12 mb-3">
