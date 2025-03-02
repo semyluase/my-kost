@@ -54,6 +54,26 @@ class DropdownController extends Controller
         return response()->json($results);
     }
 
+    function getCategoryForTransaction()
+    {
+        $categories = collect(Category::whereHas('prices')->where('is_active', true)->get())->chunk(10);
+
+        $results = array();
+
+        if ($categories) {
+            foreach ($categories as $key => $chunk) {
+                foreach ($chunk as $key => $value) {
+                    $results[] = [
+                        'label' =>  $value->name,
+                        'value' =>  $value->id
+                    ];
+                }
+            }
+        }
+
+        return response()->json($results);
+    }
+
     function getRole()
     {
         $roles = collect(Role::whereNot('slug', 'member')->get())->chunk(10);

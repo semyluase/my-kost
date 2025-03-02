@@ -17,7 +17,7 @@ const fnChangeRoom = {
 
     onLoad: async () => {
         await createDropdown(
-            `${baseUrl}/utils/dropdowns/get-categories`,
+            `${baseUrl}/utils/dropdowns/get-categories-transaction`,
             fnChangeRoom.init.dropdowns.categoryKamarDropdown,
             "",
             ""

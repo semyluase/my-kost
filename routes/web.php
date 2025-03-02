@@ -122,6 +122,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/utils/dropdowns/get-homes', [DropdownController::class, 'getHome']);
     Route::get('/utils/dropdowns/get-categories', [DropdownController::class, 'getCategory']);
+    Route::get('/utils/dropdowns/get-categories-transaction', [DropdownController::class, 'getCategoryForTransaction']);
     Route::get('/utils/dropdowns/get-roles', [DropdownController::class, 'getRole']);
     Route::get('/utils/dropdowns/get-room', [DropdownController::class, 'getRoom']);
     Route::get('/utils/dropdowns/get-room-by-category', [DropdownController::class, 'getRoomByCategory']);
