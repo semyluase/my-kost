@@ -67,17 +67,13 @@ fnChangeRoom.init.buttons.btnSave.addEventListener("click", async () => {
     unBlockUI();
 
     if (results.data.status) {
-        if (results.data.url != null) {
-            swal.fire("Berhasil", results.data.message, "success").then(
-                (result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = `${baseUrl}/transactions/rent-rooms`;
-                    }
+        swal.fire("Berhasil", results.data.message, "success").then(
+            (result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `${baseUrl}${results.data.url}`;
                 }
-            );
-        } else {
-            window.location.href = `${baseUrl}${results.data.url}`;
-        }
+            }
+        );
     } else {
         if (results.data.message.noKamarBaru[0]) {
             swal.fire(

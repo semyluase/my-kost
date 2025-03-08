@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Home;
 use App\Models\Location;
+use App\Models\Master\Bank;
 use App\Models\Member;
 use App\Models\Role;
 use App\Models\Room;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class DropdownController extends Controller
@@ -146,6 +148,26 @@ class DropdownController extends Controller
                     'label' =>  $value->phone_number,
                     'value' =>  $value->phone_number,
                 ];
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getBank()
+    {
+        $banks = collect(Bank::get())->chunk(100);
+
+        $results = array();
+
+        if ($banks) {
+            foreach ($banks as $key => $chunk) {
+                foreach ($chunk as $c => $value) {
+                    $results[] = [
+                        'label' =>  $value->nama,
+                        'value' =>  $value->id,
+                    ];
+                }
             }
         }
 

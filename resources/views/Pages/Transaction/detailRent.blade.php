@@ -5,6 +5,7 @@
         use App\Models\Room;
         use App\Models\Deposite;
         use Illuminate\Support\Carbon;
+        use Illuminate\Support\Number;
         Carbon::setLocale('id_ID');
     @endphp
     <!-- Page header -->
@@ -104,12 +105,14 @@
                                                             Total Hari Sewa : {{ $rent->total_hari_sewa }}
                                                         </td>
                                                         <td>
-                                                            Harga Sewa lama : {{ $rent->oldRoom->oldRent->price }}
+                                                            Harga Sewa lama :
+                                                            {{ Number::currency($rent->oldRoom->oldRent->price, 'Rp.', 'id') }}
                                                             <br>
-                                                            Harga Sewa Baru : {{ $rent->price }}
+                                                            Harga Sewa Baru :
+                                                            {{ Number::currency($rent->price, 'Rp.', 'id') }}
                                                         </td>
                                                         <td>
-                                                            {{ $rent->kurang_bayar }}
+                                                            {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -117,19 +120,19 @@
                                                     <tr>
                                                         <td colspan="7">Sub Total</td>
                                                         <td>
-                                                            {{ $rent->kurang_bayar }}
+                                                            {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="7">Pembulatan</td>
                                                         <td>
-                                                            {{ $rent->pembulatan }}
+                                                            {{ Number::currency($rent->pembulatan, 'Rp.', 'id') }}
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="7">Total</td>
                                                         <td>
-                                                            {{ $rent->kurang_bayar + $rent->pembulatan }}
+                                                            {{ Number::currency($rent->kurang_bayar + $rent->pembulatan, 'Rp.', 'id') }}
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -177,7 +180,7 @@
                                                             {{ Carbon::parse($rent->end_date)->isoFormat('DD MMMM YYYY') }}
                                                         </p>
                                                     </td>
-                                                    <td>{{ $rent->price }}</td>
+                                                    <td>{{ Number::currency($rent->price, 'Rp.', 'id') }}</td>
                                                 </tr>
                                                 @php
                                                     $deposit = Deposite::where('room_id', $rent->room->id)
@@ -191,10 +194,11 @@
                                                         <td>{{ $rent->room->category->name }}</td>
                                                         <td>
                                                             <p>
-                                                                Deposit berlaku sampai penghuni tidak memperpanjang sewa
+                                                                Deposit berlaku sampai penghuni tidak memperpanjang
+                                                                sewa/Checkout
                                                             </p>
                                                         </td>
-                                                        <td>{{ $rent->price }}</td>
+                                                        <td>{{ Number::currency($rent->price, 'Rp.', 'id') }}</td>
                                                     </tr>
                                                 @endif
                                             </tbody>
@@ -203,9 +207,9 @@
                                                     <td colspan="4">Total</td>
                                                     <td>
                                                         @if ($deposit)
-                                                            {{ $rent->price }}
+                                                            {{ Number::currency($rent->price, 'Rp.', 'id') }}
                                                         @else
-                                                            {{ $rent->price * 2 }}
+                                                            {{ Number::currency($rent->price * 2, 'Rp.', 'id') }}
                                                         @endif
                                                     </td>
                                                 </tr>

@@ -42,6 +42,17 @@ class TransactionRentController extends Controller
         ]);
     }
 
+    public function checkout(Request $request)
+    {
+        $room = Room::with(['category', 'rent', 'rent.member', 'rent.member.user', 'rent.member.user.deposite'])->where('slug', $request->room)->first();
+
+        return view('Pages.Transaction.checkout', [
+            'title' =>  'Transaction - Checkout',
+            'pageTitle' =>  'Transaction - Checkout',
+            'room'  =>  $room,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -255,6 +266,16 @@ class TransactionRentController extends Controller
                         'data'  =>  [
                             'status'    =>  true,
                             'message'   =>  'Berhasil simpan transaksi',
+                            'url'   =>  '/transactions/rent-rooms',
+                        ]
+                    ]);
+
+                    DB::rollback();
+
+                    return response()->json([
+                        'data'  =>  [
+                            'status'    =>  false,
+                            'message'   =>  'Gagal simpan transaksi',
                         ]
                     ]);
                 }
@@ -322,7 +343,7 @@ class TransactionRentController extends Controller
                             'data'  =>  [
                                 'status'    =>  true,
                                 'message'   =>  'Berhasil Upgrade kamar',
-                                'url'   =>  'transactions/rent-rooms/detail-rents/' . $dataKamarBaru->number_room,
+                                'url'   =>  '/transactions/rent-rooms/detail-rents/' . $dataKamarBaru->number_room,
                             ]
                         ]);
                     }
@@ -375,6 +396,16 @@ class TransactionRentController extends Controller
                             'data'  =>  [
                                 'status'    =>  true,
                                 'message'   =>  'Berhasil simpan transaksi',
+                                'url'   =>  '/transactions/rent-rooms',
+                            ]
+                        ]);
+
+                        DB::rollback();
+
+                        return response()->json([
+                            'data'  =>  [
+                                'status'    =>  false,
+                                'message'   =>  'Gagal simpan transaksi',
                             ]
                         ]);
                     }
@@ -399,6 +430,76 @@ class TransactionRentController extends Controller
                 ]);
             }
         }
+    }
+
+    function storeCheckout(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'bank'  =>  'required',
+            'noRek' =>  'required',
+            'pengembalian'  =>  'required',
+        ], [
+            'bank.required' =>  'Bank harus dipilih',
+            'noRek.required'    =>  'No Rekening harus diisi',
+            'pengembalian.required' =>  'Pengembalian Deposit harus diisi'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  $validator->errors()
+                ]
+            ]);
+        }
+
+        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
+
+        $dataUpdateDeposit = [
+            'pengembalian'  =>  $request->pengembalian,
+            'tanggal'   =>  Carbon::now('Asia/Jakarta')->addDay(),
+            'bank'  =>  $request->bank,
+            'no_rek'    =>  $request->noRek,
+            'is_checkout'   =>  true,
+        ];
+
+        $dataUpdateRent = [
+            'is_checkout_normal'    =>  Carbon::now('Asia/Jakarta')->equalTo(Carbon::parse($room->rent->end_date)),
+            'is_checkout_abnormal'    =>  Carbon::now('Asia/Jakarta')->notEqualTo(Carbon::parse($room->rent->end_date)),
+        ];
+
+        if (Deposite::where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->where('rent_id', $room->rent->id)->update($dataUpdateDeposit)) {
+            if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Penghuni berhasil Checkout'
+                    ]
+                ]);
+            }
+
+            DB::rollback();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  'Penghuni gagal Checkout'
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  'Penghuni gagal Checkout'
+            ]
+        ]);
     }
 
     /**
@@ -455,15 +556,9 @@ class TransactionRentController extends Controller
             ->latest()
             ->first();
 
-        $deposit = Deposite::where('room_id', $dataRent->id)
-            ->where('user_id', $dataRent->member->user->id)
+        $deposit = Deposite::where('user_id', $dataRent->member->user->id)
+            ->where('is_checkout', false)
             ->first();
-
-        if ($dataRent->oldRoom) {
-            if ($dataRent->oldRoom->oldRent->is_upgrade) {
-                $deposit = null;
-            }
-        }
 
         if (TransactionRent::find($dataRent->id)->update([
             'is_approve'   =>  true,
@@ -474,6 +569,12 @@ class TransactionRentController extends Controller
                     'user_id'   =>  $dataRent->member->user->id,
                     'rent_id'   =>  $dataRent->id,
                     'jumlah'    =>  $dataRent->price,
+                ]);
+            } else {
+                Deposite::find($deposit->id)->update([
+                    'room_id'   =>  $room->id,
+                    'user_id'   =>  $dataRent->member->user->id,
+                    'rent_id'   =>  $dataRent->id,
                 ]);
             }
 
