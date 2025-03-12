@@ -103,10 +103,14 @@ noHPInput.addEventListener("keyup", async (event) => {
                             : response.member.type_identity
                     );
                     nomorIdentitasInput.value = response.member.identity;
+                    let dobMember = "1990-01-01";
+                    if (response.member) {
+                        if (response.member.dob) {
+                            dobMember = response.member.dob;
+                        }
+                    }
                     fnTransaction.init.datePicker.tanggalLahir.setDate(
-                        response.member == null
-                            ? moment("1990-01-01")
-                            : moment(response.member.dob)
+                        dobMember
                     );
                     tokenFoto = response.member
                         ? response.member.user_identity.token
