@@ -166,6 +166,9 @@
                             <div class="tab-pane" id="tabs-price-cleaning" role="tabpanel">
                                 @include('Pages.Master.priceCleaning.index')
                             </div>
+                            <div class="tab-pane" id="tabs-price-laundry" role="tabpanel">
+                                @include('Pages.Master.priceLaundry.index')
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,6 +204,10 @@
 
                         case 5:
                             fnPriceCleaning.init.tables.tbPriceCleaning.columns.adjust();
+                            break;
+
+                        case 6:
+                            fnPriceLaundry.init.tables.tbPriceLaundry.columns.adjust();
                             break;
 
                         default:

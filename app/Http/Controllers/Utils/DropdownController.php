@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Home;
 use App\Models\Location;
 use App\Models\Master\Bank;
+use App\Models\Master\CategoryLaundry;
 use App\Models\Member;
 use App\Models\Role;
 use App\Models\Room;
@@ -165,6 +166,26 @@ class DropdownController extends Controller
                 foreach ($chunk as $c => $value) {
                     $results[] = [
                         'label' =>  $value->nama,
+                        'value' =>  $value->id,
+                    ];
+                }
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getCategoryLaundry()
+    {
+        $categoryLaundry = collect(CategoryLaundry::where('is_active', true)->get())->chunk(100);
+
+        $results = array();
+
+        if ($categoryLaundry) {
+            foreach ($categoryLaundry as $key => $chunk) {
+                foreach ($chunk as $c => $value) {
+                    $results[] = [
+                        'label' =>  $value->name,
                         'value' =>  $value->id,
                     ];
                 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Master\RuleController;
 use App\Http\Controllers\Master\Service\CleaningController;
+use App\Http\Controllers\Master\Service\LaundryController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
@@ -56,6 +57,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/masters/cleaning-price/get-all-data', [CleaningController::class, 'getAllData']);
     Route::resource('/masters/cleaning-price', CleaningController::class);
+
+    Route::get('/masters/laundry-price/get-all-data', [LaundryController::class, 'getAllData']);
+    Route::resource('/masters/laundry-price', LaundryController::class);
 
     Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
     Route::get('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'changeRoom']);
@@ -130,6 +134,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-room-by-category', [DropdownController::class, 'getRoomByCategory']);
     Route::get('/utils/dropdowns/get-member', [DropdownController::class, 'getMember']);
     Route::get('/utils/dropdowns/get-bank', [DropdownController::class, 'getBank']);
+    Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);
 });
 
 Route::middleware(['guest'])->group(function () {
