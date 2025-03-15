@@ -457,6 +457,7 @@ class TransactionRentController extends Controller
 
         $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
 
+        // dd($room);
         $dataUpdateDeposit = [
             'pengembalian'  =>  $request->pengembalian,
             'tanggal'   =>  Carbon::now('Asia/Jakarta')->addDay(),
@@ -532,6 +533,65 @@ class TransactionRentController extends Controller
     public function destroy(TransactionRent $transactionRent)
     {
         //
+    }
+
+    function getAllData(Request $request)
+    {
+        $rooms = collect(Room::with(['rent', 'rent.member', 'rent.member.user'])->searchCategory($request->category)
+            ->orderBy('number_room')
+            ->get())->chunk(10);
+
+        $results = array();
+
+        if (collect($rooms)->count() > 0) {
+            foreach ($rooms as $key => $chunk) {
+                foreach ($chunk as $key => $value) {
+                    $btnAction = '<div class="d-flex gap-2">';
+                    if ($value->rent) {
+                        if ($value->rent->is_approve) {
+                            $btnAction .= '<a href="' . url("/transactions/rent-rooms/checkout") . '?room=' . $value->slug . '"
+                                        class="badge badge-outline text-primary fw-semibold badge-pill">Checkout</a>
+                                    <a href="' . url("/transactions/rent-rooms/change-room") . '?room=' . $value->slug . '"
+                                        class="badge badge-outline text-primary fw-semibold badge-pill">Pindah
+                                        Kamar</a>';
+                        } else {
+                            $btnAction .= '<a href="' . url('') . '/transactions/rent-rooms/detail-rents/' . $value->slug . '"
+                                        class="badge badge-outline text-primary fw-semibold badge-pill">Detail
+                                        Pembayaran</a>';
+                        }
+                    } else {
+                        $btnAction .= '<a href="' . url('/transactions/rent-rooms/create') . '?room=' . $value->slug . '"
+                                    class="badge badge-outline text-primary fw-semibold badge-pill">Sewa Kamar</a>';
+                    }
+
+                    $btnAction .= '</div>';
+
+                    $status = '<span class="badge bg-blue-lt">Tersedia</span>';
+
+                    if ($value->rent) {
+                        if ($value->rent->is_approve) {
+                            $status = '<span class="badge bg-green-lt">Sudah Disewa</span>';
+                        } else {
+                            $status = '<span class="badge bg-red-lt">Perlu Approval</span>';
+                        }
+                    }
+
+                    $results[] = [
+                        $value->number_room,
+                        $value->home->name,
+                        $value->category->name,
+                        $value->rent ? $value->rent->member->user->name : "-",
+                        $value->rent ? Carbon::parse($value->rent->start_date)->isoFormat("DD MMMM YYYY") . ' - ' . Carbon::parse($value->rent->end_date)->isoFormat("DD MMMM YYYY") : "-",
+                        $status,
+                        $btnAction
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'data'  =>  $results
+        ]);
     }
 
     function detailPayment(Room $room)
