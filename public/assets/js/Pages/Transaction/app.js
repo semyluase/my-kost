@@ -26,3 +26,16 @@ const fnTransactionRoom = {
 };
 
 fnTransactionRoom.onLoad();
+
+fnTransactionRoom.init.dropdowns.categoryRoomDropdown.passedElement.element.addEventListener(
+    "change",
+    () => {
+        fnTransactionRoom.init.tables.tbRoom.ajax
+            .url(
+                `${baseUrl}/transactions/rent-rooms/get-all-data?category=${fnTransactionRoom.init.dropdowns.categoryRoomDropdown.getValue(
+                    "true"
+                )}`
+            )
+            .draw();
+    }
+);
