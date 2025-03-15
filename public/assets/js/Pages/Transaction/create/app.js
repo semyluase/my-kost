@@ -146,7 +146,9 @@ const fnTransaction = {
                         dobMember
                     );
                     tokenFoto = response.member
-                        ? response.member.user_identity.token
+                        ? response.member.user_identity
+                            ? response.member.user_identity.token
+                            : ""
                         : "";
 
                     tokenFotoOrang = response.foto ? response.foto.token : "";
