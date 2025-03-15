@@ -19,7 +19,7 @@ const fnTransactionRoom = {
         await createDropdown(
             `${baseUrl}/utils/dropdowns/get-categories-transaction`,
             fnTransactionRoom.init.dropdowns.categoryRoomDropdown,
-            "",
+            "Pilih Kategori",
             ""
         );
     },
