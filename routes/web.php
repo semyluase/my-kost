@@ -61,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/masters/laundry-price/get-all-data', [LaundryController::class, 'getAllData']);
     Route::resource('/masters/laundry-price', LaundryController::class);
 
+    Route::get('/transactions/rent-rooms/get-all-data', [TransactionRentController::class, 'getAllData']);
     Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
     Route::get('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'changeRoom']);
     Route::get('/transactions/rent-rooms/checkout', [TransactionRentController::class, 'checkout']);
@@ -135,6 +136,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-member', [DropdownController::class, 'getMember']);
     Route::get('/utils/dropdowns/get-bank', [DropdownController::class, 'getBank']);
     Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);
+
+    Route::get('/utils/prices/get-laundry', [DropdownController::class, 'getLaundry']);
 });
 
 Route::middleware(['guest'])->group(function () {
