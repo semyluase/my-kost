@@ -36,6 +36,6 @@ fnTransactionRoom.init.dropdowns.categoryRoomDropdown.passedElement.element.addE
                     "true"
                 )}`
             )
-            .draw();
+            .load();
     }
 );
