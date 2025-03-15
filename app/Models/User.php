@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->belongsTo(Deposite::class, 'id', 'user_id');
     }
 
+    function foto()
+    {
+        return $this->belongsTo(UserIdentity::class, 'foto_identity', 'id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

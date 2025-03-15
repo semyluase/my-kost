@@ -7,6 +7,9 @@ const endRentDate = document.querySelector("#end-rent");
 const uploadIdentity = document.querySelector("#upload-identity");
 const showIdentity = document.querySelector("#show-identity");
 const imgIdentity = document.querySelector("#image-identity");
+const uploadFotoOrang = document.querySelector("#upload-foto-orang");
+const showFotoOrang = document.querySelector("#show-foto-orang");
+const imgOrang = document.querySelector("#image-orang");
 
 let url,
     data,
@@ -14,6 +17,7 @@ let url,
     durasi,
     uploaded,
     tokenFoto,
+    tokenFotoOrang,
     startDateRent = moment(),
     tglLahir = moment("1990-01-01");
 
@@ -21,6 +25,7 @@ const fnTransaction = {
     init: {
         buttons: {
             btnSave: document.querySelector("#btn-save"),
+            btnViewMember: document.querySelector("#btn-view-member"),
         },
         dropdowns: {
             jenisIdentitasDropdown: new Choices(
@@ -67,16 +72,44 @@ const fnTransaction = {
                     tokenFoto = response.token;
                 },
             }),
+            dropzoneFotoOrang: new Dropzone("#dropzone-foto-orang", {
+                url: `${baseUrl}/transactions/rent-rooms/upload-foto-orang`,
+                maxFiles: 1,
+                method: "post",
+                paramName: "userfileFoto",
+                addRemoveLinks: true,
+                success: function (file, response) {
+                    // var data = JSON.parse(response);
+                    tokenFotoOrang = response.token;
+                },
+            }),
+        },
+        modals: {
+            modalViewMember: new bootstrap.Modal(
+                document.querySelector("#modal-view-member")
+            ),
+        },
+        tables: {
+            tbViewMember: $("#tb-view-member").DataTable({
+                ajax: {
+                    url: `${baseUrl}/utils/master/user`,
+                },
+                processing: true,
+            }),
         },
     },
-};
 
-noHPInput.addEventListener("keyup", async (event) => {
-    if (event.key == "Enter") {
+    onSelectMember: async (noHp) => {
+        noHPInput.value = noHp;
+        fnTransaction.init.modals.modalViewMember.hide();
+        await fnTransaction.searchMember(noHp);
+    },
+
+    searchMember: async (noHP) => {
         blockUI();
 
         await fetch(
-            `${baseUrl}/transactions/rent-rooms/search-member?phoneNumber=${noHPInput.value}`
+            `${baseUrl}/transactions/rent-rooms/search-member?phoneNumber=${noHP}`
         )
             .then((response) => {
                 if (!response.ok) {
@@ -115,10 +148,21 @@ noHPInput.addEventListener("keyup", async (event) => {
                     tokenFoto = response.member
                         ? response.member.user_identity.token
                         : "";
-                    uploadIdentity.classList.add("d-none");
-                    showIdentity.classList.remove("d-none");
+
+                    tokenFotoOrang = response.foto ? response.foto.token : "";
+
+                    console.log(response.member);
+
                     if (response.member) {
+                        uploadIdentity.classList.add("d-none");
+                        showIdentity.classList.remove("d-none");
                         imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
+                    }
+
+                    if (response.foto) {
+                        uploadFotoOrang.classList.add("d-none");
+                        showFotoOrang.classList.remove("d-none");
+                        imgOrang.src = `${baseUrl}/assets/upload/userIdentity/${response.foto.file_name}`;
                     }
                 } else {
                     nameInput.value = "";
@@ -127,6 +171,16 @@ noHPInput.addEventListener("keyup", async (event) => {
 
                 unBlockUI();
             });
+    },
+};
+
+fnTransaction.init.buttons.btnViewMember.addEventListener("click", () => {
+    fnTransaction.init.modals.modalViewMember.show();
+});
+
+noHPInput.addEventListener("keyup", async (event) => {
+    if (event.key == "Enter") {
+        await fnTransaction.searchMember(noHPInput.value);
     }
 });
 
@@ -201,6 +255,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
                     ),
                 identityNumber: nomorIdentitasInput.value,
                 tokenFoto: tokenFoto,
+                tokenFotoOrang: tokenFotoOrang,
                 room: room,
                 startRentDate: moment(
                     fnTransaction.init.datePicker.startRentPicker
@@ -231,6 +286,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
                     ),
                 identityNumber: nomorIdentitasInput.value,
                 tokenFoto: tokenFoto,
+                tokenFotoOrang: tokenFotoOrang,
                 room: room,
                 startRentDate: moment(
                     fnTransaction.init.datePicker.startRentPicker

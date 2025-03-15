@@ -19,6 +19,7 @@ use App\Http\Controllers\TransactionRentController;
 use App\Http\Controllers\TransactionServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Utils\DropdownController;
+use App\Http\Controllers\Utils\MasterController as UtilsMasterController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -69,6 +70,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/transactions/rent-rooms/search-member', [TransactionRentController::class, 'searchMember']);
     Route::post('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'saveDetailPayment']);
     Route::post('/transactions/rent-rooms/upload-identity', [UserIdentityController::class, 'uploadIdentity']);
+    Route::post('/transactions/rent-rooms/upload-foto-orang', [UserIdentityController::class, 'uploadFotoOrang']);
     Route::post('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'storeChangeRoom']);
     Route::post('/transactions/rent-rooms/checkout', [TransactionRentController::class, 'storeCheckout']);
     Route::resource('/transactions/rent-rooms', TransactionRentController::class);
@@ -138,6 +140,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);
 
     Route::get('/utils/prices/get-laundry', [DropdownController::class, 'getLaundry']);
+
+    Route::get('/utils/master/user', [UtilsMasterController::class, 'getUserMember']);
 });
 
 Route::middleware(['guest'])->group(function () {

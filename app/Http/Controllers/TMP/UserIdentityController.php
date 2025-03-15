@@ -100,4 +100,39 @@ class UserIdentityController extends Controller
             ]
         ]);
     }
+
+    function uploadFotoOrang(Request $request)
+    {
+        DB::beginTransaction();
+
+        $data = array();
+        $file = $request->file('userfileFoto');
+        if ($file) {
+            $dataUpload = $file->store('upload/userIdentity');
+            $token = Str::random(32);
+            $data = [
+                'token' =>  $token,
+                'file_location' =>  base_path($dataUpload),
+                'file_name' =>  basename($dataUpload),
+            ];
+        }
+
+        if (UserIdentity::create($data)) {
+            DB::commit();
+
+            return response()->json([
+                'status'    =>  true,
+                'token' =>  $token,
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'token' =>  null,
+            ]
+        ]);
+    }
 }

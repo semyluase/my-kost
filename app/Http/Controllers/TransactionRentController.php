@@ -84,6 +84,8 @@ class TransactionRentController extends Controller
 
         $userIdentify = UserIdentity::where('token', $request->tokenFoto)->first();
 
+        $userFoto = UserIdentity::where('token', $request->tokenFotoOrang)->first();
+
         $room = Room::with(['category.prices'])->where('slug', $request->room)
             ->where('home_id', auth()->user()->home_id)
             ->first();
@@ -99,7 +101,7 @@ class TransactionRentController extends Controller
         $dataUser = array();
         $dataMember = array();
         $dataRent = array();
-        $dataDeposit = array();
+
         if (!$user) {
             $dataUser = [
                 'role_id'   =>  3,
@@ -107,6 +109,7 @@ class TransactionRentController extends Controller
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'name'  =>  Str::title($request->name),
                 'password'  =>  bcrypt(Carbon::parse($request->tanggalLahir)->isoFormat("DDMMYYYY")),
+                'foto_identity' =>  $userFoto->id,
             ];
         }
 
@@ -116,6 +119,7 @@ class TransactionRentController extends Controller
             if ($user->home_id == null) {
                 User::find($user->id)->update([
                     'home_id'   =>  auth()->user()->home_id,
+                    'foto_identity' =>  $userFoto->id,
                 ]);
             }
         }
@@ -660,7 +664,7 @@ class TransactionRentController extends Controller
 
     function searchMember(Request $request)
     {
-        $member = User::with(['member', 'member.userIdentity'])->where('phone_number', makePhoneNumber($request->phoneNumber))
+        $member = User::with(['member', 'member.userIdentity', 'foto'])->where('phone_number', makePhoneNumber($request->phoneNumber))
             ->first();
 
         return response()->json(

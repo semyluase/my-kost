@@ -85,6 +85,7 @@
             </div>
         </div>
     </div>
+    @include('Pages.Transaction.partials.create.table.tbMember')
     @push('myscript')
         <script>
             let nobukti = "{{ request()->nobukti ? request()->nobukti : '' }}"
