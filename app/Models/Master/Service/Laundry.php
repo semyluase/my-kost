@@ -2,7 +2,6 @@
 
 namespace App\Models\Master\Service;
 
-use App\Models\Master\CategoryLaundry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,14 +16,9 @@ class Laundry extends Model
         return 'kode_item';
     }
 
-    function categoryLaundry()
-    {
-        return $this->belongsTo(CategoryLaundry::class);
-    }
-
     function scopeSearch($query, array $params)
     {
-        $query->when($params['search'] ?? false, fn($query, $search) => ($query->whereRelation('categoryLaundry', 'name', 'LIKE', "%$search%")));
+        $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('name', 'LIKE', "%$search%")));
 
         return $query;
     }

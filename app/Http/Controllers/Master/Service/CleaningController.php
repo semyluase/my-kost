@@ -39,10 +39,8 @@ class CleaningController extends Controller
     {
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
-            'category'  =>  'required',
             'harga' =>  'required'
         ], [
-            'category.required' =>  "Kategori Kamar wajib dipilih",
             'harga.required'    =>  'Harga wajib diisi'
         ]);
 
@@ -58,7 +56,6 @@ class CleaningController extends Controller
 
         $data = [
             'kode_item' =>  $kode,
-            'category_id'   =>  $request->category,
             'price' =>  $request->harga,
             'user_created'  =>  auth()->user()->username,
         ];
@@ -107,10 +104,8 @@ class CleaningController extends Controller
     {
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
-            'category'  =>  'required',
             'harga' =>  'required'
         ], [
-            'category.required' =>  "Kategori Kamar wajib dipilih",
             'harga.required'    =>  'Harga wajib diisi'
         ]);
 
@@ -124,7 +119,6 @@ class CleaningController extends Controller
         }
 
         $data = [
-            'category_id'   =>  $request->category,
             'price' =>  $request->harga,
             'user_updated'  =>  auth()->user()->username,
         ];
@@ -184,11 +178,11 @@ class CleaningController extends Controller
         $totalPriceCleanings = Cleaning::where('is_active', true)
             ->count();
 
-        $filteredPriceCleanings = Cleaning::with(['category'])->where('is_active', true)
+        $filteredPriceCleanings = Cleaning::where('is_active', true)
             ->search(['search' => $request->search['value']])
             ->count();
 
-        $priceCleanings = Cleaning::with(['category'])->where('is_active', true)
+        $priceCleanings = Cleaning::where('is_active', true)
             ->search(['search' => $request->search['value']])
             ->skip($request->start)
             ->limit($request->length)
@@ -210,10 +204,11 @@ class CleaningController extends Controller
 
                 $results[] = [
                     $no,
-                    $value->category->name,
                     Number::currency($value->price, in: 'IDR', locale: 'id'),
                     $btnAction
                 ];
+
+                $no++;
             }
         }
 

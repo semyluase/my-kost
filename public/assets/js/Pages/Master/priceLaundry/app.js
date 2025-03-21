@@ -1,6 +1,7 @@
 const kodeItemPriceLaundryInput = document.querySelector(
     "#kode-item-price-laundry"
 );
+const typeLaundryInput = document.querySelector("#type-laundry");
 const beratLaundryInput = document.querySelector("#berat-price-laundry");
 const hargaLaundryInput = document.querySelector("#price-laundry");
 
@@ -12,11 +13,6 @@ const fnPriceLaundry = {
             ),
             btnSavePriceLaundry: document.querySelector(
                 "#btn-save-price-laundry"
-            ),
-        },
-        dropdowns: {
-            categoryPriceLaundryDropdown: new Choices(
-                document.querySelector("#category-price-laundry")
             ),
         },
         modals: {
@@ -56,12 +52,7 @@ const fnPriceLaundry = {
                 return response.json();
             })
             .then(async (response) => {
-                await createDropdown(
-                    `${baseUrl}/utils/dropdowns/get-category-laundry`,
-                    fnPriceLaundry.init.dropdowns.categoryPriceLaundryDropdown,
-                    "",
-                    response.category_laundry_id
-                );
+                typeLaundryInput.value = response.name;
                 beratLaundryInput.value = response.weight;
                 hargaLaundryInput.value = response.price;
                 kodeItemPriceLaundryInput.value = response.kode_item;
@@ -126,12 +117,7 @@ const fnPriceLaundry = {
 fnPriceLaundry.init.buttons.btnAddPriceLaundry.addEventListener(
     "click",
     async () => {
-        await createDropdown(
-            `${baseUrl}/utils/dropdowns/get-category-laundry`,
-            fnPriceLaundry.init.dropdowns.categoryPriceLaundryDropdown,
-            "",
-            ""
-        );
+        typeLaundryInput.value = "";
         beratLaundryInput.value = "";
         hargaLaundryInput.value = "";
         fnPriceLaundry.init.buttons.btnSavePriceLaundry.setAttribute(
@@ -150,10 +136,7 @@ fnPriceLaundry.init.buttons.btnSavePriceLaundry.addEventListener(
                 url = `${baseUrl}/masters/laundry-price`;
 
                 data = JSON.stringify({
-                    category:
-                        fnPriceLaundry.init.dropdowns.categoryPriceLaundryDropdown.getValue(
-                            true
-                        ),
+                    name: typeLaundryInput.value,
                     weight: beratLaundryInput.value,
                     harga: hargaLaundryInput.value,
                     _token: fnPriceLaundry.init.buttons.btnSavePriceLaundry
@@ -167,10 +150,7 @@ fnPriceLaundry.init.buttons.btnSavePriceLaundry.addEventListener(
                 url = `${baseUrl}/masters/laundry-price/${kodeItemPriceLaundryInput.value}`;
 
                 data = JSON.stringify({
-                    category:
-                        fnPriceLaundry.init.dropdowns.categoryPriceLaundryDropdown.getValue(
-                            true
-                        ),
+                    name: typeLaundryInput.value,
                     weight: beratLaundryInput.value,
                     harga: hargaLaundryInput.value,
                     _token: fnPriceLaundry.init.buttons.btnSavePriceLaundry
@@ -201,10 +181,10 @@ fnPriceLaundry.init.buttons.btnSavePriceLaundry.addEventListener(
                 }
             );
         } else {
-            if (results.data.message.category[0]) {
+            if (results.data.message.name[0]) {
                 swal.fire(
                     "Terjadi kesalahan",
-                    results.data.message.category[0],
+                    results.data.message.name[0],
                     "error"
                 );
                 return false;

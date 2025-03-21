@@ -9,6 +9,7 @@ use App\Http\Controllers\Master\RuleController;
 use App\Http\Controllers\Master\Service\CleaningController;
 use App\Http\Controllers\Master\Service\LaundryController;
 use App\Http\Controllers\MasterController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoleMenuController;
@@ -74,6 +75,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'storeChangeRoom']);
     Route::post('/transactions/rent-rooms/checkout', [TransactionRentController::class, 'storeCheckout']);
     Route::resource('/transactions/rent-rooms', TransactionRentController::class);
+
+    Route::get('/members/details/{member}', [MemberController::class, 'detail']);
+    Route::get('/members/get-all-data', [MemberController::class, 'getAllData']);
+    Route::resource('/members', MemberController::class);
 
     // Route::get('/inventories/receipts/create', [ReceiptController::class, 'create']);
     Route::get('/inventories/receipts/get-detail-data', [ReceiptController::class, 'getDetailData']);

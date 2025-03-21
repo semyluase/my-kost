@@ -1,14 +1,29 @@
 const fnTransactionRoom = {
     init: {
+        buttons: {
+            btnListMember: document.querySelector("#btn-list-member"),
+        },
         dropdowns: {
             categoryRoomDropdown: new Choices(
                 document.querySelector("#category-room")
+            ),
+        },
+        modals: {
+            modalListMember: new bootstrap.Modal(
+                document.querySelector("#modal-list-member")
             ),
         },
         tables: {
             tbRoom: new $("#tb-room").DataTable({
                 ajax: {
                     url: `${baseUrl}/transactions/rent-rooms/get-all-data?category=`,
+                },
+                processing: true,
+                paging: false,
+            }),
+            tbListMember: new $("#tb-list-member").DataTable({
+                ajax: {
+                    url: `${baseUrl}/members/get-all-data`,
                 },
                 processing: true,
                 paging: false,
@@ -22,6 +37,14 @@ const fnTransactionRoom = {
             "Pilih Kategori",
             ""
         );
+    },
+
+    detailGuest: (id) => {
+        window.open(`${baseUrl}/members/details/${id}`, "_blank");
+    },
+
+    onListMember: () => {
+        fnTransactionRoom.init.modals.modalListMember.show();
     },
 };
 

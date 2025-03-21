@@ -13,11 +13,6 @@ const fnPriceCleaning = {
                 "#btn-save-price-cleaning"
             ),
         },
-        dropdowns: {
-            categoryPriceCleaningDropdown: new Choices(
-                document.querySelector("#category-price-cleaning")
-            ),
-        },
         modals: {
             priceCleaningModal: new bootstrap.Modal(
                 document.querySelector("#modal-price-cleaning")
@@ -55,13 +50,6 @@ const fnPriceCleaning = {
                 return response.json();
             })
             .then(async (response) => {
-                await createDropdown(
-                    `${baseUrl}/utils/dropdowns/get-categories`,
-                    fnPriceCleaning.init.dropdowns
-                        .categoryPriceCleaningDropdown,
-                    "Pilih Kategori",
-                    response.category_id
-                );
                 hargaCleaningInput.value = response.price;
                 kodeItemPriceCleaningInput.value = response.kode_item;
                 fnPriceCleaning.init.buttons.btnSavePriceCleaning.setAttribute(
@@ -125,13 +113,6 @@ const fnPriceCleaning = {
 fnPriceCleaning.init.buttons.btnAddPriceCleaning.addEventListener(
     "click",
     async () => {
-        await createDropdown(
-            `${baseUrl}/utils/dropdowns/get-categories`,
-            fnPriceCleaning.init.dropdowns.categoryPriceCleaningDropdown,
-            "Pilih Kategori",
-            ""
-        );
-
         hargaCleaningInput.value = "";
         fnPriceCleaning.init.buttons.btnSavePriceCleaning.setAttribute(
             "data-type",
@@ -151,10 +132,6 @@ fnPriceCleaning.init.buttons.btnSavePriceCleaning.addEventListener(
                 url = `${baseUrl}/masters/cleaning-price`;
 
                 data = JSON.stringify({
-                    category:
-                        fnPriceCleaning.init.dropdowns.categoryPriceCleaningDropdown.getValue(
-                            true
-                        ),
                     harga: hargaCleaningInput.value,
                     _token: fnPriceCleaning.init.buttons.btnSavePriceCleaning
                         .dataset.csrf,
@@ -167,10 +144,6 @@ fnPriceCleaning.init.buttons.btnSavePriceCleaning.addEventListener(
                 url = `${baseUrl}/masters/cleaning-price/${kodeItemPriceCleaningInput.value}`;
 
                 data = JSON.stringify({
-                    category:
-                        fnPriceCleaning.init.dropdowns.categoryPriceCleaningDropdown.getValue(
-                            true
-                        ),
                     harga: hargaCleaningInput.value,
                     _token: fnPriceCleaning.init.buttons.btnSavePriceCleaning
                         .dataset.csrf,
@@ -200,15 +173,6 @@ fnPriceCleaning.init.buttons.btnSavePriceCleaning.addEventListener(
                 }
             );
         } else {
-            if (results.data.message.category[0]) {
-                swal.fire(
-                    "Terjadi kesalahan",
-                    results.data.message.category[0],
-                    "error"
-                );
-                return false;
-            }
-
             if (results.data.message.harga[0]) {
                 swal.fire(
                     "Terjadi kesalahan",

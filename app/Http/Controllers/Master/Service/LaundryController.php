@@ -39,11 +39,11 @@ class LaundryController extends Controller
     {
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
-            'category'  =>  'required',
+            'name'  =>  'required',
             'weight' =>  'required',
             'harga' =>  'required'
         ], [
-            'category.required' =>  "Kategori Laundry wajib dipilih",
+            'name.required' =>  "Tipe Laundry wajib diisi",
             'weight.required'    =>  'Berat wajib diisi',
             'harga.required'    =>  'Harga wajib diisi'
         ]);
@@ -60,7 +60,7 @@ class LaundryController extends Controller
 
         $data = [
             'kode_item' =>  $kode,
-            'category_laundry_id'   =>  $request->category,
+            'name'   =>  $request->name,
             'weight' =>  $request->weight,
             'price' =>  $request->harga,
             'user_created'  =>  auth()->user()->id,
@@ -110,11 +110,11 @@ class LaundryController extends Controller
     {
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
-            'category'  =>  'required',
+            'name'  =>  'required',
             'weight' =>  'required',
             'harga' =>  'required'
         ], [
-            'category.required' =>  "Kategori Laundry wajib dipilih",
+            'name.required' =>  "Tipe Laundry wajib diisi",
             'weight.required'    =>  'Berat wajib diisi',
             'harga.required'    =>  'Harga wajib diisi'
         ]);
@@ -129,7 +129,7 @@ class LaundryController extends Controller
         }
 
         $data = [
-            'category_laundry_id'   =>  $request->category,
+            'name'   =>  $request->name,
             'weight'   =>  $request->weight,
             'price' =>  $request->harga,
             'user_updated'  =>  auth()->user()->id,
@@ -191,11 +191,11 @@ class LaundryController extends Controller
         $totalPriceLaundries = Laundry::where('is_active', true)
             ->count();
 
-        $filteredPriceLaundries = Laundry::with(['categoryLaundry'])->where('is_active', true)
+        $filteredPriceLaundries = Laundry::where('is_active', true)
             ->search(['search' => $request->search['value']])
             ->count();
 
-        $priceLaundries = Laundry::with(['categoryLaundry'])->where('is_active', true)
+        $priceLaundries = Laundry::where('is_active', true)
             ->search(['search' => $request->search['value']])
             ->skip($request->start)
             ->limit($request->length)
@@ -217,11 +217,13 @@ class LaundryController extends Controller
 
                 $results[] = [
                     $no,
-                    $value->categoryLaundry->name,
+                    $value->name,
                     $value->weight,
                     Number::currency($value->price, in: 'IDR', locale: 'id'),
                     $btnAction
                 ];
+
+                $no++;
             }
         }
 

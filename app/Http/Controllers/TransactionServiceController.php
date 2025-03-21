@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Home;
+use App\Models\Master\Service\Laundry;
 use App\Models\Member;
 use App\Models\Member\TopUp;
 use App\Models\Pembayaran;
@@ -85,12 +86,19 @@ class TransactionServiceController extends Controller
 
     public function createLaundry(Request $request)
     {
-        $laundry = TransactionDetail::where('nobukti', $request->nobukti)
+        $laundry = TransactionDetail::with(['categoryLaundry'])->where('nobukti', $request->nobukti)
             ->where('is_service', true)
             ->where('is_laundry', true)
             ->first();
 
-        $laundryPrice = Service::where('description', 'laundry')
+        $laundryPriceReguler = Laundry::with(['categoryLaundry'])->where('is_active', true)
+            ->whereHas('categoryLaundry', fn($query) => ($query->where('is_express', false)))
+            ->orderBy('weight')
+            ->get();
+
+        $laundryPriceExpress = Laundry::with(['categoryLaundry'])->where('is_active', true)
+            ->whereHas('categoryLaundry', fn($query) => ($query->where('is_express', true)))
+            ->orderBy('weight')
             ->get();
 
         $payments = Pembayaran::where('is_active', true)
@@ -105,7 +113,8 @@ class TransactionServiceController extends Controller
             'home'   =>  $home,
             'payments'   =>  $payments,
             'laundry'   =>  $laundry,
-            'laundryPrice'  =>  $laundryPrice
+            'laundryPriceReguler'  =>  $laundryPriceReguler,
+            'laundryPriceExpress'  =>  $laundryPriceExpress,
         ]);
     }
 
@@ -151,9 +160,7 @@ class TransactionServiceController extends Controller
 
         $room = Room::where('slug', $request->noKamar)->first();
 
-        $price = Service::where('description', 'laundry')
-            ->where('is_express', ($request->kategori == 'express' ? true : false))
-            ->first();
+        $price = Laundry::where('is_active', true)->get();
 
         $header = [
             'nobukti'   =>  $nobukti,

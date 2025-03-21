@@ -26,7 +26,6 @@
                         <thead>
                             <tr class="text-center">
                                 <th>#</th>
-                                <th>Kategori</th>
                                 <th>Harga</th>
                                 <th>#</th>
                             </tr>
@@ -47,9 +46,6 @@
             <div class="modal-body">
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="category-price-cleaning" class="form-label">Kategori</label>
-                        <select name="category-price-cleaning" id="category-price-cleaning"
-                            class="form-select choices"></select>
                         <input type="hidden" name="kode-item-price-cleaning" id="kode-item-price-cleaning"
                             class="form-control">
                     </div>

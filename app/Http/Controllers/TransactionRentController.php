@@ -584,7 +584,7 @@ class TransactionRentController extends Controller
                         $value->number_room,
                         $value->home->name,
                         $value->category->name,
-                        $value->rent ? $value->rent->member->user->name : "-",
+                        $value->rent ? '<button class="btn btn-link" title="Detail Penghuni" onclick="fnTransactionRoom.detailGuest(\'' . $value->rent->member->id . '\')">' . $value->rent->member->user->name . '</button>' : "-",
                         $value->rent ? Carbon::parse($value->rent->start_date)->isoFormat("DD MMMM YYYY") . ' - ' . Carbon::parse($value->rent->end_date)->isoFormat("DD MMMM YYYY") : "-",
                         $status,
                         $btnAction

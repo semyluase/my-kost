@@ -17,14 +17,9 @@ class Cleaning extends Model
         return 'kode_item';
     }
 
-    function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
-    }
-
     function scopeSearch($query, array $params)
     {
-        $query->when($params['search'] ?? false, fn($query, $search) => ($query->whereRelation('category', 'name', 'LIKE', "%$search%")));
+        $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('price', 'LIKE', "%$search%")));
 
         return $query;
     }

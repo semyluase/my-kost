@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Master\CategoryLaundry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,11 @@ class TransactionDetail extends Model
     function stock()
     {
         return $this->belongsTo(Stock::class, 'code_item', 'code_item');
+    }
+
+    function categorylaundry()
+    {
+        return $this->belongsTo(CategoryLaundry::class);
     }
 
     function scopeGetReceipt($query, $nobukti)

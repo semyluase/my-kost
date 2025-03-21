@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
 <div class="card">
     <div class="card-body">
         <div class="row mb-3">
@@ -19,25 +22,55 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6">
-                <label for="">Kategori</label>
-                <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                    @foreach ($laundryPrice as $price)
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="category-laundry"
-                                value="{{ $price->is_express ? 'express' : 'reguler' }}" class="form-selectgroup-input"
-                                {{ $laundry ? 'disabled' : '' }} data-price={{ $price->harga }}
-                                {{ $laundry ? ($laundry->is_express && $price->is_express ? 'checked' : ($loop->first ? 'checked' : '')) : '' }}>
-                            <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                <div class="me-3">
-                                    <span class="form-selectgroup-check"></span>
-                                </div>
-                                <div>
-                                    {{ $price->is_express ? 'Express' : 'Reguler' }}
-                                </div>
-                            </div>
-                        </label>
-                    @endforeach
+            <div class="col-12">
+                <label for="" class="mb-3">Kategori</label>
+                <div class="row">
+                    <div class="col-6">
+                        {{-- @dd($laundryPriceReguler) --}}
+                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                            @foreach ($laundryPriceReguler as $priceReguler)
+                                <label class="form-selectgroup-item flex-fill">
+                                    <input type="radio" name="category-laundry"
+                                        value="{{ Str::lower($priceReguler->categoryLaundry->name) }}"
+                                        class="form-selectgroup-input" {{ $laundry ? 'disabled' : '' }}
+                                        data-price={{ $priceReguler->price }}
+                                        {{ $laundry ? ($laundry->category_laundry_id == $priceReguler->category_laundry_id ? 'checked' : ($loop->first ? 'checked' : '')) : '' }}>
+                                    <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                        <div class="me-3">
+                                            <span class="form-selectgroup-check"></span>
+                                        </div>
+                                        <div>
+                                            {{ $priceReguler->categoryLaundry->name }} (Max
+                                            {{ $priceReguler->weight }}kg)
+                                        </div>
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        {{-- @dd($laundryPriceReguler) --}}
+                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                            @foreach ($laundryPriceExpress as $priceExpress)
+                                <label class="form-selectgroup-item flex-fill">
+                                    <input type="radio" name="category-laundry"
+                                        value="{{ Str::lower($priceExpress->categoryLaundry->name) }}"
+                                        class="form-selectgroup-input" {{ $laundry ? 'disabled' : '' }}
+                                        data-price={{ $priceExpress->price }}
+                                        {{ $laundry ? ($laundry->category_laundry_id == $priceExpress->category_laundry_id ? 'checked' : ($loop->first ? 'checked' : '')) : '' }}>
+                                    <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                        <div class="me-3">
+                                            <span class="form-selectgroup-check"></span>
+                                        </div>
+                                        <div>
+                                            {{ $priceExpress->categoryLaundry->name }} (Max
+                                            {{ $priceExpress->weight }}kg)
+                                        </div>
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

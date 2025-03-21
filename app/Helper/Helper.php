@@ -41,6 +41,11 @@ function makePhoneNumber($phoneNumber)
     return $newPhoneNumber;
 }
 
+function viewPhoneNumber($phoneNumber)
+{
+    return '0' . $phoneNumber;
+}
+
 function generateNoTrans($type)
 {
     $homeID = "HM" . Str::padLeft(auth()->user()->home_id, 3, "0");

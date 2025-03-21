@@ -26,7 +26,7 @@
                         <thead>
                             <tr class="text-center">
                                 <th>#</th>
-                                <th>Kategori</th>
+                                <th>Jenis</th>
                                 <th>Berat</th>
                                 <th>Harga</th>
                                 <th>#</th>
@@ -48,9 +48,8 @@
             <div class="modal-body">
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="category-price-laundry" class="form-label">Kategory</label>
-                        <select name="category-price-laundry" id="category-price-laundry"
-                            class="form-select choices"></select>
+                        <label for="type-laundry" class="form-label">Jenis</label>
+                        <input name="type-laundry" id="type-laundry" class="form-control" />
                         <input type="hidden" name="kode-item-price-laundry" id="kode-item-price-laundry"
                             class="form-control">
                     </div>

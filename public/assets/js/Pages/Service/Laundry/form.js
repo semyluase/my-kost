@@ -51,7 +51,13 @@ quantityInput.addEventListener("keyup", () => {
 });
 
 categorySelect.forEach((item) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("click", async () => {
+        if (quantityInput.value == "") {
+            swal.fire("Terjadi kesalahan", "Berat tidak boleh kosong", "error");
+            return false;
+        }
+
+        await "";
         subTotalInput.value =
             parseInt(item.dataset.price) *
             parseFloat(quantityInput.value == "" ? 0 : quantityInput.value);

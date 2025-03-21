@@ -36,7 +36,7 @@ class TransactionHeader extends Model
                 left join tr_transaction_d ttd
                 on tth.nobukti = ttd.nobukti
                 where tth.tanggal between '$startDate' and '$endDate'
-                and is_laundry = true) tb");
+                and tth.is_laundry = true) tb");
     }
 
     function scopeGetDataCleaning($query, $tgl)

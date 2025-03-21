@@ -29,4 +29,9 @@ class Member extends Model
     {
         return $this->belongsTo(UserIdentity::class, 'identity_id', 'id');
     }
+
+    function historyRent()
+    {
+        return $this->hasMany(TransactionRent::class);
+    }
 }
