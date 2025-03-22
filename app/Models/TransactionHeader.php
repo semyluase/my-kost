@@ -32,9 +32,11 @@ class TransactionHeader extends Model
     function scopeGetDataLaundry($query, $startDate, $endDate)
     {
         return $query->select('*')
-            ->fromRaw("(select ttd.* from tr_transaction_h tth
+            ->fromRaw("(select ttd.*, l.name from tr_transaction_h tth
                 left join tr_transaction_d ttd
                 on tth.nobukti = ttd.nobukti
+                left join laundries l
+                on ttd.laundry_id = l.id
                 where tth.tanggal between '$startDate' and '$endDate'
                 and tth.is_laundry = true) tb");
     }

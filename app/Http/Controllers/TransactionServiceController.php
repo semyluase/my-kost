@@ -91,14 +91,7 @@ class TransactionServiceController extends Controller
             ->where('is_laundry', true)
             ->first();
 
-        $laundryPriceReguler = Laundry::with(['categoryLaundry'])->where('is_active', true)
-            ->whereHas('categoryLaundry', fn($query) => ($query->where('is_express', false)))
-            ->orderBy('weight')
-            ->get();
-
-        $laundryPriceExpress = Laundry::with(['categoryLaundry'])->where('is_active', true)
-            ->whereHas('categoryLaundry', fn($query) => ($query->where('is_express', true)))
-            ->orderBy('weight')
+        $laundryPrice = Laundry::where('is_active', true)
             ->get();
 
         $payments = Pembayaran::where('is_active', true)
@@ -113,8 +106,7 @@ class TransactionServiceController extends Controller
             'home'   =>  $home,
             'payments'   =>  $payments,
             'laundry'   =>  $laundry,
-            'laundryPriceReguler'  =>  $laundryPriceReguler,
-            'laundryPriceExpress'  =>  $laundryPriceExpress,
+            'laundryPrice'  =>  $laundryPrice,
         ]);
     }
 
@@ -160,7 +152,7 @@ class TransactionServiceController extends Controller
 
         $room = Room::where('slug', $request->noKamar)->first();
 
-        $price = Laundry::where('is_active', true)->get();
+        $price = Laundry::where('kode_item', $request->kategori)->where('is_active', true)->get();
 
         $header = [
             'nobukti'   =>  $nobukti,
@@ -176,8 +168,8 @@ class TransactionServiceController extends Controller
             'tgl_selesai'   =>  $request->kategori == 'reguler' ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta')->addHour(6),
             'room_id'   =>  $room->id,
             'no_room'   =>  $room->number_room,
-            'is_express'    =>  $request->kategori == 'reguler' ? false : true,
             'is_laundry'    =>  true,
+            'laundry_id' =>  $price->id,
             'harga_laundry' =>  $price->harga,
             'qty_laundry'   =>  $request->berat,
             'pembayaran'    =>  $request->totalPayment ? $request->totalPayment : 0,
@@ -588,7 +580,7 @@ class TransactionServiceController extends Controller
                     $no,
                     $value->nobukti,
                     $value->no_room,
-                    $value->is_express ? 'Express' : 'Reguler',
+                    $value->name,
                     $value->tgl_masuk ? Carbon::parse($value->tgl_masuk)->isoFormat("DD-MM-YYYY HH:mm") : '',
                     $value->tgl_selesai ? Carbon::parse($value->tgl_selesai)->isoFormat("DD-MM-YYYY HH:mm") : '',
                     $value->tgl_ambil ? Carbon::parse($value->tgl_ambil)->isoFormat("DD-MM-YYYY HH:mm") : '',

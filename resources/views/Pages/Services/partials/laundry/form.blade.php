@@ -17,7 +17,7 @@
             </div>
             <div class="col-6">
                 <label for="quantity" class="form-label">Berat</label>
-                <input type="number" name="quantity" id="quantity" class="form-control"
+                <input type="number" name="quantity" id="quantity" class="form-control" step="any"
                     value="{{ $laundry ? $laundry->qty_laundry : '' }}" {{ $laundry ? 'disabled' : '' }}>
             </div>
         </div>
@@ -26,45 +26,20 @@
                 <label for="" class="mb-3">Kategori</label>
                 <div class="row">
                     <div class="col-6">
-                        {{-- @dd($laundryPriceReguler) --}}
                         <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                            @foreach ($laundryPriceReguler as $priceReguler)
+                            @foreach ($laundryPrice as $price)
                                 <label class="form-selectgroup-item flex-fill">
-                                    <input type="radio" name="category-laundry"
-                                        value="{{ Str::lower($priceReguler->categoryLaundry->name) }}"
+                                    <input type="radio" name="category-laundry" value="{{ $price->kode_item }}"
                                         class="form-selectgroup-input" {{ $laundry ? 'disabled' : '' }}
-                                        data-price={{ $priceReguler->price }}
-                                        {{ $laundry ? ($laundry->category_laundry_id == $priceReguler->category_laundry_id ? 'checked' : ($loop->first ? 'checked' : '')) : '' }}>
+                                        data-id-laundry="{{ $price->id }}" data-weight="{{ $price->weight }}"
+                                        data-price={{ $price->price }}
+                                        {{ $laundry ? $laundry->laundry_id == $price->id : ($loop->first ? 'checked' : '') }}>
                                     <div class="form-selectgroup-label d-flex align-items-center p-3">
                                         <div class="me-3">
                                             <span class="form-selectgroup-check"></span>
                                         </div>
                                         <div>
-                                            {{ $priceReguler->categoryLaundry->name }} (Max
-                                            {{ $priceReguler->weight }}kg)
-                                        </div>
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        {{-- @dd($laundryPriceReguler) --}}
-                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                            @foreach ($laundryPriceExpress as $priceExpress)
-                                <label class="form-selectgroup-item flex-fill">
-                                    <input type="radio" name="category-laundry"
-                                        value="{{ Str::lower($priceExpress->categoryLaundry->name) }}"
-                                        class="form-selectgroup-input" {{ $laundry ? 'disabled' : '' }}
-                                        data-price={{ $priceExpress->price }}
-                                        {{ $laundry ? ($laundry->category_laundry_id == $priceExpress->category_laundry_id ? 'checked' : ($loop->first ? 'checked' : '')) : '' }}>
-                                    <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                        <div class="me-3">
-                                            <span class="form-selectgroup-check"></span>
-                                        </div>
-                                        <div>
-                                            {{ $priceExpress->categoryLaundry->name }} (Max
-                                            {{ $priceExpress->weight }}kg)
+                                            {{ $price->name }}
                                         </div>
                                     </div>
                                 </label>

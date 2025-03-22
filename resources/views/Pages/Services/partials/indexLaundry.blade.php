@@ -71,7 +71,7 @@
                                                 <th>#</th>
                                                 <th>No. Transaksi</th>
                                                 <th>No. Kamar</th>
-                                                <th>Reguler/Express</th>
+                                                <th>Jenis</th>
                                                 <th>Tgl Masuk</th>
                                                 <th>Tgl Selesai</th>
                                                 <th>Tgl Ambil</th>

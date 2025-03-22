@@ -45,7 +45,11 @@ quantityInput.addEventListener("keyup", () => {
         if (item.checked) {
             subTotalInput.value =
                 parseInt(item.dataset.price) *
-                parseFloat(quantityInput.value == "" ? 0 : quantityInput.value);
+                parseFloat(
+                    parseFloat(
+                        quantityInput.value == "" ? 0 : quantityInput.value
+                    ) / item.dataset.weight
+                );
         }
     });
 });
@@ -57,10 +61,13 @@ categorySelect.forEach((item) => {
             return false;
         }
 
-        await "";
         subTotalInput.value =
             parseInt(item.dataset.price) *
-            parseFloat(quantityInput.value == "" ? 0 : quantityInput.value);
+            parseFloat(
+                parseFloat(
+                    quantityInput.value == "" ? 0 : quantityInput.value
+                ) / item.dataset.weight
+            );
     });
 });
 

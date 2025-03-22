@@ -52,6 +52,7 @@ const fnPriceLaundry = {
                 return response.json();
             })
             .then(async (response) => {
+                unBlockUI();
                 typeLaundryInput.value = response.name;
                 beratLaundryInput.value = response.weight;
                 hargaLaundryInput.value = response.price;
