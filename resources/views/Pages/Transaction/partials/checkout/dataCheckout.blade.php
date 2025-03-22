@@ -10,6 +10,21 @@
         </div>
     </div>
     <div class="col-6 mb-3">
+        <div class="mb-3">
+            <label class="form-label">Simple selectgroup</label>
+            <div class="form-selectgroup">
+                <label class="form-selectgroup-item">
+                    <input type="radio" name="jenis-pengembalian" id="jenis-pengembalian" value="cash"
+                        class="form-selectgroup-input" checked="">
+                    <span class="form-selectgroup-label">Cash</span>
+                </label>
+                <label class="form-selectgroup-item">
+                    <input type="radio" name="jenis-pengembalian" id="jenis-pengembalian" value="transfer"
+                        class="form-selectgroup-input">
+                    <span class="form-selectgroup-label">Transfer</span>
+                </label>
+            </div>
+        </div>
         <div class="text-start">
             <p>
                 <label for="bank" class="form-label">Bank</label>

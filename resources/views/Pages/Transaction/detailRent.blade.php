@@ -8,6 +8,19 @@
         use Illuminate\Support\Number;
         Carbon::setLocale('id_ID');
     @endphp
+    @push('mystyles')
+        <style>
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
+        </style>
+    @endpush
     <!-- Page header -->
     <div class="page-header d-print-none">
         <div class="container-xl">
@@ -56,16 +69,101 @@
                                 @if ($rent->oldRoom)
                                     @if ($rent->oldRoom->oldRent->is_upgrade)
                                         <div class="col-12 mb-3">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>No. Kamar</th>
+                                                            <th>Kategori</th>
+                                                            <th>Tipe Transaksi</th>
+                                                            <th>Durasi</th>
+                                                            <th>Detail Sewa</th>
+                                                            <th>Harga Sewa</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>{{ $rent->room->number_room }}</td>
+                                                            <td>{{ $rent->room->category->name }}</td>
+                                                            <td>Upgrade</td>
+                                                            <td>
+                                                                @switch($rent->duration)
+                                                                    @case('daily')
+                                                                        Harian
+                                                                    @break
+
+                                                                    @case('monthly')
+                                                                        Bulanan
+                                                                    @break
+
+                                                                    @case('weekly')
+                                                                        Mingguan
+                                                                    @break
+
+                                                                    @default
+                                                                        tahunan
+                                                                @endswitch
+                                                                <p>
+                                                                    {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}
+                                                                </p>
+                                                                <p>
+                                                                    {{ Carbon::parse($rent->end_date)->isoFormat('DD MMMM YYYY') }}
+                                                                </p>
+                                                            </td>
+                                                            <td>
+                                                                Sisa Hari Sewa : {{ $rent->sisa_hari_sewa }}
+                                                                <br>
+                                                                Total Hari Sewa : {{ $rent->total_hari_sewa }}
+                                                            </td>
+                                                            <td>
+                                                                Harga Sewa lama :
+                                                                {{ Number::currency($rent->oldRoom->oldRent->price, 'Rp.', 'id') }}
+                                                                <br>
+                                                                Harga Sewa Baru :
+                                                                {{ Number::currency($rent->price, 'Rp.', 'id') }}
+                                                            </td>
+                                                            <td>
+                                                                {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot class="bg-gray-100">
+                                                        <tr>
+                                                            <td colspan="7">Sub Total</td>
+                                                            <td>
+                                                                {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="7">Pembulatan</td>
+                                                            <td>
+                                                                {{ Number::currency($rent->pembulatan, 'Rp.', 'id') }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="7">Total</td>
+                                                            <td>
+                                                                {{ Number::currency($rent->kurang_bayar + $rent->pembulatan, 'Rp.', 'id') }}
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="col-12 mb-3">
+                                        <div class="table-responsive">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
                                                         <th>No. Kamar</th>
                                                         <th>Kategori</th>
-                                                        <th>Tipe Transaksi</th>
                                                         <th>Durasi</th>
-                                                        <th>Detail Sewa</th>
-                                                        <th>Harga Sewa</th>
                                                         <th>Total</th>
                                                     </tr>
                                                 </thead>
@@ -74,7 +172,6 @@
                                                         <td>1</td>
                                                         <td>{{ $rent->room->number_room }}</td>
                                                         <td>{{ $rent->room->category->name }}</td>
-                                                        <td>Upgrade</td>
                                                         <td>
                                                             @switch($rent->duration)
                                                                 @case('daily')
@@ -90,7 +187,7 @@
                                                                 @break
 
                                                                 @default
-                                                                    tahunan
+                                                                    Tahunan
                                                             @endswitch
                                                             <p>
                                                                 {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}
@@ -99,96 +196,15 @@
                                                                 {{ Carbon::parse($rent->end_date)->isoFormat('DD MMMM YYYY') }}
                                                             </p>
                                                         </td>
-                                                        <td>
-                                                            Sisa Hari Sewa : {{ $rent->sisa_hari_sewa }}
-                                                            <br>
-                                                            Total Hari Sewa : {{ $rent->total_hari_sewa }}
-                                                        </td>
-                                                        <td>
-                                                            Harga Sewa lama :
-                                                            {{ Number::currency($rent->oldRoom->oldRent->price, 'Rp.', 'id') }}
-                                                            <br>
-                                                            Harga Sewa Baru :
-                                                            {{ Number::currency($rent->price, 'Rp.', 'id') }}
-                                                        </td>
-                                                        <td>
-                                                            {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
-                                                        </td>
+                                                        <td>{{ Number::currency($rent->price, 'Rp.', 'id') }}</td>
                                                     </tr>
-                                                </tbody>
-                                                <tfoot class="bg-gray-100">
-                                                    <tr>
-                                                        <td colspan="7">Sub Total</td>
-                                                        <td>
-                                                            {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="7">Pembulatan</td>
-                                                        <td>
-                                                            {{ Number::currency($rent->pembulatan, 'Rp.', 'id') }}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="7">Total</td>
-                                                        <td>
-                                                            {{ Number::currency($rent->kurang_bayar + $rent->pembulatan, 'Rp.', 'id') }}
-                                                        </td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    @endif
-                                @else
-                                    <div class="col-12 mb-3">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>No. Kamar</th>
-                                                    <th>Kategori</th>
-                                                    <th>Durasi</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>{{ $rent->room->number_room }}</td>
-                                                    <td>{{ $rent->room->category->name }}</td>
-                                                    <td>
-                                                        @switch($rent->duration)
-                                                            @case('daily')
-                                                                Harian
-                                                            @break
-
-                                                            @case('monthly')
-                                                                Bulanan
-                                                            @break
-
-                                                            @case('weekly')
-                                                                Mingguan
-                                                            @break
-
-                                                            @default
-                                                                Tahunan
-                                                        @endswitch
-                                                        <p>
-                                                            {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}
-                                                        </p>
-                                                        <p>
-                                                            {{ Carbon::parse($rent->end_date)->isoFormat('DD MMMM YYYY') }}
-                                                        </p>
-                                                    </td>
-                                                    <td>{{ Number::currency($rent->price, 'Rp.', 'id') }}</td>
-                                                </tr>
-                                                @php
-                                                    $deposit = Deposite::where('room_id', $rent->room->id)
-                                                        ->where('user_id', $rent->member->user->id)
-                                                        ->first();
-                                                @endphp
-                                                @if (!$deposit)
-                                                    <tr>
+                                                    @php
+                                                        $deposit = Deposite::where('room_id', $rent->room->id)
+                                                            ->where('user_id', $rent->member->user->id)
+                                                            ->where('is_returned', false)
+                                                            ->first();
+                                                    @endphp
+                                                    <tr class="{{ $deposit ? 'd-none' : '' }}">
                                                         <td>2</td>
                                                         <td>Deposit {{ $rent->room->number_room }}</td>
                                                         <td>{{ $rent->room->category->name }}</td>
@@ -198,23 +214,24 @@
                                                                 sewa/Checkout
                                                             </p>
                                                         </td>
-                                                        <td>{{ Number::currency($rent->price, 'Rp.', 'id') }}</td>
+                                                        <td>
+                                                            <input type="number" lang="id" name="deposit"
+                                                                id="deposit" class="form-control"
+                                                                value="{{ $rent->price }}">
+                                                        </td>
                                                     </tr>
-                                                @endif
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="4">Total</td>
-                                                    <td>
-                                                        @if ($deposit)
-                                                            {{ Number::currency($rent->price, 'Rp.', 'id') }}
-                                                        @else
-                                                            {{ Number::currency($rent->price * 2, 'Rp.', 'id') }}
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="4">Total</td>
+                                                        <td>
+                                                            <input type="text" name="total" disabled id="total"
+                                                                class="form-control">
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -243,6 +260,9 @@
         </div>
     </div>
     @push('myscript')
+        <script>
+            const price = {{ $rent->price }}
+        </script>
         <script src="{{ asset('assets/js/Pages/Transaction/detail/app.js') }}?{{ rand() }}"></script>
     @endpush
 @endsection

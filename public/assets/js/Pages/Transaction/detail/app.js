@@ -1,3 +1,6 @@
+const depositInput = document.querySelector("#deposit");
+const totalInput = document.querySelector("#total");
+
 const fnDetailSewa = {
     init: {
         buttons: {
@@ -6,6 +9,21 @@ const fnDetailSewa = {
     },
 };
 
+totalInput.value = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+}).format(parseInt(price) + parseInt(depositInput.value));
+
+depositInput.addEventListener("keyup", () => {
+    let total =
+        parseInt(price) +
+        parseInt(depositInput.value == "" ? 0 : depositInput.value);
+
+    totalInput.value = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+    }).format(total);
+});
 fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
     swalWithBootstrapButtons
         .fire({
@@ -24,6 +42,7 @@ fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
                 const results = await onSaveJson(
                     `${baseUrl}/transactions/rent-rooms/detail-rents/${fnDetailSewa.init.buttons.btnSave.dataset.room}`,
                     JSON.stringify({
+                        deposit: depositInput.value,
                         _token: fnDetailSewa.init.buttons.btnSave.dataset.csrf,
                     }),
                     "post"

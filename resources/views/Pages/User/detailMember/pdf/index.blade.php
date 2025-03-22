@@ -116,8 +116,8 @@
             </tr>
         </table>
     </div>
-    <div class="page_break"></div>
     @if (collect($member->historyRent)->count() > 0)
+        <div class="page_break"></div>
         <div class="text-center"><strong>Detail Sewa</strong></div>
         <div class="pt-1">
             <table class="detail_sewa text-center">

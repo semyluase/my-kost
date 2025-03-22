@@ -74,8 +74,6 @@ class TransactionRentController extends Controller
     {
         DB::beginTransaction();
 
-        $nobukti = Carbon::now('Asia/Jakarta')->isoFormat("YYYYMMDDHHmmss");
-
         $user = User::where('phone_number', makePhoneNumber($request->noHP))
             ->first();
 
@@ -94,7 +92,7 @@ class TransactionRentController extends Controller
         if ($member) {
             $rent = TransactionRent::where('room_id', $room->id)
                 ->where('member_id', $member->id)
-                ->where('start_date', Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD"))
+                ->where('end_date', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
                 ->first();
         }
 
@@ -441,12 +439,8 @@ class TransactionRentController extends Controller
         DB::beginTransaction();
 
         $validator = Validator::make($request->all(), [
-            'bank'  =>  'required',
-            'noRek' =>  'required',
             'pengembalian'  =>  'required',
         ], [
-            'bank.required' =>  'Bank harus dipilih',
-            'noRek.required'    =>  'No Rekening harus diisi',
             'pengembalian.required' =>  'Pengembalian Deposit harus diisi'
         ]);
 
@@ -459,12 +453,34 @@ class TransactionRentController extends Controller
             ]);
         }
 
+        if ($request->jenisPengembalian == 'transfer') {
+            $validator = Validator::make($request->all(), [
+                'bank'  =>  'required',
+                'noRek' =>  'required',
+                'pengembalian'  =>  'required',
+            ], [
+                'bank.required' =>  'Bank harus dipilih',
+                'noRek.required'    =>  'No Rekening harus diisi',
+                'pengembalian.required' =>  'Pengembalian Deposit harus diisi'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  $validator->errors()
+                    ]
+                ]);
+            }
+        }
+
         $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
 
         // dd($room);
         $dataUpdateDeposit = [
             'pengembalian'  =>  $request->pengembalian,
             'tanggal'   =>  Carbon::now('Asia/Jakarta')->addDay(),
+            'jenis_pengembalian'  =>  $request->jenis_pengembalian,
             'bank'  =>  $request->bank,
             'no_rek'    =>  $request->noRek,
             'is_checkout'   =>  true,
@@ -475,7 +491,7 @@ class TransactionRentController extends Controller
             'is_checkout_abnormal'    =>  Carbon::now('Asia/Jakarta')->notEqualTo(Carbon::parse($room->rent->end_date)),
         ];
 
-        if (Deposite::where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->where('rent_id', $room->rent->id)->update($dataUpdateDeposit)) {
+        if (Deposite::where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
             if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
                 DB::commit();
 
@@ -612,7 +628,7 @@ class TransactionRentController extends Controller
         ]);
     }
 
-    function saveDetailPayment(Room $room)
+    function saveDetailPayment(Request $request, Room $room)
     {
         DB::beginTransaction();
 
@@ -621,6 +637,7 @@ class TransactionRentController extends Controller
             ->first();
 
         $deposit = Deposite::where('user_id', $dataRent->member->user->id)
+            ->where('room_id', $dataRent->room_id)
             ->where('is_checkout', false)
             ->first();
 
@@ -631,14 +648,7 @@ class TransactionRentController extends Controller
                 Deposite::create([
                     'room_id'   =>  $room->id,
                     'user_id'   =>  $dataRent->member->user->id,
-                    'rent_id'   =>  $dataRent->id,
-                    'jumlah'    =>  $dataRent->price,
-                ]);
-            } else {
-                Deposite::find($deposit->id)->update([
-                    'room_id'   =>  $room->id,
-                    'user_id'   =>  $dataRent->member->user->id,
-                    'rent_id'   =>  $dataRent->id,
+                    'jumlah'    =>  $request->deposit,
                 ]);
             }
 
