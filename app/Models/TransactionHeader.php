@@ -63,7 +63,7 @@ class TransactionHeader extends Model
                     left join users u
                     on ttd.user_id = u.id
                     where tth.tanggal = '$tgl'
-                    and is_topup = true) tb");
+                    and tth.is_topup = true) tb");
     }
 
     function scopeGetDataTransaction($query, $startDate, $endDate)

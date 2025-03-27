@@ -7,21 +7,62 @@ const fnDetailSewa = {
             btnSave: document.querySelector("#btn-save"),
         },
     },
+    onLoad: () => {
+        depositInput.value =
+            depositInput.value == ""
+                ? new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      trailingZeroDisplay: "stripIfInteger",
+                  }).format(0)
+                : new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      trailingZeroDisplay: "stripIfInteger",
+                  }).format(parseInt(depositInput.value));
+    },
+
+    clearDeposit: () => {
+        depositInput.value = "";
+    },
 };
+
+fnDetailSewa.onLoad();
 
 totalInput.value = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-}).format(parseInt(price) + parseInt(depositInput.value));
+    trailingZeroDisplay: "stripIfInteger",
+}).format(
+    parseInt(price) + parseInt(depositInput.value.replace(/[^0-9-,]/g, ""))
+);
 
-depositInput.addEventListener("keyup", () => {
+depositInput.addEventListener("keyup", (event) => {
+    if (event.key == "Backspace" || event.key == "Delete") {
+        fnDetailSewa.clearDeposit();
+    } else {
+        depositInput.value =
+            depositInput.value == "" || depositInput.value == "Rp "
+                ? ""
+                : new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      trailingZeroDisplay: "stripIfInteger",
+                  }).format(depositInput.value.replace(/[^0-9-,]/g, ""));
+    }
+
     let total =
         parseInt(price) +
-        parseInt(depositInput.value == "" ? 0 : depositInput.value);
+        parseInt(
+            depositInput.value == ""
+                ? 0
+                : depositInput.value.replace(/[^0-9-,]/g, "")
+        );
 
     totalInput.value = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
+        trailingZeroDisplay: "stripIfInteger",
     }).format(total);
 });
 fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
