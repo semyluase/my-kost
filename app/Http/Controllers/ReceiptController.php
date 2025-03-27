@@ -9,6 +9,7 @@ use App\Models\TransactionHeader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 use function App\Helper\generateNoTrans;
 
@@ -52,6 +53,20 @@ class ReceiptController extends Controller
 
         $mode = 'update';
 
+        $validator = Validator::make(['kodebrg' => $request->kodebrg], [
+            'kodebrg'   =>  'required',
+        ], [
+            'kodebrg.required'  =>  'Silahkan pilih barang yang ada disebelah kanan'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  $validator->errors(),
+                ]
+            ]);
+        }
         if ($nobukti == '') {
             $nobukti = generateNoTrans('RC');
             $mode = "insert";

@@ -7,6 +7,8 @@ const jumlahInput = document.querySelector("#jumlah");
 const hargaBeliInput = document.querySelector("#harga-beli");
 const subTotalInput = document.querySelector("#sub-total");
 
+const itemCards = document.querySelectorAll("#items");
+
 let url, data, method;
 
 const fnReceipt = {
@@ -125,6 +127,16 @@ hargaBeliInput.addEventListener("keyup", (e) => {
         parseInt(jumlahInput.value) * parseInt(hargaBeliInput.value);
 });
 
+itemCards.forEach((item) => {
+    item.addEventListener("click", () => {
+        itemCards.forEach((old) => {
+            if (old.classList.contains("bg-blue-lt")) {
+                old.classList.remove("bg-blue-lt");
+            }
+        });
+        item.classList.add("bg-blue-lt");
+    });
+});
 fnReceipt.init.buttons.btnSave.addEventListener("click", async () => {
     blockUI();
 
@@ -187,7 +199,19 @@ fnReceipt.init.buttons.btnSave.addEventListener("click", async () => {
 
         fnReceipt.onClearForm();
     } else {
-        swal.fire("Terjadi kesalahan", results.data.message, "error");
+        if (results.data.message.kodebrg[0]) {
+            swal.fire(
+                "Terjadi kesalahan",
+                results.data.message.kodebrg[0],
+                "error"
+            );
+            return false;
+        }
+
+        if (typeof results.data.message == "string") {
+            swal.fire("Terjadi kesalahan", results.data.message, "error");
+            return false;
+        }
     }
 });
 
