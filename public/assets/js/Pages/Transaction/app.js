@@ -5,7 +5,8 @@ const fnTransactionRoom = {
         },
         dropdowns: {
             categoryRoomDropdown: new Choices(
-                document.querySelector("#category-room")
+                document.querySelector("#category-room"),
+                { shouldSort: false }
             ),
         },
         modals: {
