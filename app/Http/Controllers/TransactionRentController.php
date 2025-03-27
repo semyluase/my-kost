@@ -155,19 +155,19 @@ class TransactionRentController extends Controller
             switch ($request->durasi) {
                 case 'mingguan':
                     $price = $room->category->prices[1]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addWeek(1)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(7)->isoFormat("YYYY-MM-DD");
                     $durasi = 'weekly';
                     break;
 
                 case 'bulanan':
                     $price = $room->category->prices[2]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addMonth(1)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(30)->isoFormat("YYYY-MM-DD");
                     $durasi = 'monthly';
                     break;
 
                 case 'tahunan':
                     $price = $room->category->prices[3]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addYear(1)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(365)->isoFormat("YYYY-MM-DD");
                     $durasi = 'yearly';
                     break;
 

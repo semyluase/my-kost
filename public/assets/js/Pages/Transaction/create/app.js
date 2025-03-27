@@ -156,9 +156,11 @@ const fnTransaction = {
                     console.log(response.member);
 
                     if (response.member) {
-                        uploadIdentity.classList.add("d-none");
-                        showIdentity.classList.remove("d-none");
-                        imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
+                        if (response.member.user_identity) {
+                            uploadIdentity.classList.add("d-none");
+                            showIdentity.classList.remove("d-none");
+                            imgIdentity.src = `${baseUrl}/assets/upload/userIdentity/${response.member.user_identity.file_name}`;
+                        }
                     }
 
                     if (response.foto) {
