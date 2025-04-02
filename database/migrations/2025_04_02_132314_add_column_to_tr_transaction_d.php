@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('members', function (Blueprint $table) {
-            // $table->foreignId('identity_id')->nullable();
+        Schema::table('tr_transaction_d', function (Blueprint $table) {
+            $table->decimal('harga_cleaning', 10, 0)->default(0);
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('members', function (Blueprint $table) {
+        Schema::table('tr_transaction_d', function (Blueprint $table) {
             //
         });
     }

@@ -6,6 +6,8 @@
     @endphp
     @push('mystyles')
         <link rel="stylesheet" href="{{ asset('assets/vendor/choicesjs/styles/choices.min.css') }}?{{ rand() }}">
+        <link rel="stylesheet"
+            href="{{ asset('assets/vendor/tabler/libs/litepicker/dist/css/litepicker.css') }}?{{ rand() }}">
         <style>
             .choices__list--dropdown {
                 z-index: 3000 !important;
@@ -50,6 +52,8 @@
             let noKamar = "{{ $cleaning ? $cleaning->no_room : '' }}"
         </script>
         <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/bundle.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/js/Pages/Service/Cleaning/form.js') }}?{{ rand() }}"></script>
     @endpush
 @endsection

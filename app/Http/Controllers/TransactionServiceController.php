@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Home;
+use App\Models\Master\Service\Cleaning;
 use App\Models\Master\Service\Laundry;
 use App\Models\Member;
 use App\Models\Member\TopUp;
@@ -117,6 +118,9 @@ class TransactionServiceController extends Controller
             ->where('is_cleaning', true)
             ->first();
 
+        $priceCleaning = Cleaning::where('is_active', true)
+            ->first();
+
         $home = Home::where('id', auth()->user()->home_id)
             ->first();
 
@@ -125,6 +129,7 @@ class TransactionServiceController extends Controller
             'pageTitle' =>  "Transaksi Cleaning",
             'home'   =>  $home,
             'cleaning'   =>  $cleaning,
+            'priceCleaning'   =>  $priceCleaning,
         ]);
     }
 
@@ -250,25 +255,36 @@ class TransactionServiceController extends Controller
         }
 
         $room = Room::where('slug', $request->noKamar)->first();
+        $priceCleaning = Cleaning::where('is_active', true)->first();
 
         $header = [
             'nobukti'   =>  $nobukti,
             'room_id'   =>  $room->id,
-            'tanggal'   =>  Carbon::now('Asia/Jakarta'),
+            'tanggal'   =>  Carbon::parse($request->tanggal),
+            'tipe_pembayaran'   =>  $request->typePayment,
+            'pembayaran'   =>  $request->totalbayar,
+            'kembalian'   =>  $request->kembalian,
+            'total'   =>  $priceCleaning->price,
             'user_id'   =>  auth()->user()->id,
+            'is_cleaning'    =>  true,
         ];
 
         $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
 
+        // dd(Carbon::parse($request->tanggal)->isoFormat("Y-M-D"));
         $detail = [
             'nobukti'   =>  $nobukti,
             'is_service'    =>  true,
-            'tgl_request_cleaning' =>  Carbon::createFromFormat('Y-m-d H:i', $now->isoFormat("YYYY-MM-DD") . " " . $request->jamRequest, 'Asia/Jakarta'),
-            'tgl_mulai_cleaning' =>  $request->jamMulai ? Carbon::createFromFormat('Y-m-d H:i', $now->isoFormat("YYYY-MM-DD") . " " . $request->jamMulai, 'Asia/Jakarta') : null,
-            'tgl_selesai_cleaning' =>  $request->jamSelesai ? Carbon::createFromFormat('Y-m-d H:i', $now->isoFormat("YYYY-MM-DD") . " " . $request->jamSelesai, 'Asia/Jakarta') : null,
+            'tgl_request_cleaning' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
             'room_id'   =>  $room->id,
             'no_room'   =>  $room->number_room,
+            'price_cleaning' => $priceCleaning->price,
+            'tipe_pembayaran'   =>  $request->typePayment,
+            'pembayaran'   =>  $request->totalbayar,
+            'kembalian'   =>  $request->kembalian,
             'is_cleaning'    =>  true,
+            'is_payment'    =>  true,
+            'is_verify'    =>  true,
         ];
 
         if ($mode == 'insert') {

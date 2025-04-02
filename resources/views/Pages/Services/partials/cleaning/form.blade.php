@@ -11,11 +11,31 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6">
+            <div class="col-6 mb-3">
                 <label for="no-kamar" class="form-label">No Kamar</label>
                 <select name="no-kamar" id="no-kamar" class="form-select choices"></select>
             </div>
-            <div class="col-6">
+            <div class="col-6 mb-3">
+                <label for="tanggal-cleaning" class="form-label">Tanggal</label>
+                <div class="input-icon mb-2">
+                    <input class="form-control" placeholder="Select a date" id="tanggal">
+                    <span class="input-icon-addon">
+                        <!-- Download SVG icon from http://tabler.io/icons/icon/calendar -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="icon icon-1">
+                            <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z">
+                            </path>
+                            <path d="M16 3v4"></path>
+                            <path d="M8 3v4"></path>
+                            <path d="M4 11h16"></path>
+                            <path d="M11 15h1"></path>
+                            <path d="M12 15v3"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div class="col-6 mb-3">
                 <label for="waktu-cleaning" class="form-label">Jam (<span class="text-gray-500">format
                         hh:mm</span>)</label>
                 <input type="text" name="waktu-cleaning" id="waktu-cleaning" class="form-control"
@@ -24,16 +44,49 @@
         </div>
         <div class="row mb-3">
             <div class="col-6">
-                <label for="mulai-cleaning" class="form-label">Jam (<span class="text-gray-500">format
-                        hh:mm</span>)</label>
-                <input type="text" name="mulai-cleaning" id="mulai-cleaning" class="form-control"
-                    value="{{ $cleaning ? ($cleaning->tgl_mulai_cleaning ? Carbon::parse($cleaning->tgl_mulai_cleaning)->isoFormat('HH:mm') : '') : '' }}">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label">Cara Pembayaran</label>
+                        <div class="form-selectgroup">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="select-payment" id="select-payment" value="transfer"
+                                    class="form-selectgroup-input" checked="">
+                                <span class="form-selectgroup-label">Transfer</span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="select-payment" id="select-payment" value="qris"
+                                    class="form-selectgroup-input">
+                                <span class="form-selectgroup-label">Qris</span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="select-payment" id="select-payment" value="cash"
+                                    class="form-selectgroup-input">
+                                <span class="form-selectgroup-label">Cash</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="sub-total" class="form-label">Sub Total</label>
+                        <input type="text" name="sub-total" id="sub-total" class="form-control bg-gray-500" readonly
+                            value="{{ $priceCleaning->price }}">
+                    </div>
+                </div>
             </div>
             <div class="col-6">
-                <label for="selesai-cleaning" class="form-label">Jam (<span class="text-gray-500">format
-                        hh:mm</span>)</label>
-                <input type="text" name="selesai-cleaning" id="selesai-cleaning" class="form-control"
-                    value="{{ $cleaning ? ($cleaning->tgl_selesai_cleaning ? Carbon::parse($cleaning->tgl_selesai_cleaning)->isoFormat('HH:mm') : '') : '' }}">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="payment" class="form-label">Total Pembayaran</label>
+                        <input type="text" name="payment" id="payment" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="kembalian" class="form-label">Total Kembalian</label>
+                        <input type="text" name="kembalian" id="kembalian" class="form-control bg-gray-500" readonly>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
