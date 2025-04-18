@@ -59,6 +59,7 @@ const fnPriceCleaning = {
                     "edit-data"
                 );
                 fnPriceCleaning.init.modals.priceCleaningModal.show();
+                unBlockUI()
             });
     },
 
