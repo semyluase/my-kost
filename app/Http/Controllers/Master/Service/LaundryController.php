@@ -214,7 +214,7 @@ class LaundryController extends Controller
                 $results[] = [
                     $no,
                     $value->name,
-                    $value->weight,
+                    $value->weight . ' Kg',
                     Number::currency($value->price, in: 'IDR', locale: 'id'),
                     $btnAction
                 ];
