@@ -60,7 +60,7 @@
                 <div class="row mb-3">
                     <div class="col-12">
                         <label for="deskripsi-cleaning" class="form-label">Deskripsi</label>
-                        <textarea name="deskripsi-cleaning" id="deskripsi-cleaning" class="form-control" rows="10">
+                        <textarea name="deskripsi-cleaning" id="deskripsi-cleaning" class="form-control" rows="10"></textarea>
                     </div>
                 </div>
             </div>
@@ -93,5 +93,5 @@
 </div>
 @push('myscript')
     <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
-                    <script src="{{ asset('assets/js/Pages/Master/priceCleaning/app.js') }}?{{ rand() }}"></script>
+    <script src="{{ asset('assets/js/Pages/Master/priceCleaning/app.js') }}?{{ rand() }}"></script>
 @endpush
