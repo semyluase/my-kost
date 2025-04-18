@@ -24,7 +24,7 @@
                 @php
                     $stock = Stock::where('code_item', $fs->code_item)->first();
                 @endphp
-                <div class="col-4">
+                <div class="col-4 mb-3">
                     <a href="javascript:;"
                         onclick="fnReceipt.onSelectGoods('{{ $fs->code_item }}','{{ $fs->name }}','{{ $fs->category }}','{{ $stock->qty }}')">
                         <div class="card" id="items">
