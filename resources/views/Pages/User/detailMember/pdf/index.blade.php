@@ -164,7 +164,7 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $rent->room->number_room }}</td>
+                            <td>{{ $rent->room ? $rent->room->number_room : '' }}</td>
                             <td>{{ $durasi }}</td>
                             <td>{{ $rent->tanggal_transaksi != null ? Carbon::parse($rent->tanggal_transaksi)->isoFormat('DD MMMM YYYY') : '' }}
                             </td>

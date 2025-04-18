@@ -111,15 +111,13 @@ class TransactionRentController extends Controller
             ];
         }
 
-        if (collect($dataUser)->count() > 0) {
+        if (collect($dataUser)->count() == 0) {
             $user = User::create($dataUser);
         } else {
-            if ($user->home_id == null) {
-                User::find($user->id)->update([
-                    'home_id'   =>  auth()->user()->home_id,
-                    'foto_identity' =>  $userFoto->id,
-                ]);
-            }
+            User::find($user->id)->update([
+                'home_id'   =>  $user->home_id == null ? auth()->user()->home_id : $user->home_id,
+                'foto_identity' =>  $userFoto->id,
+            ]);
         }
 
         if (!$member) {
