@@ -3,6 +3,7 @@
         <tr>
             <th>#</th>
             <th>Nama</th>
+            <th>Identitas Kos</th>
             <th>Fasilitas</th>
             <th>Harga</th>
             <th>Status</th>

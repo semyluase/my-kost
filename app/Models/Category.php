@@ -47,4 +47,9 @@ class Category extends Model
     {
         return $this->hasMany(CategoryPrice::class);
     }
+
+    function identities()
+    {
+        return $this->hasMany(CategoryIdentity::class);
+    }
 }

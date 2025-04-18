@@ -1,5 +1,6 @@
 @push('mystyles')
     <link rel="stylesheet" href="{{ asset('assets/vendor/tabler/libs/dropzone/dist/dropzone.css') }}?{{ rand() }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/choicesjs/styles/choices.min.css') }}?{{ rand() }}">
 @endpush
 <div class="card">
     <div class="card-header">
@@ -30,5 +31,6 @@
 @include('Pages.Master.Category.partials.modals.viewPicture')
 @push('myscript')
     <script src="{{ asset('assets/vendor/tabler/libs/dropzone/dist/dropzone-min.js') }}?{{ rand() }}"></script>
+    <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
     <script src="{{ asset('assets/js/Pages/Master/Category/app.js') }}?{{ rand() }}"></script>
 @endpush

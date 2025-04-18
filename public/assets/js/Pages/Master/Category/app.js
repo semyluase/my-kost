@@ -35,6 +35,11 @@ const fnCategory = {
                 document.querySelector("#modal-view-picture-category")
             ),
         },
+        dropdowns: {
+            identityKosDropdown: new Choices(
+                document.querySelector("#identity-category")
+            ),
+        },
         dropzones: {
             uploadCategoryDropzone: new Dropzone("#dropzone-category-picture", {
                 url: `${baseUrl}/masters/categories/upload-picture`,
@@ -162,7 +167,7 @@ const fnCategory = {
 
                 return response.json();
             })
-            .then((response) => {
+            .then(async (response) => {
                 nameCategory.value = response.name;
                 slugCategory.value = response.slug;
 
@@ -200,6 +205,18 @@ const fnCategory = {
                             break;
                     }
                 });
+
+                let identityKos = [];
+                response.identities.forEach((item) => {
+                    identityKos.push(item.id);
+                });
+
+                await createDropdown(
+                    `${baseUrl}/utils/dropdowns/get-homes`,
+                    fnCategory.init.dropdowns.identityKosDropdown,
+                    "",
+                    identityKos
+                );
 
                 fnCategory.init.buttons.btnSave.setAttribute(
                     "data-type",
@@ -307,13 +324,20 @@ const fnCategory = {
     },
 };
 
-fnCategory.init.buttons.btnAdd.addEventListener("click", () => {
+fnCategory.init.buttons.btnAdd.addEventListener("click", async () => {
     nameCategory.value = "";
     slugCategory.value = "";
     priceDailyCategoryInput.value = "";
     priceWeeklyCategoryInput.value = "";
     priceMonthlyCategoryInput.value = "";
     priceYearlyCategoryInput.value = "";
+
+    await createDropdown(
+        `${baseUrl}/utils/dropdowns/get-homes`,
+        fnCategory.init.dropdowns.identityKosDropdown,
+        "",
+        ""
+    );
 
     const categoryFacility = document.querySelectorAll(
         "input[name='category-facility']"
@@ -346,6 +370,10 @@ fnCategory.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 name: nameCategory.value,
+                categoryIdentities:
+                    fnCategory.init.dropdowns.identityKosDropdown.getValue(
+                        true
+                    ),
                 categoryFacilities: categoryFacilities,
                 dailyPrice: priceDailyCategoryInput.value,
                 weeklyPrice: priceWeeklyCategoryInput.value,
@@ -362,6 +390,10 @@ fnCategory.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 name: nameCategory.value,
+                categoryIdentities:
+                    fnCategory.init.dropdowns.identityKosDropdown.getValue(
+                        true
+                    ),
                 categoryFacilities: categoryFacilities,
                 dailyPrice: priceDailyCategoryInput.value,
                 weeklyPrice: priceWeeklyCategoryInput.value,

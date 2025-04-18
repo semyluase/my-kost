@@ -15,6 +15,13 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-12">
+                        <label for="identity-category" class="form-label">Identitas Kos</label>
+                        <select name="identity-category" id="identity-category" class="form-control choices-multiple"
+                            multiple></select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
                         <label for="" class="form-label">Fasilitas Kamar</label>
                         <div class="row">
                             <div class="col-6">
@@ -78,8 +85,8 @@
                     </svg>
                     Batal
                 </button>
-                <button type="button" class="btn btn-primary" id="btn-save-category" data-csrf="{{ csrf_token() }}"
-                    data-bs-dismiss="modal">
+                <button type="button" class="btn btn-primary" id="btn-save-category"
+                    data-csrf="{{ csrf_token() }}" data-bs-dismiss="modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round"

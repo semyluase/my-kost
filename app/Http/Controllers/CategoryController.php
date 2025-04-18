@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\CategoryFacility;
-use App\Models\CategoryPicture;
-use App\Models\CategoryPrice;
-use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\CategoryPrice;
 use Illuminate\Support\Carbon;
+use App\Models\CategoryPicture;
+use App\Models\CategoryFacility;
+use App\Models\CategoryIdentity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 
 class CategoryController extends Controller
 {
@@ -77,6 +78,7 @@ class CategoryController extends Controller
         }
 
         $facilities = array();
+        $identities = array();
         $prices = array();
 
         $data = [
@@ -92,6 +94,17 @@ class CategoryController extends Controller
                     $facilities[] = [
                         'category_id'   =>  $category->id,
                         'facility_id'   =>  $value,
+                        'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                        'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                    ];
+                }
+            }
+
+            if (collect($request->categoryIdentities)->count() > 0) {
+                foreach ($request->categoryIdentities as $key => $value) {
+                    $identities[] = [
+                        'category_id'   =>  $category->id,
+                        'identity_id'   =>  $value,
                         'created_at'    =>  Carbon::now('Asia/Jakarta'),
                         'updated_at'    =>  Carbon::now('Asia/Jakarta'),
                     ];
@@ -138,28 +151,32 @@ class CategoryController extends Controller
                 ];
             }
 
-            if (collect($facilities)->count() > 0) {
-                if (CategoryFacility::insert($facilities)) {
-                    if (collect($prices)->count() > 0) {
-                        if (CategoryPrice::insert($prices)) {
-                            DB::commit();
+            if (collect($identities)->count() > 0) {
+                if (CategoryIdentity::insert($identities)) {
+                    if (collect($facilities)->count() > 0) {
+                        if (CategoryFacility::insert($facilities)) {
+                            if (collect($prices)->count() > 0) {
+                                if (CategoryPrice::insert($prices)) {
+                                    DB::commit();
 
-                            return response()->json([
-                                'data'  =>  [
-                                    'status'    =>  true,
-                                    'message'   =>  'Kategori berhasil disimpan'
-                                ]
-                            ]);
+                                    return response()->json([
+                                        'data'  =>  [
+                                            'status'    =>  true,
+                                            'message'   =>  'Kategori berhasil disimpan'
+                                        ]
+                                    ]);
+                                }
+
+                                DB::rollBack();
+
+                                return response()->json([
+                                    'data'  =>  [
+                                        'status'    =>  false,
+                                        'message'   =>  'Kategori gagal disimpan'
+                                    ]
+                                ]);
+                            }
                         }
-
-                        DB::rollBack();
-
-                        return response()->json([
-                            'data'  =>  [
-                                'status'    =>  false,
-                                'message'   =>  'Kategori gagal disimpan'
-                            ]
-                        ]);
                     }
                 }
 
@@ -269,7 +286,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return response()->json($category->load('facilities', 'prices'));
+        return response()->json($category->load('facilities', 'prices', 'identities'));
     }
 
     public function getDataUpload(Category $category)
@@ -320,6 +337,7 @@ class CategoryController extends Controller
         }
 
         $facilities = array();
+        $identities = array();
         $prices = array();
 
         $data = [
@@ -334,6 +352,21 @@ class CategoryController extends Controller
 
             if (collect($category->prices)->count() > 0) {
                 CategoryPrice::where('category_id', $category->id)->delete();
+            }
+
+            if (collect($category->identities)->count() > 0) {
+                CategoryIdentity::where('category_id', $category->id)->delete();
+            }
+
+            if (collect($request->categoryIdentities)->count() > 0) {
+                foreach ($request->categoryIdentities as $key => $value) {
+                    $identities[] = [
+                        'category_id'   =>  $category->id,
+                        'identity_id'   =>  $value,
+                        'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                        'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                    ];
+                }
             }
 
             if (collect($request->categoryFacilities)->count() > 0) {
@@ -387,18 +420,31 @@ class CategoryController extends Controller
                 ];
             }
 
-            if (collect($facilities)->count() > 0) {
-                if (CategoryFacility::insert($facilities)) {
-                    if (collect($prices)->count() > 0) {
-                        if (CategoryPrice::insert($prices)) {
-                            DB::commit();
+            if (collect($identities)->count() > 0) {
+                if (CategoryIdentity::insert($identities)) {
+                    if (collect($facilities)->count() > 0) {
+                        if (CategoryFacility::insert($facilities)) {
+                            if (collect($prices)->count() > 0) {
+                                if (CategoryPrice::insert($prices)) {
+                                    DB::commit();
 
-                            return response()->json([
-                                'data'  =>  [
-                                    'status'    =>  true,
-                                    'message'   =>  'Kategori berhasil diubah'
-                                ]
-                            ]);
+                                    return response()->json([
+                                        'data'  =>  [
+                                            'status'    =>  true,
+                                            'message'   =>  'Kategori berhasil diubah'
+                                        ]
+                                    ]);
+                                }
+
+                                DB::rollBack();
+
+                                return response()->json([
+                                    'data'  =>  [
+                                        'status'    =>  false,
+                                        'message'   =>  'Kategori gagal diubah'
+                                    ]
+                                ]);
+                            }
                         }
 
                         DB::rollBack();
@@ -411,15 +457,6 @@ class CategoryController extends Controller
                         ]);
                     }
                 }
-
-                DB::rollBack();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  'Kategori gagal diubah'
-                    ]
-                ]);
             }
 
             DB::rollBack();
@@ -580,7 +617,7 @@ class CategoryController extends Controller
         $filteredCategory = Category::search(['search' => $request->search['value']])
             ->count();
 
-        $categories = collect(Category::with(['facilities', 'prices', 'pictures'])->search(['search' => $request->search['value']])
+        $categories = collect(Category::with(['facilities', 'prices', 'pictures', 'identities', 'identities.identity'])->search(['search' => $request->search['value']])
             ->skip($request->start)
             ->limit($request->length)
             ->get())->chunk(10);
@@ -685,6 +722,27 @@ class CategoryController extends Controller
                         $prices .= '</div>';
                     }
 
+                    if ($value->identities) {
+                        $identities = '<div class="row g-1">';
+
+                        $categoryIdentities = collect($value->identities)->chunk(10);
+
+                        if ($categoryIdentities) {
+                            foreach ($categoryIdentities as $k => $chunk) {
+                                foreach ($chunk as $cci => $identity) {
+                                    $identities .= '<div class="col-12">
+                                                <div class="row g-1 align-items-center">
+                                                  <div class="col">
+                                                    <div class="text-reset d-block">' . $identity->identity->name . '</div>
+                                                  </div>
+                                                </div>
+                                              </div>';
+                                }
+                            }
+                        }
+                        $identities .= '</div>';
+                    }
+
                     if ($value->facilities) {
                         $facilities = '<div class="row g-1">';
 
@@ -710,6 +768,7 @@ class CategoryController extends Controller
                     $results[] = [
                         $no,
                         $value->name,
+                        $identities,
                         $facilities,
                         $prices,
                         $value->is_active ? '<span class="badge bg-green text-green-fg">Aktif</span>' : '<span class="badge bg-red text-red-fg">TIdak Aktif</span>',
