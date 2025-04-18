@@ -26,6 +26,7 @@
                         <thead>
                             <tr class="text-center">
                                 <th>#</th>
+                                <th>Deskripsi</th>
                                 <th>Harga</th>
                                 <th>#</th>
                             </tr>
@@ -54,6 +55,12 @@
                     <div class="col-12">
                         <label for="price-cleaning" class="form-label">Harga</label>
                         <input type="text" name="price-cleaning" id="price-cleaning" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="deskripsi-cleaning" class="form-label">Deskripsi</label>
+                        <textarea name="deskripsi-cleaning" id="deskripsi-cleaning" class="form-control" rows="10">
                     </div>
                 </div>
             </div>
@@ -86,5 +93,5 @@
 </div>
 @push('myscript')
     <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
-    <script src="{{ asset('assets/js/Pages/Master/priceCleaning/app.js') }}?{{ rand() }}"></script>
+                    <script src="{{ asset('assets/js/Pages/Master/priceCleaning/app.js') }}?{{ rand() }}"></script>
 @endpush

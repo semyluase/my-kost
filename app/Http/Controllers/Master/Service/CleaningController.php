@@ -57,6 +57,7 @@ class CleaningController extends Controller
         $data = [
             'kode_item' =>  $kode,
             'price' =>  $request->harga,
+            'description'   =>  $request->description,
             'user_created'  =>  auth()->user()->username,
         ];
 
@@ -120,6 +121,7 @@ class CleaningController extends Controller
 
         $data = [
             'price' =>  $request->harga,
+            'description'   =>  $request->description,
             'user_updated'  =>  auth()->user()->username,
         ];
 
@@ -204,6 +206,7 @@ class CleaningController extends Controller
 
                 $results[] = [
                     $no,
+                    $value->description,
                     Number::currency($value->price, in: 'IDR', locale: 'id'),
                     $btnAction
                 ];

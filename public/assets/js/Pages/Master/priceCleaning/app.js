@@ -2,6 +2,7 @@ const kodeItemPriceCleaningInput = document.querySelector(
     "#kode-item-price-cleaning"
 );
 const hargaCleaningInput = document.querySelector("#price-cleaning");
+const deskripsiCleaningInput = document.querySelector("#deskripsi-cleaning");
 
 const fnPriceCleaning = {
     init: {
@@ -52,6 +53,7 @@ const fnPriceCleaning = {
             .then(async (response) => {
                 hargaCleaningInput.value = response.price;
                 kodeItemPriceCleaningInput.value = response.kode_item;
+                deskripsiCleaningInput.value = response.description;
                 fnPriceCleaning.init.buttons.btnSavePriceCleaning.setAttribute(
                     "data-type",
                     "edit-data"
@@ -133,6 +135,7 @@ fnPriceCleaning.init.buttons.btnSavePriceCleaning.addEventListener(
 
                 data = JSON.stringify({
                     harga: hargaCleaningInput.value,
+                    description: deskripsiCleaningInput.value,
                     _token: fnPriceCleaning.init.buttons.btnSavePriceCleaning
                         .dataset.csrf,
                 });
@@ -145,6 +148,7 @@ fnPriceCleaning.init.buttons.btnSavePriceCleaning.addEventListener(
 
                 data = JSON.stringify({
                     harga: hargaCleaningInput.value,
+                    description: deskripsiCleaningInput.value,
                     _token: fnPriceCleaning.init.buttons.btnSavePriceCleaning
                         .dataset.csrf,
                 });

@@ -40,11 +40,9 @@ class LaundryController extends Controller
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
-            'weight' =>  'required',
             'harga' =>  'required'
         ], [
             'name.required' =>  "Tipe Laundry wajib diisi",
-            'weight.required'    =>  'Berat wajib diisi',
             'harga.required'    =>  'Harga wajib diisi'
         ]);
 
@@ -61,7 +59,7 @@ class LaundryController extends Controller
         $data = [
             'kode_item' =>  $kode,
             'name'   =>  $request->name,
-            'weight' =>  $request->weight,
+            'weight' =>  $request->weight == '' ? 0 : $request->weight,
             'price' =>  $request->harga,
             'user_created'  =>  auth()->user()->id,
         ];
@@ -111,11 +109,9 @@ class LaundryController extends Controller
         DB::beginTransaction();
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
-            'weight' =>  'required',
             'harga' =>  'required'
         ], [
             'name.required' =>  "Tipe Laundry wajib diisi",
-            'weight.required'    =>  'Berat wajib diisi',
             'harga.required'    =>  'Harga wajib diisi'
         ]);
 
@@ -130,7 +126,7 @@ class LaundryController extends Controller
 
         $data = [
             'name'   =>  $request->name,
-            'weight'   =>  $request->weight,
+            'weight' =>  $request->weight == '' ? 0 : $request->weight,
             'price' =>  $request->harga,
             'user_updated'  =>  auth()->user()->id,
         ];
