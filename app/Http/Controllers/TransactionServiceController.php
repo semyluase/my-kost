@@ -324,17 +324,31 @@ class TransactionServiceController extends Controller
         }
 
         if ($mode == 'update') {
-            if (TransactionDetail::create($detail)) {
-                DB::commit();
+            if (TransactionHeader::where('nobukti', $nobukti)->update([
+                'status'    =>  2
+            ])) {
+                if (TransactionDetail::where('nobukti', $nobukti)->update($detail)) {
+                    DB::commit();
+
+                    return response()->json([
+                        'data'  =>  [
+                            'status'    =>  true,
+                            'message'   =>  'Data berhasil diproses',
+                            'nobukti'   =>  $nobukti,
+                        ]
+                    ]);
+                }
+                DB::rollback();
 
                 return response()->json([
                     'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  'Data berhasil diproses',
-                        'nobukti'   =>  $nobukti,
+                        'status'    =>  false,
+                        'message'   =>  'Data gagal diproses',
+                        'nobukti'   =>  ''
                     ]
                 ]);
             }
+
 
             DB::rollback();
 
@@ -357,12 +371,25 @@ class TransactionServiceController extends Controller
         if (TransactionDetail::where('id', $transaction->id)->update([
             'tgl_mulai_cleaning'    =>  Carbon::now("Asia/Jakarta")
         ])) {
-            DB::commit();
+            if (TransactionHeader::where('nobukti', $request->nobukti)->update([
+                'status'    => 3
+            ])) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  "Mulai membersihkan kamar " . $transaction->no_room,
+                    ]
+                ]);
+            }
+
+            DB::rollback();
 
             return response()->json([
                 'data'  =>  [
-                    'status'    =>  true,
-                    'message'   =>  "Mulai membersihkan kamar " . $transaction->no_room,
+                    'status'    =>  false,
+                    'message'   =>  "Gagal mulai membersihkan kamar " . $transaction->no_room,
                 ]
             ]);
         }
@@ -386,12 +413,24 @@ class TransactionServiceController extends Controller
         if (TransactionDetail::where('id', $transaction->id)->update([
             'tgl_selesai_cleaning'    =>  Carbon::now("Asia/Jakarta")
         ])) {
-            DB::commit();
+            if (TransactionHeader::where('nobukti', $request->nobukti)->update([
+                'status'    =>  5
+            ])) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  "Selesai membersihkan kamar " . $transaction->no_room,
+                    ]
+                ]);
+            }
+            DB::rollback();
 
             return response()->json([
                 'data'  =>  [
-                    'status'    =>  true,
-                    'message'   =>  "Selesai membersihkan kamar " . $transaction->no_room,
+                    'status'    =>  false,
+                    'message'   =>  "Gagal selesai membersihkan kamar " . $transaction->no_room,
                 ]
             ]);
         }
