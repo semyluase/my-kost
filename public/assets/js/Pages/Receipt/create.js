@@ -4,8 +4,10 @@ const kodebrgInput = document.querySelector("#kodebrg");
 const kategoriInput = document.querySelector("#kategori");
 const namabrgInput = document.querySelector("#namabrg");
 const jumlahInput = document.querySelector("#jumlah");
+const stockInput = document.querySelector("#stock");
 const hargaBeliInput = document.querySelector("#harga-beli");
 const subTotalInput = document.querySelector("#sub-total");
+const tanggalInput = document.querySelector("#tgl");
 
 const itemCards = document.querySelectorAll("#items");
 
@@ -18,21 +20,21 @@ const fnReceipt = {
             btnPosting: document.querySelector("#btn-posting"),
             btnDeleteBulk: document.querySelector("#btn-delete-bulk"),
         },
-        litepicker: {
-            transDate: new Litepicker({
-                element: document.querySelector("#tgl"),
-                buttonText: {
-                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
-                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
-                },
-                startDate: moment().format("DD/MM/YYYY"),
-                format: "DD/MM/YYYY",
-                inlineMode: true,
-                singleMode: true,
-            }),
-        },
+        // litepicker: {
+        //     transDate: new Litepicker({
+        //         element: document.querySelector("#tgl"),
+        //         buttonText: {
+        //             previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+        //         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+        //             nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+        //         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+        //         },
+        //         startDate: moment().format("DD/MM/YYYY"),
+        //         format: "DD/MM/YYYY",
+        //         inlineMode: true,
+        //         singleMode: true,
+        //     }),
+        // },
         tables: {
             tbDetail: $("#tb-detail").DataTable({
                 processing: true,
@@ -49,15 +51,17 @@ const fnReceipt = {
         namabrgInput.value = "";
         kategoriInput.value = "";
         jumlahInput.value = "";
+        stockInput.value = "";
         hargaBeliInput.value = "";
         subTotalInput.value = "";
         kodebrgInput.focus();
     },
 
-    onSelectGoods: (codeItem, name, category) => {
+    onSelectGoods: (codeItem, name, category, stock) => {
         kodebrgInput.value = codeItem;
         namabrgInput.value = name;
         kategoriInput.value = category;
+        stockInput.value = stock;
     },
 
     onDeleteDetail: (id, csrf) => {
@@ -149,9 +153,9 @@ fnReceipt.init.buttons.btnSave.addEventListener("click", async () => {
             namabrg: namabrgInput.value,
             jumlah: jumlahInput.value,
             hargaBeli: hargaBeliInput.value,
-            tanggal: moment(
-                fnReceipt.init.litepicker.transDate.getDate().toJSDate()
-            ).format("YYYY-MM-DD"),
+            tanggal: moment(tanggalInput.value, "DD-MM-YYYY").format(
+                "YYYY-MM-DD"
+            ),
             _token: fnReceipt.init.buttons.btnSave.dataset.csrf,
         });
         method = "post";
@@ -164,6 +168,9 @@ fnReceipt.init.buttons.btnSave.addEventListener("click", async () => {
             namabrg: namabrgInput.value,
             jumlah: jumlahInput.value,
             hargaBeli: hargaBeliInput.value,
+            tanggal: moment(tanggalInput.value, "DD-MM-YYYY").format(
+                "YYYY-MM-DD"
+            ),
             _token: fnReceipt.init.buttons.btnSave.dataset.csrf,
         });
         method = "put";

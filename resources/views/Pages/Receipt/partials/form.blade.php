@@ -1,8 +1,11 @@
 <div class="card">
+    @php
+        use Illuminate\Support\Carbon;
+    @endphp
     <div class="card-body">
         <div class="row mb-3">
-            <div class="col-6">
-                <div class="row mb-3">
+            <div class="col-12">
+                <div class="row mb-3 d-none">
                     <div class="col">
                         <label for="nobukti" class="form-label">No. Transaksi</label>
                         <input type="text" name="nobukti" id="nobukti" class="form-control bg-gray-500" readonly
@@ -10,7 +13,7 @@
                         <input type="hidden" name="id-detail" id="id-detail" class="form-control bg-gray-500" readonly>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-3 d-none">
                     <div class="col">
                         <label for="kodebrg" class="form-label">Barcode</label>
                         <input type="text" name="kodebrg" id="kodebrg" class="form-control" autofocus>
@@ -18,31 +21,30 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-6">
+                    <div class="col-6 mb-3">
                         <label for="namabrg" class="form-label">Nama Barang</label>
-                        <input type="text" name="namabrg" id="namabrg" class="form-control">
+                        <input type="text" name="namabrg" id="namabrg" class="form-control bg-gray-400" readonly>
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 mb-3">
+                        <label for="tgl" class="form-label">Tanggal Transaksi</label>
+                        <input type="text" class="form-control bg-gray-400" id="tgl" readonly
+                            value="{{ Carbon::now('Asia/Jakarta')->isoFormat('DD-MM-YYYY') }}" />
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" name="stock" id="stock" class="form-control bg-gray-400" readonly>
+                    </div>
+                    <div class="col-6 mb-3">
                         <label for="jumlah" class="form-label">Jumlah</label>
                         <input type="number" name="jumlah" id="jumlah" class="form-control">
                     </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6">
+                    <div class="col-6 mb-3">
                         <label for="harga-beli" class="form-label">Harga Beli</label>
                         <input type="text" name="harga-beli" id="harga-beli" class="form-control">
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 mb-3">
                         <label for="sub-total" class="form-label">Sub Total</label>
                         <input type="number" name="sub-total" id="sub-total" class="form-control bg-gray-500" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label for="tgl" class="form-label">Tanggal Transaksi</label>
-                        <div class="datepicker-inline" id="tgl"></div>
                     </div>
                 </div>
             </div>

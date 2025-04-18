@@ -1,5 +1,6 @@
 @php
     use Illuminate\Support\Str;
+    use App\Models\Stock;
 @endphp
 <div class="card">
     <div class="card-header">
@@ -20,9 +21,12 @@
     <div class="card-body overflow-scroll">
         <div class="row">
             @foreach ($foodSnacks as $fs)
+                @php
+                    $stock = Stock::where('code_item', $fs->code_item)->first();
+                @endphp
                 <div class="col-4">
                     <a href="javascript:;"
-                        onclick="fnReceipt.onSelectGoods('{{ $fs->code_item }}','{{ $fs->name }}','{{ $fs->category }}')">
+                        onclick="fnReceipt.onSelectGoods('{{ $fs->code_item }}','{{ $fs->name }}','{{ $fs->category }}','{{ $stock->qty }}')">
                         <div class="card" id="items">
                             <!-- Photo -->
                             @if ($fs->picture)
@@ -35,7 +39,7 @@
                                 </div>
                             @endif
                             <div class="card-body">
-                                <h3 class="card-title">{{ $fs->name }}</h3>
+                                <h3 class="card-title">{{ $fs->name }} ({{ $stock->qty }} Pcs)</h3>
                             </div>
                         </div>
                     </a>

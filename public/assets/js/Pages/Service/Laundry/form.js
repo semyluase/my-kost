@@ -63,11 +63,17 @@ categorySelect.forEach((item) => {
 
         subTotalInput.value =
             parseInt(item.dataset.price) *
-            parseFloat(
-                parseFloat(
-                    quantityInput.value == "" ? 0 : quantityInput.value
-                ) / item.dataset.weight
-            );
+            (item.dataset.weight == 0
+                ? parseFloat(
+                      parseFloat(
+                          quantityInput.value == "" ? 0 : quantityInput.value
+                      ) / 1
+                  )
+                : parseFloat(
+                      parseFloat(
+                          quantityInput.value == "" ? 0 : quantityInput.value
+                      ) / item.dataset.weight
+                  ));
     });
 });
 
