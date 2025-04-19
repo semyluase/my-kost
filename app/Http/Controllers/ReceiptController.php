@@ -20,11 +20,11 @@ class ReceiptController extends Controller
      */
     public function index()
     {
-        $stocks = Stock::with(['foodSnack'])->get();
+        // $stocks = Stock::with(['foodSnack'])->get();
         return view('Pages.Receipt.index', [
             'title' =>  "Barang Masuk",
             'pageTitle' =>  "Barang Masuk",
-            'stocks'    =>  $stocks,
+            // 'stocks'    =>  $stocks,
         ]);
     }
 

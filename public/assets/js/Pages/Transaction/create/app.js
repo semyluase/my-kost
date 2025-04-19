@@ -70,6 +70,7 @@ const fnTransaction = {
                 success: function (file, response) {
                     // var data = JSON.parse(response);
                     tokenFoto = response.token;
+                    console.log(tokenFoto);
                 },
             }),
             dropzoneFotoOrang: new Dropzone("#dropzone-foto-orang", {
@@ -81,6 +82,7 @@ const fnTransaction = {
                 success: function (file, response) {
                     // var data = JSON.parse(response);
                     tokenFotoOrang = response.token;
+                    console.log(tokenFotoOrang);
                 },
             }),
         },

@@ -37,6 +37,7 @@
     <script>
         const baseUrl = '{{ url('') }}'
     </script>
+    @livewireStyles
 </head>
 
 <body class=" layout-fluid">
@@ -214,6 +215,16 @@
             });
         }
     </script>
+    <script>
+        window.addEventListener('swal-modal', event => {
+            swal({
+                title: event.detail.message,
+                text: event.detail.text,
+                icon: event.detail.type,
+            })
+        });
+    </script>
+    @livewireScripts
     @stack('myscript')
 </body>
 

@@ -111,7 +111,8 @@ class TransactionRentController extends Controller
             ];
         }
 
-        if (collect($dataUser)->count() == 0) {
+        // dd(collect($dataUser)->count() == 0);
+        if (collect($dataUser)->count() > 0) {
             $user = User::create($dataUser);
         } else {
             User::find($user->id)->update([
@@ -646,7 +647,7 @@ class TransactionRentController extends Controller
                 Deposite::create([
                     'room_id'   =>  $room->id,
                     'user_id'   =>  $dataRent->member->user->id,
-                    'jumlah'    =>  $request->deposit,
+                    'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit)
                 ]);
             }
 
