@@ -92,7 +92,7 @@ class TransactionRentController extends Controller
         if ($member) {
             $rent = TransactionRent::where('room_id', $room->id)
                 ->where('member_id', $member->id)
-                ->where('end_date', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
+                ->where('end_date', '>', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
                 ->first();
         }
 
@@ -117,7 +117,7 @@ class TransactionRentController extends Controller
         } else {
             User::find($user->id)->update([
                 'home_id'   =>  $user->home_id == null ? auth()->user()->home_id : $user->home_id,
-                'foto_identity' =>  $userFoto->id,
+                'foto_identity' =>  $userFoto ? $userFoto->id : null,
             ]);
         }
 
@@ -129,7 +129,7 @@ class TransactionRentController extends Controller
                 'address'   =>  $request->address,
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'dob'   =>  Carbon::parse($request->tanggalLahir)->isoFormat("YYYY-MM-DD"),
-                'identity_id'   =>  $userIdentify->id,
+                'identity_id'   =>  $userIdentify ? $userIdentify->id : null,
             ];
         } else {
             $dataMember = [
@@ -138,7 +138,7 @@ class TransactionRentController extends Controller
                 'address'   =>  $request->address,
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'dob'   =>  Carbon::parse($request->tanggalLahir)->isoFormat("YYYY-MM-DD"),
-                'identity_id'   =>  $userIdentify->id,
+                'identity_id'   =>  $userIdentify ? $userIdentify->id : null,
             ];
         }
 

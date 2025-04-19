@@ -214,16 +214,12 @@
                 }
             });
         }
-    </script>
-    <script>
+
         window.addEventListener('swal-modal', event => {
-            swal({
-                title: event.detail.message,
-                text: event.detail.text,
-                icon: event.detail.type,
-            })
+            swal.fire(event.detail[0].message, event.detail[0].text, event.detail[0].type)
         });
     </script>
+    <script></script>
     @livewireScripts
     @stack('myscript')
 </body>
