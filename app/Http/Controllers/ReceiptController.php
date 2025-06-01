@@ -379,7 +379,7 @@ class ReceiptController extends Controller
         $styling[] = ['col' => "A5:I6", 'style' => styleExcel_Calibry('12', true)];
         $styling[] = ['col' => "A5:I6", 'style' => styleExcel_TableBorder()];
         $styling[] = ['col' => "A5:I6", 'style' => styleExcel_TextMiddle()];
-        if (collect($items)->count() > 1) {
+        if ($request->item == 'undefined') {
             $baris = 7;
             $awalBaris = $baris;
             $sheet->setCellValue("B3", ": ALL");
@@ -417,7 +417,7 @@ class ReceiptController extends Controller
             $styling[] = ['col' => "A$awalBaris:I" . ($baris - 1), 'style' => styleExcel_TableBorder('bottom')];
         }
 
-        if (collect($items)->count() == 1) {
+        if ($request->item != 'undefined') {
             $baris = 7;
             $awalBaris = $baris;
             $sheet->setCellValue("B3", ": " . $items->code_item . ' ' . $items->name);

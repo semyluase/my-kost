@@ -57,7 +57,7 @@ function generateNoTrans($type)
 
 function formatExcel_Idr()
 {
-    return 'Rp. #,##0.00';
+    return 'Rp #,##';
 }
 
 function formatExcel_Number()
