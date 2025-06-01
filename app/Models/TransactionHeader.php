@@ -77,4 +77,33 @@ class TransactionHeader extends Model
                     where tth.tanggal between '$startDate' and '$endDate'
                     and tth.is_order = true) tb");
     }
+
+    function scopeGetDataReportDetail($query, $startDate, $endDate, $codeItem)
+    {
+        return $query->select('*')
+            ->fromRaw("(select code_item, name, tanggal, sum(qty_in) as qty_in, harga_beli,
+                    sum(qty_out) as qty_out, harga_jual
+                    from (select fs.code_item, fs.name, tth.tanggal, sum(ttd.qty) as qty_in,
+                    ttd.harga_beli, 0 as qty_out, 0 as harga_jual from food_snacks fs 
+                    join tr_transaction_d ttd 
+                    on fs.code_item = ttd.code_item
+                    and ttd.`type` = 'IN'
+                    join tr_transaction_h tth 
+                    on ttd.nobukti = tth.nobukti
+                    where fs.code_item = '$codeItem'
+                    and tth.tanggal between '$startDate' and '$endDate'
+                    group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli
+                    union all
+                    select fs.code_item, fs.name, tth.tanggal, 0 as qty_in,
+                    0 as harga_beli, sum(ttd.qty) as qty_out, ttd.harga_jual from food_snacks fs 
+                    join tr_transaction_d ttd 
+                    on fs.code_item = ttd.code_item
+                    and ttd.`type` = 'OUT'
+                    join tr_transaction_h tth 
+                    on ttd.nobukti = tth.nobukti
+                    where fs.code_item = '$codeItem'
+                    and tth.tanggal between '$startDate' and '$endDate'
+                    group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli) a
+                    group by  code_item, name, tanggal, harga_beli, harga_jual) tb");
+    }
 }

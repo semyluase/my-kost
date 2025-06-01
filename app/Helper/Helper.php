@@ -54,3 +54,56 @@ function generateNoTrans($type)
 
     return $noTrans;
 }
+
+function formatExcel_Idr()
+{
+    return 'Rp. #,##0.00';
+}
+
+function formatExcel_Number()
+{
+    return '#,##0';
+}
+
+function styleExcel_TableBorder($type = 'allBorders')
+{
+    return [
+        'borders' => [
+            $type => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+            ],
+        ],
+    ];
+}
+
+function styleExcel_TextMiddle()
+{
+    return [
+        'alignment' => [
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+        ]
+    ];
+};
+
+function styleExcel_Heading()
+{
+    return [
+        'font' => [
+            'bold' => true,
+            'size' => 22,
+            'name' => 'Calibri Light'
+        ]
+    ];
+};
+
+function styleExcel_Calibry($fontSize, $bold)
+{
+    return [
+        'font' => [
+            'bold' => $bold,
+            'size' => $fontSize,
+            'name' => 'Calibri Light'
+        ]
+    ];
+};

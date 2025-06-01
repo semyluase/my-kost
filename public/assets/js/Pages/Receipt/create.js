@@ -1,330 +1,70 @@
-const nobuktiInput = document.querySelector("#nobukti");
-const idDetailInput = document.querySelector("#id-detail");
-const kodebrgInput = document.querySelector("#kodebrg");
-const kategoriInput = document.querySelector("#kategori");
-const namabrgInput = document.querySelector("#namabrg");
-const jumlahInput = document.querySelector("#jumlah");
-const stockInput = document.querySelector("#stock");
-const hargaBeliInput = document.querySelector("#harga-beli");
-const subTotalInput = document.querySelector("#sub-total");
-const tanggalInput = document.querySelector("#tgl");
-
-const itemCards = document.querySelectorAll("#items");
-
-let url, data, method;
+let url,
+    data,
+    method,
+    startDate = moment().startOf("month"),
+    endDate = moment();
 
 const fnReceipt = {
     init: {
         buttons: {
-            btnSave: document.querySelector("#btn-save"),
-            btnPosting: document.querySelector("#btn-posting"),
-            btnDeleteBulk: document.querySelector("#btn-delete-bulk"),
+            btnBuatLaporan: document.querySelector("#btn-buat-laporan"),
+            btnGenerateReport: document.querySelector("#btn-generate-report"),
         },
-        // litepicker: {
-        //     transDate: new Litepicker({
-        //         element: document.querySelector("#tgl"),
-        //         buttonText: {
-        //             previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-        //         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
-        //             nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-        //         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
-        //         },
-        //         startDate: moment().format("DD/MM/YYYY"),
-        //         format: "DD/MM/YYYY",
-        //         inlineMode: true,
-        //         singleMode: true,
-        //     }),
-        // },
-        tables: {
-            tbDetail: $("#tb-detail").DataTable({
-                processing: true,
-                ajax: {
-                    url: `${baseUrl}/inventories/receipts/get-detail-data?nobukti=${nobuktiInput.value}`,
+        dropdowns: {
+            barangReportDropdown: new Choices(
+                document.querySelector("#barang-report"),
+                {
+                    shouldSort: false,
+                }
+            ),
+        },
+        modals: {
+            modalGenerataReport: new bootstrap.Modal(
+                document.querySelector("#modal-report")
+            ),
+        },
+        litepicker: {
+            tanggalReport: new Litepicker({
+                element: document.querySelector("#tanggal-report"),
+                buttonText: {
+                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
                 },
+                startDate: startDate.format("DD/MM/YYYY"),
+                endDate: endDate.format("DD/MM/YYYY"),
+                format: "DD/MM/YYYY",
+                singleMode: false,
             }),
         },
     },
-
-    onClearForm: () => {
-        kodebrgInput.value = "";
-        idDetailInput.value = "";
-        namabrgInput.value = "";
-        kategoriInput.value = "";
-        jumlahInput.value = "";
-        stockInput.value = "";
-        hargaBeliInput.value = "";
-        subTotalInput.value = "";
-        kodebrgInput.focus();
-    },
-
-    onSelectGoods: (codeItem, name, category, stock) => {
-        kodebrgInput.value = codeItem;
-        namabrgInput.value = name;
-        kategoriInput.value = category;
-        stockInput.value = stock;
-    },
-
-    onDeleteDetail: (id, csrf) => {
-        swalWithBootstrapButtons
-            .fire({
-                title: "Perhatian",
-                text: "Apakah anda akan menghapus data ini?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 12l5 5l10 -10"></path>
-         </svg> Hapus Data`,
-                cancelButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M18 6l-12 12"></path>
-            <path d="M6 6l12 12"></path>
-         </svg> Batal`,
-            })
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    blockUI();
-
-                    const results = await onSaveJson(
-                        `${baseUrl}/inventories/receipts/details/${id}`,
-                        JSON.stringify({ _token: csrf }),
-                        "delete"
-                    );
-
-                    unBlockUI();
-
-                    if (results.data.status) {
-                        Toastify({
-                            text: results.data.message,
-                            className: "success",
-                            style: {
-                                background: "rgb(47, 179, 68)",
-                            },
-                        }).showToast();
-
-                        fnReceipt.init.tables.tbDetail.ajax
-                            .url(
-                                `${baseUrl}/inventories/receipts/get-detail-data?nobukti=${nobuktiInput.value}`
-                            )
-                            .load();
-                    } else {
-                        if (typeof results.data.message == "string") {
-                            swalWithBootstrapButtons.fire(
-                                "Terjadi Kesalahan",
-                                results.data.message,
-                                "error"
-                            );
-                        }
-                    }
-                }
-            });
-    },
 };
 
-jumlahInput.addEventListener("keyup", (e) => {
-    subTotalInput.value =
-        parseInt(jumlahInput.value) * parseInt(hargaBeliInput.value);
+fnReceipt.init.buttons.btnBuatLaporan.addEventListener("click", async () => {
+    await createDropdown(
+        `${baseUrl}/utils/dropdowns/get-items`,
+        fnReceipt.init.dropdowns.barangReportDropdown,
+        "",
+        ""
+    );
+
+    fnReceipt.init.modals.modalGenerataReport.show();
 });
 
-hargaBeliInput.addEventListener("keyup", (e) => {
-    subTotalInput.value =
-        parseInt(jumlahInput.value) * parseInt(hargaBeliInput.value);
-});
+fnReceipt.init.buttons.btnGenerateReport.addEventListener("click", () => {
+    fnReceipt.init.modals.modalGenerataReport.hide();
 
-itemCards.forEach((item) => {
-    item.addEventListener("click", () => {
-        itemCards.forEach((old) => {
-            if (old.classList.contains("bg-blue-lt")) {
-                old.classList.remove("bg-blue-lt");
-            }
-        });
-        item.classList.add("bg-blue-lt");
-    });
-});
-fnReceipt.init.buttons.btnSave.addEventListener("click", async () => {
-    blockUI();
-
-    if (idDetailInput.value == "") {
-        url = `${baseUrl}/inventories/receipts`;
-        data = JSON.stringify({
-            nobukti: nobuktiInput.value,
-            kodebrg: kodebrgInput.value,
-            kategori: kategoriInput.value,
-            namabrg: namabrgInput.value,
-            jumlah: jumlahInput.value,
-            hargaBeli: hargaBeliInput.value,
-            tanggal: moment(tanggalInput.value, "DD-MM-YYYY").format(
-                "YYYY-MM-DD"
-            ),
-            _token: fnReceipt.init.buttons.btnSave.dataset.csrf,
-        });
-        method = "post";
-    } else {
-        url = `${baseUrl}/inventories/receipts/${idDetailInput.value}`;
-        data = JSON.stringify({
-            nobukti: nobuktiInput.value,
-            kodebrg: kodebrgInput.value,
-            kategori: kategoriInput.value,
-            namabrg: namabrgInput.value,
-            jumlah: jumlahInput.value,
-            hargaBeli: hargaBeliInput.value,
-            tanggal: moment(tanggalInput.value, "DD-MM-YYYY").format(
-                "YYYY-MM-DD"
-            ),
-            _token: fnReceipt.init.buttons.btnSave.dataset.csrf,
-        });
-        method = "put";
-    }
-
-    const results = await onSaveJson(url, data, method);
-
-    unBlockUI();
-
-    if (results.data.status) {
-        Toastify({
-            text: results.data.message,
-            className: "success",
-            style: {
-                background: "rgb(47, 179, 68)",
-            },
-        }).showToast();
-
-        if (nobuktiInput.value == "") {
-            window.history.pushState(
-                null,
-                null,
-                `${baseUrl}/inventories/receipts/create?nobukti=${results.data.nobukti}`
-            );
-            nobuktiInput.value = results.data.nobukti;
-        }
-
-        fnReceipt.init.tables.tbDetail.ajax
-            .url(
-                `${baseUrl}/inventories/receipts/get-detail-data?nobukti=${nobuktiInput.value}`
-            )
-            .load();
-
-        fnReceipt.onClearForm();
-    } else {
-        if (results.data.message.kodebrg[0]) {
-            swal.fire(
-                "Terjadi kesalahan",
-                results.data.message.kodebrg[0],
-                "error"
-            );
-            return false;
-        }
-
-        if (typeof results.data.message == "string") {
-            swal.fire("Terjadi kesalahan", results.data.message, "error");
-            return false;
-        }
-    }
-});
-
-fnReceipt.init.buttons.btnDeleteBulk.addEventListener("click", async () => {
-    swalWithBootstrapButtons
-        .fire({
-            title: "Perhatian",
-            text: "Apakah anda akan menghapus semua data ini?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 12l5 5l10 -10"></path>
-         </svg> Hapus Data`,
-            cancelButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M18 6l-12 12"></path>
-            <path d="M6 6l12 12"></path>
-         </svg> Batal`,
-        })
-        .then(async (result) => {
-            if (result.isConfirmed) {
-                blockUI();
-
-                const results = await onSaveJson(
-                    `${baseUrl}/inventories/receipts/${nobuktiInput.value}`,
-                    JSON.stringify({
-                        nobukti: nobuktiInput.value,
-                        _token: fnReceipt.init.buttons.btnDeleteBulk.dataset
-                            .csrf,
-                    }),
-                    "delete"
-                );
-
-                unBlockUI();
-
-                if (results.data.status) {
-                    swal.fire("Berhasil", results.data.message, "success").then(
-                        (result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = `${baseUrl}/inventories/receipts`;
-                            }
-                        }
-                    );
-                } else {
-                    if (typeof results.data.message == "string") {
-                        swalWithBootstrapButtons.fire(
-                            "Terjadi Kesalahan",
-                            results.data.message,
-                            "error"
-                        );
-                    }
-                }
-            }
-        });
-});
-
-fnReceipt.init.buttons.btnPosting.addEventListener("click", async () => {
-    swalWithBootstrapButtons
-        .fire({
-            title: "Perhatian",
-            text: "Apakah anda yakin akan memposting transaksi ini?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 12l5 5l10 -10"></path>
-         </svg> Posting Data`,
-            cancelButtonText: `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M18 6l-12 12"></path>
-            <path d="M6 6l12 12"></path>
-         </svg> Batal`,
-        })
-        .then(async (result) => {
-            if (result.isConfirmed) {
-                blockUI();
-
-                const results = await onSaveJson(
-                    `${baseUrl}/inventories/receipts/posting`,
-                    JSON.stringify({
-                        nobukti: nobuktiInput.value,
-                        _token: fnReceipt.init.buttons.btnPosting.dataset.csrf,
-                    }),
-                    "post"
-                );
-
-                unBlockUI();
-
-                if (results.data.status) {
-                    swal.fire("Berhasil", results.data.message, "success").then(
-                        (result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = `${baseUrl}/inventories/receipts`;
-                            }
-                        }
-                    );
-                } else {
-                    if (typeof results.data.message == "string") {
-                        swalWithBootstrapButtons.fire(
-                            "Terjadi Kesalahan",
-                            results.data.message,
-                            "error"
-                        );
-                    }
-                }
-            }
-        });
+    window.open(
+        `${baseUrl}/inventories/receipts/generateReport?s=${moment(
+            fnReceipt.init.litepicker.tanggalReport.getStartDate().toJSDate()
+        ).format("YYYY-MM-DD")}&e=${moment(
+            fnReceipt.init.litepicker.tanggalReport.getEndDate().toJSDate()
+        ).format(
+            "YYYY-MM-DD"
+        )}&item=${fnReceipt.init.dropdowns.barangReportDropdown.getValue(
+            true
+        )}`,
+        "_blank"
+    );
 });

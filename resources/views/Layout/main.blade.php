@@ -22,6 +22,7 @@
     <link href="{{ asset('assets/vendor/freezeui/freeze-ui.min.css') }}?{{ rand() }}" rel="stylesheet" />
     <link href="{{ asset('assets/vendor/datatable/datatables.min.css') }}?{{ rand() }}" rel="stylesheet" />
     <link href="{{ asset('assets/vendor/tabler/css/tabler.min.css') }}?{{ rand() }}" rel="stylesheet" />
+    @vite(['resources/js/app.js'])
     @stack('mystyles')
     <style>
         @import url('https://rsms.me/inter/inter.css');

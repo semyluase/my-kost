@@ -82,6 +82,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Route::get('/inventories/receipts/create', [ReceiptController::class, 'create']);
     Route::get('/inventories/receipts/get-detail-data', [ReceiptController::class, 'getDetailData']);
+    Route::get('/inventories/receipts/generateReport', [ReceiptController::class, 'generateReport']);
     Route::post('/inventories/receipts/posting', [ReceiptController::class, 'posting']);
     Route::delete('/inventories/receipts/details/{detail}', [ReceiptController::class, 'deleteDetail']);
     Route::resource('/inventories/receipts', ReceiptController::class);
@@ -143,6 +144,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/dropdowns/get-member', [DropdownController::class, 'getMember']);
     Route::get('/utils/dropdowns/get-bank', [DropdownController::class, 'getBank']);
     Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);
+    Route::get('/utils/dropdowns/get-items', [DropdownController::class, 'getItems']);
 
     Route::get('/utils/prices/get-laundry', [DropdownController::class, 'getLaundry']);
 

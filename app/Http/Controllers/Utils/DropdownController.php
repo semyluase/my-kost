@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Utils;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\FoodSnack;
 use App\Models\Home;
 use App\Models\Location;
 use App\Models\Master\Bank;
@@ -187,6 +188,26 @@ class DropdownController extends Controller
                     $results[] = [
                         'label' =>  $value->name,
                         'value' =>  $value->id,
+                    ];
+                }
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getItems()
+    {
+        $items = collect(FoodSnack::get())->chunk(100);
+
+        $results = array();
+
+        if ($items) {
+            foreach ($items as $key => $chunk) {
+                foreach ($chunk as $c => $value) {
+                    $results[] = [
+                        'label' =>  $value->name,
+                        'value' =>  $value->code_item,
                     ];
                 }
             }
