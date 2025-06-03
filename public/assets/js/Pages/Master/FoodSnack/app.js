@@ -1,7 +1,6 @@
 const nameFoodSnack = document.querySelector("#name-food-snack");
 const codeFoodSnack = document.querySelector("#code-food-snack");
 const hargaFoodSnack = document.querySelector("#harga-food-snack");
-const categoryFoodSnack = document.querySelector("#category-food-snack");
 const slugUploadFotoFoodSnack = document.querySelector(
     "#slug-upload-food-snack"
 );
@@ -13,7 +12,9 @@ const fnFoodSnack = {
             btnSave: document.querySelector("#btn-save-food-snack"),
         },
         dropdowns: {
-            categoryDropdown: new Choices(categoryFoodSnack),
+            categoryDropdown: new Choices(
+                document.querySelector("#category-food-snack")
+            ),
         },
         dropzones: {
             uploadFoodSnackDropzone: new Dropzone(
@@ -308,7 +309,7 @@ fnFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
                 }
             });
     } else {
-        if (results.data.message.name[0]) {
+        if (results.data.message.name) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.name[0],
@@ -318,7 +319,7 @@ fnFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.price[0]) {
+        if (results.data.message.price) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.price[0],
@@ -328,7 +329,7 @@ fnFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.category[0]) {
+        if (results.data.message.category) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.category[0],
