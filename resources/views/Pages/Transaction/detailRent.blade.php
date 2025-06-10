@@ -127,7 +127,20 @@
                                                                 {{ Number::currency($rent->price, 'Rp.', 'id') }}
                                                             </td>
                                                             <td>
+                                                                @php
+                                                                    $deposit = Deposite::where(
+                                                                        'room_id',
+                                                                        $rent->room->id,
+                                                                    )
+                                                                        ->where('user_id', $rent->member->user->id)
+                                                                        ->where('is_checkout', false)
+                                                                        ->first();
+                                                                @endphp
                                                                 {{ Number::currency($rent->kurang_bayar, 'Rp.', 'id') }}
+                                                                <input type="hidden" name="deposit" id="deposit"
+                                                                    class="form-control {{ $deposit ? 'bg-gray-500' : '' }}"
+                                                                    {{ $deposit ? 'readonly' : '' }}
+                                                                    value="{{ $deposit ? $deposit->jumlah : $rent->price }}">
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -147,6 +160,8 @@
                                                         <tr>
                                                             <td colspan="7">Total</td>
                                                             <td>
+                                                                <input type="hidden" class="form-control bg-gray-400"
+                                                                    id="total" readonly value="">
                                                                 {{ Number::currency($rent->kurang_bayar + $rent->pembulatan, 'Rp.', 'id') }}
                                                             </td>
                                                         </tr>

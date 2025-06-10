@@ -649,6 +649,10 @@ class TransactionRentController extends Controller
                     'user_id'   =>  $dataRent->member->user->id,
                     'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit)
                 ]);
+            } else {
+                Deposite::find($deposit->id)->update([
+                    'room_id'   =>  $room->id,
+                ]);
             }
 
             DB::commit();
