@@ -208,8 +208,8 @@ class UserController extends Controller
                         $no,
                         $value->name,
                         $value->username,
-                        $value->role->name,
-                        $value->location->city,
+                        $value->role ? $value->role->name : "",
+                        $value->location ? $value->location->city : "",
                         $btnAction
                     ];
 
