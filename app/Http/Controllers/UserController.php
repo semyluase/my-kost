@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
+use App\Models\TransactionRent;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -162,7 +165,28 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $user->load(['member']);
+
+        if ($user->member) {
+            $rent = TransactionRent::where('member_id', $user->member->id)
+                ->where('end_date', '>=', Carbon::now('Asia/Jakarta'))
+                ->first();
+
+            if ($rent) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  "User ini gagal dihapus, kerena masih menyewa kamar!"
+                    ]
+                ]);
+            }
+        }
+
         if (User::find($user->id)->delete()) {
+            if ($user->member) {
+                Member::where('id', $user->member->id)->delete();
+            }
+
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
