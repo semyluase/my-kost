@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HotspotController;
 use App\Http\Controllers\Master\RuleController;
 use App\Http\Controllers\Master\Service\CleaningController;
 use App\Http\Controllers\Master\Service\LaundryController;
@@ -62,6 +63,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/masters/laundry-price/get-all-data', [LaundryController::class, 'getAllData']);
     Route::resource('/masters/laundry-price', LaundryController::class);
+
+    Route::get('/masters/hotspots/get-all-data', [HotspotController::class, 'getAllData']);
+    Route::resource('/masters/hotspots', HotspotController::class);
 
     Route::get('/transactions/rent-rooms/get-all-data', [TransactionRentController::class, 'getAllData']);
     Route::get('/transactions/rent-rooms/approved', [TransactionRentController::class, 'approvedPayment']);
