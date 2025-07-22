@@ -104,6 +104,7 @@ class TransactionRentController extends Controller
             $dataUser = [
                 'role_id'   =>  3,
                 'home_id'   =>  auth()->user()->home_id,
+                'username'  =>  makePhoneNumber($request->noHP),
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'name'  =>  Str::title($request->name),
                 'password'  =>  bcrypt(Carbon::parse($request->tanggalLahir)->isoFormat("DDMMYYYY")),
@@ -133,6 +134,7 @@ class TransactionRentController extends Controller
             ];
         } else {
             $dataMember = [
+                'user_id' =>  $user->id,
                 'type_identity' =>  $request->identity,
                 'identity'  =>  $request->identityNumber,
                 'address'   =>  $request->address,
