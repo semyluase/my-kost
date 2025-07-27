@@ -277,8 +277,6 @@ class HomeController extends Controller
 
         $data = [
             'name'  =>  Str::upper($request->name),
-            'langitute' =>  trim(explode(',', $request->langLong)[0]),
-            'longitute' =>  trim(explode(',', $request->langLong)[1]),
             'slug'  =>  $slug,
             'city'  =>  Str::upper($request->city),
             'address'  =>  Str::title($request->address),

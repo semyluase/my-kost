@@ -170,6 +170,9 @@ class UserController extends Controller
         if ($user->member) {
             $rent = TransactionRent::where('member_id', $user->member->id)
                 ->where('end_date', '>=', Carbon::now('Asia/Jakarta'))
+                ->where('is_change_room', false)
+                ->where('is_checkout_abnormal', false)
+                ->where('is_checkout_normal', false)
                 ->first();
 
             if ($rent) {
