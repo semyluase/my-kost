@@ -93,6 +93,8 @@ class TransactionRentController extends Controller
             $rent = TransactionRent::where('room_id', $room->id)
                 ->where('member_id', $member->id)
                 ->where('end_date', '>', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
+                ->where('is_checkout_abnormal', false)
+                ->where('is_checkout_normal', false)
                 ->first();
         }
 
