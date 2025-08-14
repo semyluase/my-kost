@@ -39,6 +39,7 @@
         const baseUrl = '{{ url('') }}'
     </script>
     @livewireStyles
+    @vite('resources/js/app.js')
 </head>
 
 <body class=" layout-fluid">

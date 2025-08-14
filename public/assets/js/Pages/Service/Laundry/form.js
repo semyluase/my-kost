@@ -25,12 +25,17 @@ const fnFormLaundry = {
     },
 
     onLoad: async () => {
+        fnFormLaundry.init.dropdowns.noKamarDropdown.enable();
         await createDropdown(
             `${baseUrl}/utils/dropdowns/get-room`,
             fnFormLaundry.init.dropdowns.noKamarDropdown,
             "Pilih Kamar",
             noKamar
         );
+
+        if (noKamar) {
+            fnFormLaundry.init.dropdowns.noKamarDropdown.disable();
+        }
 
         if (lunas == 1) {
             fnFormLaundry.init.buttons.btnSave.setAttribute("disabled", true);
@@ -40,40 +45,29 @@ const fnFormLaundry = {
 
 fnFormLaundry.onLoad();
 
-quantityInput.addEventListener("keyup", () => {
-    categorySelect.forEach((item) => {
-        if (item.checked) {
-            subTotalInput.value =
-                parseInt(item.dataset.price) *
-                parseFloat(
-                    parseFloat(
-                        quantityInput.value == "" ? 0 : quantityInput.value
-                    ) / item.dataset.weight
-                );
-        }
-    });
-});
+// quantityInput.addEventListener("keyup", () => {
+//     categorySelect.forEach((item) => {
+//         if (item.checked) {
+//             subTotalInput.value =
+//                 parseInt(item.dataset.price) *
+//                 parseFloat(
+//                     parseFloat(
+//                         quantityInput.value == "" ? 0 : quantityInput.value
+//                     ) / item.dataset.weight
+//                 );
+//         }
+//     });
+// });
 
 categorySelect.forEach((item) => {
     item.addEventListener("click", async () => {
-        if (quantityInput.value == "") {
-            swal.fire("Terjadi kesalahan", "Berat tidak boleh kosong", "error");
-            return false;
-        }
+        // if (quantityInput.value == "") {
+        //     swal.fire("Terjadi kesalahan", "Berat tidak boleh kosong", "error");
+        //     return false;
+        // }
+        quantityInput.value = item.dataset.weight;
 
-        subTotalInput.value =
-            parseInt(item.dataset.price) *
-            (item.dataset.weight == 0
-                ? parseFloat(
-                      parseFloat(
-                          quantityInput.value == "" ? 0 : quantityInput.value
-                      ) / 1
-                  )
-                : parseFloat(
-                      parseFloat(
-                          quantityInput.value == "" ? 0 : quantityInput.value
-                      ) / item.dataset.weight
-                  ));
+        subTotalInput.value = parseInt(item.dataset.price);
     });
 });
 
@@ -114,7 +108,7 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
             },
         }).showToast();
 
-        fnFormLaundry.onLoad();
+        window.location.href = `${baseUrl}/transactions/orders/laundry`;
     } else {
         swal.fire("Terjadi kesalahan", results.data.message, "error");
     }
@@ -126,8 +120,6 @@ fnFormLaundry.init.buttons.btnTakeLaundry.addEventListener(
         let kategori = Array.from(categorySelect).find((item) => item.checked);
 
         let payment = Array.from(paymentSelect).find((item) => item.checked);
-
-        console.log(kategori, payment);
 
         url = `${baseUrl}/transactions/orders/laundry`;
 
@@ -160,7 +152,7 @@ fnFormLaundry.init.buttons.btnTakeLaundry.addEventListener(
                 },
             }).showToast();
 
-            fnFormLaundry.onLoad();
+            window.location.href = `${baseUrl}/transactions/orders/laundry`;
         } else {
             swal.fire("Terjadi kesalahan", results.data.message, "error");
         }

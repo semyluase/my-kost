@@ -33,7 +33,7 @@
                                         class="form-selectgroup-input" {{ $laundry ? 'disabled' : '' }}
                                         data-id-laundry="{{ $price->id }}" data-weight="{{ $price->weight }}"
                                         data-price={{ $price->price }}
-                                        {{ $laundry ? $laundry->laundry_id == $price->id : ($loop->first ? 'checked' : '') }}>
+                                        {{ $laundry ? ($laundry->laundry_id == $price->id ? 'checked' : '') : '' }}>
                                     <div class="form-selectgroup-label d-flex align-items-center p-3">
                                         <div class="me-3">
                                             <span class="form-selectgroup-check"></span>
@@ -56,7 +56,7 @@
                     <div class="col-3">Rp.</div>
                     <div class="col-9">
                         <input type="text" name="sub-total" id="sub-total" class="form-control bg-gray-500" readonly
-                            value="{{ $laundry ? $laundry->harga_laundry * $laundry->qty_laundry : 0 }}">
+                            value="{{ $laundry ? $laundry->harga_laundry : 0 }}">
                     </div>
                 </div>
             </div>

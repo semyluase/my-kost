@@ -24,7 +24,7 @@ use App\Http\Controllers\Utils\DropdownController;
 use App\Http\Controllers\Utils\MasterController as UtilsMasterController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::get('/masters', [MasterController::class, 'index']);
@@ -93,10 +93,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     # laundry
     Route::get('/transactions/orders/laundry', [TransactionServiceController::class, 'indexLaundry']);
+    Route::post('/transactions/orders/laundry/receive-laundry', [TransactionServiceController::class, 'receiveLaundry']);
+    Route::post('/transactions/orders/laundry/finish-laundry', [TransactionServiceController::class, 'finishLaundry']);
+    Route::post('/transactions/orders/laundry/take-laundry', [TransactionServiceController::class, 'takeLaundry']);
     Route::get('/transactions/orders/laundry/create', [TransactionServiceController::class, 'createLaundry']);
     Route::get('/transactions/orders/laundry/get-detail', [TransactionServiceController::class, 'getDetailLaundry']);
     Route::get('/transactions/orders/laundry/get-all-data', [TransactionServiceController::class, 'getAllDataLaundry']);
     Route::post('/transactions/orders/laundry', [TransactionServiceController::class, 'storeLaundry']);
+    Route::post('/transactions/orders/laundry/store-payment', [TransactionServiceController::class, 'storeLaundryPayment']);
 
     # cleaning
     Route::get('/transactions/orders/cleaning', [TransactionServiceController::class, 'indexCleaning']);
@@ -137,8 +141,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/settings/users/profiles', [UserController::class, 'profile']);
     Route::resource('/settings/users', UserController::class);
 
-    Route::post('/logout', [AuthController::class, 'logout']);
-
     Route::get('/utils/dropdowns/get-homes', [DropdownController::class, 'getHome']);
     Route::get('/utils/dropdowns/get-categories', [DropdownController::class, 'getCategory']);
     Route::get('/utils/dropdowns/get-categories-transaction', [DropdownController::class, 'getCategoryForTransaction']);
@@ -153,6 +155,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/utils/prices/get-laundry', [DropdownController::class, 'getLaundry']);
 
     Route::get('/utils/master/user', [UtilsMasterController::class, 'getUserMember']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware(['guest'])->group(function () {

@@ -87,6 +87,7 @@
             </div>
         </div>
     </div>
+    @include('Pages.Services.partials.laundry.modalPayment')
     @push('myscript')
         <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/js/main.js') }}?{{ rand() }}"></script>

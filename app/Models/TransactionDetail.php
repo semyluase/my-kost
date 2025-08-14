@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Master\CategoryLaundry;
+use App\Models\Master\Service\Laundry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,7 +27,7 @@ class TransactionDetail extends Model
 
     function categorylaundry()
     {
-        return $this->belongsTo(CategoryLaundry::class);
+        return $this->belongsTo(Laundry::class, 'laundry_id', 'id');
     }
 
     function scopeGetReceipt($query, $nobukti)

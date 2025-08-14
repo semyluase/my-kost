@@ -16,6 +16,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 use function App\Helper\generateNoTrans;
 use function App\Helper\makePhoneNumber;
@@ -157,11 +158,12 @@ class TransactionServiceController extends Controller
 
         $room = Room::where('slug', $request->noKamar)->first();
 
-        $price = Laundry::where('kode_item', $request->kategori)->where('is_active', true)->get();
+        $price = Laundry::where('kode_item', $request->kategori)->where('is_active', true)->first();
 
         $header = [
             'nobukti'   =>  $nobukti,
             'room_id'   =>  $room->id,
+            'is_laundry'    =>  true,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
             'user_id'   =>  auth()->user()->id,
         ];
@@ -169,17 +171,15 @@ class TransactionServiceController extends Controller
         $detail = [
             'nobukti'   =>  $nobukti,
             'is_service'    =>  true,
-            'tgl_masuk' =>  Carbon::now('Asia/Jakarta'),
-            'tgl_selesai'   =>  $request->kategori == 'reguler' ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta')->addHour(6),
             'room_id'   =>  $room->id,
             'no_room'   =>  $room->number_room,
             'is_laundry'    =>  true,
             'laundry_id' =>  $price->id,
-            'harga_laundry' =>  $price->harga,
+            'harga_laundry' =>  $price->price,
             'qty_laundry'   =>  $request->berat,
             'pembayaran'    =>  $request->totalPayment ? $request->totalPayment : 0,
-            'tipe_pembayaran'    =>  $request->totalPayment ? $request->payment : null,
-            'kembalian'    =>  $request->totalPayment ? $request->totalPayment - ($price->harga * $request->berat) : 0,
+            'tipe_pembayaran'    =>  $request->payment,
+            'kembalian'    =>  $request->totalPayment ? $request->totalPayment - $price->harga : 0,
             'is_verified'   =>  $request->totalPayment ? true : false,
             'is_payment'   =>  $request->totalPayment ? true : false,
         ];
@@ -238,6 +238,78 @@ class TransactionServiceController extends Controller
                 ]
             ]);
         }
+    }
+
+    function storeLaundryPayment(Request $request)
+    {
+        if ($request->payment == 'tunai') {
+            $validator = Validator::make($request->all(), [
+                'totalBayar'    =>  'required',
+            ], [
+                'totalBayar.required'   =>  "Harap isi total bayar"
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  $validator->errors()
+                    ]
+                ]);
+            }
+        }
+
+        $dataLaundry = TransactionDetail::with(['categorylaundry'])->where('nobukti', $request->nobukti)
+            ->first();
+
+        $dataHeader = [
+            'tipe_pembayaran'   =>  $request->payment,
+            'pembayaran'    =>  $request->totalBayar,
+            'kembalian' =>  $request->totalBayar - $dataLaundry->categorylaundry->price,
+            'total' =>  $dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price,
+        ];
+
+        $dataDetail = [
+            'tipe_pembayaran'   =>  $request->payment,
+            'pembayaran'    =>  $request->totalBayar,
+            'kembalian' =>  $request->totalBayar - ($dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price),
+            'harga_laundry' =>  $dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price,
+            'is_verify' =>  true,
+            'is_payment'    =>  true,
+        ];
+
+        DB::beginTransaction();
+
+        if (TransactionDetail::where('nobukti', $request->nobukti)->update($dataDetail)) {
+            if (TransactionHeader::where('nobukti', $request->nobukti)->update($dataHeader)) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  "Laundry berhasil dibayar"
+                    ]
+                ]);
+            }
+
+            DB::rollBack();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  "Laundry gagal dibayar"
+                ]
+            ]);
+        }
+
+        DB::rollBack();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  "Laundry gagal dibayar"
+            ]
+        ]);
     }
 
     public function storeCleaning(Request $request)
@@ -360,6 +432,135 @@ class TransactionServiceController extends Controller
                 ]
             ]);
         }
+    }
+
+    function receiveLaundry(Request $request)
+    {
+        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
+            ->first();
+
+        DB::beginTransaction();
+
+        if (TransactionDetail::find($transactionDetail->id)->update([
+            'tgl_masuk' =>  Carbon::now('Asia/Jakarta')
+        ])) {
+            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
+                'status'    =>  2,
+            ])) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Laundry sudah diterima',
+                    ]
+                ]);
+            }
+
+            DB::rollback();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  'Laundry gagal diterima',
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  'Laundry gagal diterima',
+            ]
+        ]);
+    }
+
+    function finishLaundry(Request $request)
+    {
+        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
+            ->first();
+
+        DB::beginTransaction();
+
+        if (TransactionDetail::find($transactionDetail->id)->update([
+            'tgl_selesai' =>  Carbon::now('Asia/Jakarta')
+        ])) {
+            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
+                'status'    =>  4,
+            ])) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Laundry sudah selesai',
+                    ]
+                ]);
+            }
+
+            DB::rollback();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  'Laundry belum selesai',
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  'Laundry belum selesai',
+            ]
+        ]);
+    }
+
+    function takeLaundry(Request $request)
+    {
+        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
+            ->first();
+
+        DB::beginTransaction();
+
+        if (TransactionDetail::find($transactionDetail->id)->update([
+            'tgl_ambil' =>  Carbon::now('Asia/Jakarta')
+        ])) {
+            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
+                'status'    =>  5,
+            ])) {
+                DB::commit();
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Laundry sudah diambil',
+                    ]
+                ]);
+            }
+
+            DB::rollback();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  'Laundry gagal diambil',
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  'Laundry gagal diambil',
+            ]
+        ]);
     }
 
     function startCleaning(Request $request)
@@ -597,6 +798,14 @@ class TransactionServiceController extends Controller
         //
     }
 
+    function getDetailLaundry(Request $request)
+    {
+        $dataLaundry = TransactionDetail::with(['categorylaundry'])->where('nobukti', $request->nobukti)
+            ->first();
+
+        return response()->json($dataLaundry);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -623,17 +832,36 @@ class TransactionServiceController extends Controller
         $no = 1;
         if ($laundries) {
             foreach ($laundries as $key => $value) {
-                $btnAction = '<div class="d-flex gap-2">
-                                <button class="btn btn-primary" title="Ambil Laundry" onclick="fnLaundry.onTakeLaundry(\'' . $value->nobukti . '\',\'' . csrf_token() . '\')">
+                $btnAction = '<div class="d-flex gap-2">';
+
+                if ($value->status == '1') {
+                    $btnAction .= '<button class="btn btn-primary" title="Terima Laundry" onclick="fnLaundry.receiveLaundry(\'' . $value->nobukti . '\',\'' . csrf_token() . '\')">
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-archive"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" /><path d="M10 12l4 0" /></svg>
+                                </button>';
+                }
+
+                if ($value->status == '2') {
+                    $btnAction .= '<button class="btn btn-primary" title="Selesai Laundry" onclick="fnLaundry.finishLaundry(\'' . $value->nobukti . '\',\'' . csrf_token() . '\')">
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-pennant"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 2a1 1 0 0 1 .993 .883l.007 .117v.35l8.406 3.736c.752 .335 .79 1.365 .113 1.77l-.113 .058l-8.406 3.735v7.351h1a1 1 0 0 1 .117 1.993l-.117 .007h-4a1 1 0 0 1 -.117 -1.993l.117 -.007h1v-17a1 1 0 0 1 1 -1z" /></svg>
+                                </button>';
+                }
+
+                if ($value->status == '4') {
+                    $btnAction .= '<button class="btn btn-primary" title="Ambil Laundry" onclick="fnLaundry.onTakeLaundry(\'' . $value->nobukti . '\',\'' . $value->is_payment . '\',\'' . csrf_token() . '\')">
                                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-paper-bag"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 3h8a2 2 0 0 1 2 2v1.82a5 5 0 0 0 .528 2.236l.944 1.888a5 5 0 0 1 .528 2.236v5.82a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-5.82a5 5 0 0 1 .528 -2.236l1.472 -2.944v-3a2 2 0 0 1 2 -2z" /><path d="M14 15m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M6 21a2 2 0 0 0 2 -2v-5.82a5 5 0 0 0 -.528 -2.236l-1.472 -2.944" /><path d="M11 7h2" /></svg>
-                                </button>
-                                <button class="btn btn-info" title="Detail Laundry" onclick="fnLaundry.onDetailLaundry(\'' . $value->nobukti . '\')">
-                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
-                                </button>
-                            </div>';
+                                </button>';
+                }
+
+                if (!$value->is_payment) {
+                    $btnAction .= '<button class="btn btn-primary" title="Paymenr Laundry" onclick="fnLaundry.onPayment(\'' . $value->nobukti . '\')">
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-mastercard"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M12 9.765a3 3 0 1 0 0 4.47" /><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /></svg>
+                                </button>';
+                }
+
+                $btnAction .= '</div>';
                 $results[] = [
                     $no,
-                    $value->nobukti,
+                    $value->nobukti . ' ' . ($value->is_payment ? '<span class="badge bg-teal text-teal-fg">Lunas</span>' : '<span class="badge bg-pink text-pink-fg">Belum Lunas</span>'),
                     $value->no_room,
                     $value->name,
                     $value->tgl_masuk ? Carbon::parse($value->tgl_masuk)->isoFormat("DD-MM-YYYY HH:mm") : '',
@@ -641,6 +869,8 @@ class TransactionServiceController extends Controller
                     $value->tgl_ambil ? Carbon::parse($value->tgl_ambil)->isoFormat("DD-MM-YYYY HH:mm") : '',
                     $btnAction,
                 ];
+
+                $no++;
             }
         }
 
