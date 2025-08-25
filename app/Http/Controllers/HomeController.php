@@ -480,13 +480,15 @@ class HomeController extends Controller
                         if ($rules) {
                             foreach ($rules as $key => $chunkRule) {
                                 foreach ($chunkRule as $key => $valueRule) {
-                                    $homeRules .= '<div class="col-6">
-                                    <div class="row g-3 align-items-center">
-                                      <div class="col">
-                                        <div class="text-reset d-block text-truncate">' . $valueRule->rule->name . '</div>
-                                      </div>
-                                    </div>
-                                  </div>';
+                                    if ($valueRule->rule) {
+                                        $homeRules .= '<div class="col-6">
+                                        <div class="row g-3 align-items-center">
+                                          <div class="col">
+                                            <div class="text-reset d-block text-truncate">' . $valueRule->rule->name . '</div>
+                                          </div>
+                                        </div>
+                                      </div>';
+                                    }
                                 }
                             }
                         }
