@@ -34,7 +34,7 @@ class Home extends Model
 
     function rule()
     {
-        return $this->hasMany(HomeRule::class);
+        return $this->hasMany(HomeRule::class, 'home_id', 'id');
     }
 
     function pictures()
@@ -44,7 +44,7 @@ class Home extends Model
 
     function scopeSearch($query, array $params)
     {
-        $query->when($params['search'] ?? false, fn ($query, $search) => ($query->where('name', "LIKE", "%$search%")->orWhere('city', "LIKE", "%$search%")->orWhere('address', "LIKE", "%$search%")));
+        $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('name', "LIKE", "%$search%")->orWhere('city', "LIKE", "%$search%")->orWhere('address', "LIKE", "%$search%")));
 
         return $query;
     }

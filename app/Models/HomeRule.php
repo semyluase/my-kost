@@ -14,6 +14,6 @@ class HomeRule extends Model
 
     function rule()
     {
-        return $this->belongsTo(Rule::class);
+        return $this->belongsTo(Rule::class, 'rule_id', 'id');
     }
 }
