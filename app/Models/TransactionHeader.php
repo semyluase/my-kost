@@ -38,7 +38,8 @@ class TransactionHeader extends Model
                 left join laundries l
                 on ttd.laundry_id = l.id
                 where tth.tanggal between '$startDate' and '$endDate'
-                and tth.is_laundry = true) tb");
+                and tth.is_laundry = true
+                order by tth.created_at desc) tb");
     }
 
     function scopeGetDataCleaning($query, $tgl)
