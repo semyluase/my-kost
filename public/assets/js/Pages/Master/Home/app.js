@@ -182,8 +182,12 @@ const fnHome = {
                 rulesList.forEach((r) => {
                     if (response.rule.length > 0) {
                         response.rule.forEach((rl) => {
-                            if (r.value == rl.rule.id) {
-                                r.checked = true;
+                            if (rl.rule) {
+                                if (r.value == rl.rule.id) {
+                                    r.checked = true;
+                                } else {
+                                    r.checked = false;
+                                }
                             } else {
                                 r.checked = false;
                             }
