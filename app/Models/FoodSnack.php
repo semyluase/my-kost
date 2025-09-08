@@ -30,6 +30,11 @@ class FoodSnack extends Model
         return $this->belongsTo(FoodSnackPicture::class, 'id', 'food_snack_id');
     }
 
+    function categoryOrder()
+    {
+        return $this->belongsTo(CategoryOrder::class, 'category', 'short_name');
+    }
+
     function scopeGetData($query)
     {
         return $query->select('*')

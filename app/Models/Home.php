@@ -34,7 +34,7 @@ class Home extends Model
 
     function rule()
     {
-        return $this->hasMany(HomeRule::class, 'home_id', 'id');
+        return $this->hasMany(HomeRule::class, 'home_id', 'id')->orderBy('index');
     }
 
     function pictures()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Utils;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\CategoryOrder;
 use App\Models\FoodSnack;
 use App\Models\Home;
 use App\Models\Location;
@@ -208,6 +209,26 @@ class DropdownController extends Controller
                     $results[] = [
                         'label' =>  $value->name,
                         'value' =>  $value->code_item,
+                    ];
+                }
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    function getCategoryOrder()
+    {
+        $categoryOrders = collect(CategoryOrder::where('is_active', true)->get())->chunk(100);
+
+        $results = array();
+
+        if ($categoryOrders) {
+            foreach ($categoryOrders as $key => $chunk) {
+                foreach ($chunk as $c => $value) {
+                    $results[] = [
+                        'label' =>  $value->name,
+                        'value' =>  $value->short_name,
                     ];
                 }
             }

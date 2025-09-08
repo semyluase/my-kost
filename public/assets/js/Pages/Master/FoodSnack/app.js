@@ -104,20 +104,7 @@ const fnFoodSnack = {
                 //     : `${baseUrl}/assets/image/nocontent.jpg`;
 
                 await createDropdown(
-                    [
-                        {
-                            label: "Makanan",
-                            value: "F",
-                        },
-                        {
-                            label: "Minuman",
-                            value: "D",
-                        },
-                        {
-                            label: "Makanan Ringan",
-                            value: "S",
-                        },
-                    ],
+                    `${baseUrl}/utils/dropdowns/get-category-orders`,
                     fnFoodSnack.init.dropdowns.categoryDropdown,
                     "Pilih Kategori",
                     response.category
@@ -236,20 +223,7 @@ fnFoodSnack.init.buttons.btnAdd.addEventListener("click", async () => {
 
     // viewFotoFoodSnack.src = `${baseUrl}/assets/image/nocontent.jpg`;
     await createDropdown(
-        [
-            {
-                label: "Makanan",
-                value: "F",
-            },
-            {
-                label: "Minuman",
-                value: "D",
-            },
-            {
-                label: "Makanan Ringan",
-                value: "S",
-            },
-        ],
+        `${baseUrl}/utils/dropdowns/get-category-orders`,
         fnFoodSnack.init.dropdowns.categoryDropdown,
         "Pilih Kategori",
         ""

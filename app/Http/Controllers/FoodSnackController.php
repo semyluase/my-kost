@@ -184,12 +184,14 @@ class FoodSnackController extends Controller
 
         $data = [
             'name'  =>  Str::title($request->name),
-            'code_item' =>  $request->codeFoodSnack,
             'category'  =>  $request->category,
             'price' =>  $request->price,
         ];
 
         if (FoodSnack::find($foodSnack->id)->update($data)) {
+            Stock::where('code_item', $foodSnack->code_item)->update([
+                'harga_jual' =>  $request->price,
+            ]);
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -265,12 +267,12 @@ class FoodSnackController extends Controller
 
     function getAllData(Request $request)
     {
-        $totalFoodSnacks = FoodSnack::count();
+        $totalFoodSnacks = FoodSnack::with(['categoryOrder'])->count();
 
-        $filteredFoodSnacks = FoodSnack::search(['search' => $request->search['value']])
+        $filteredFoodSnacks = FoodSnack::with(['categoryOrder'])->search(['search' => $request->search['value']])
             ->count();
 
-        $foodSnacks = collect(FoodSnack::search(['search' => $request->search['value']])
+        $foodSnacks = collect(FoodSnack::with(['categoryOrder'])->search(['search' => $request->search['value']])
             ->skip($request->start)
             ->limit($request->length)
             ->get())->chunk(10);
@@ -302,26 +304,12 @@ class FoodSnackController extends Controller
                                 </div>';
 
                     $image = $value->picture ? asset('assets/upload/foodSnack/' . $value->picture->file_name) : asset('assets/image/nocontent.jpg');
-                    $category = 'Makanan';
-
-                    switch ($value->category) {
-                        case 'D':
-                            $category = "Minuman";
-                            break;
-
-                        case 'S':
-                            $category = "Makanan Ringan";
-                            break;
-
-                        default:
-                            break;
-                    }
 
                     $results[] = [
                         $no,
                         '<img src="' . $image . '" class="img-responsive pt-0" style="max-width:5rem !important; max-height 7rem !important;">',
                         $value->name,
-                        $category,
+                        $value->categoryOrder ? $value->categoryOrder->name : "",
                         Number::currency($value->price, in: 'IDR', locale: 'id'),
                         $btnAction,
                     ];

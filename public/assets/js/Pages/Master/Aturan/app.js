@@ -20,8 +20,14 @@ const fnAturan = {
                 processing: true,
                 ordering: false,
                 scrollX: true,
+                rowReorder: true,
+                paging: false,
             }),
         },
+    },
+
+    onDragRow: async (id, csrf) => {
+        console.log(true);
     },
 
     onEdit: async (slug) => {
@@ -88,7 +94,7 @@ const fnAturan = {
                                         .url(
                                             `${baseUrl}/masters/rules/get-all-data`
                                         )
-                                        .draw();
+                                        .load();
                                 }
                             });
                     } else {
@@ -171,6 +177,45 @@ fnAturan.init.buttons.btnSaveRules.addEventListener("click", async () => {
             return false;
         }
 
+        if (typeof results.data.message == "string") {
+            swal.fire("Terjadi kesalahan", results.data.message, "error");
+            return false;
+        }
+    }
+});
+
+fnAturan.init.tables.tbAturan.on("row-reorder", async function (e, diff, edit) {
+    let reorder = [];
+    let csrf = fnAturan.init.tables.tbAturan.row().data()[4];
+    for (let i = 0, ien = diff.length; i < ien; i++) {
+        let rowData = fnAturan.init.tables.tbAturan.row(diff[i].node).data();
+        reorder.push({
+            id: rowData[3],
+            newPosition: diff[i].newPosition,
+            oldPosition: diff[i].oldPosition,
+        });
+    }
+
+    url = `${baseUrl}/masters/rules/re-order`;
+
+    data = JSON.stringify({
+        dataReorder: reorder,
+        _token: csrf,
+    });
+
+    method = "put";
+
+    blockUI();
+
+    const results = await onSaveJson(url, data, method);
+
+    unBlockUI();
+
+    if (results.data.status) {
+        fnAturan.init.tables.tbAturan.ajax
+            .url(`${baseUrl}/masters/rules/get-all-data`)
+            .load();
+    } else {
         if (typeof results.data.message == "string") {
             swal.fire("Terjadi kesalahan", results.data.message, "error");
             return false;

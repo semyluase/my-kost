@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Models\Home;
+use App\Models\HomeRule;
 use App\Models\Rule;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
@@ -74,11 +76,21 @@ class RuleController extends Controller
             'name'  => Str::title($request->name),
             'slug'  =>  $slug,
             'index'     =>  Rule::max('index') + 1,
-            'user_created'  =>  auth()->user()->username,
         ];
 
-        if (Rule::create($data)) {
+        $newRule = Rule::create($data);
+        if ($newRule) {
             DB::commit();
+
+            $homes = Home::where('is_active', true)->get();
+
+            foreach ($homes as $key => $value) {
+                HomeRule::create([
+                    'home_id'   =>  $value->id,
+                    'rule_id'   =>  $newRule->id,
+                    'index'   =>  $newRule->index,
+                ]);
+            }
 
             return response()->json([
                 'data'  =>  [
@@ -182,6 +194,48 @@ class RuleController extends Controller
         ]);
     }
 
+    function reOrder(Request $request)
+    {
+        DB::beginTransaction();
+
+        $totalData = 0;
+
+        foreach ($request->dataReorder as $key => $value) {
+            $data = [
+                'index' =>  $value['newPosition'] + 1,
+            ];
+
+            if (Rule::find($value['id'])->update($data)) {
+                HomeRule::where('rule_id', $value['id'])
+                    ->update([
+                        'index' =>  $value['newPosition'] + 1
+                    ]);
+
+                $totalData++;
+            }
+        }
+
+        if (collect($request->dataReorder)->count() == $totalData) {
+            DB::commit();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  true,
+                    'message'   =>  'Data berhasil diurutkan'
+                ]
+            ]);
+        }
+
+        DB::rollback();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  'Data gagal diurutkan'
+            ]
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -228,10 +282,18 @@ class RuleController extends Controller
                                             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                                         </button>
                                     </div>';
+                    $reOrder = '<div class="d-flex">
+                                    <button title="Drag to Re-Order Row" class="btn btn-action">
+                                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6l16 0" /><path d="M4 12l16 0" /><path d="M4 18l16 0" /></svg>
+                                        ' . $no . '
+                                    </button>
+                                </div>';
                     $results[] = [
-                        $no,
+                        $reOrder,
                         $value->name,
-                        $btnAction
+                        $btnAction,
+                        $value->id,
+                        csrf_token(),
                     ];
 
                     $no++;

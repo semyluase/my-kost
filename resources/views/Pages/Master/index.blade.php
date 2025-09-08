@@ -92,6 +92,22 @@
                                     Kamar</a>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <a href="#tabs-category-food-snack" class="nav-link" data-bs-toggle="tab"
+                                    aria-selected="false" tabindex="-1"
+                                    role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/user -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-category-2">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M14 4h6v6h-6z" />
+                                        <path d="M4 14h6v6h-6z" />
+                                        <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                        <path d="M7 7m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                    </svg>
+                                    Kategori Food Snack</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <a href="#tabs-food-snack" class="nav-link" data-bs-toggle="tab" aria-selected="false"
                                     tabindex="-1"
                                     role="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
@@ -175,6 +191,9 @@
                             <div class="tab-pane" id="tabs-room" role="tabpanel">
                                 @include('Pages.Master.Room.index')
                             </div>
+                            <div class="tab-pane" id="tabs-category-food-snack" role="tabpanel">
+                                @include('Pages.Master.CategoryOrder.index')
+                            </div>
                             <div class="tab-pane" id="tabs-food-snack" role="tabpanel">
                                 @include('Pages.Master.FoodSnack.index')
                             </div>
@@ -206,6 +225,9 @@
 
                         case 1:
                             fnHome.init.tables.tbHome.columns.adjust();
+                            fnHome.init.tables.tbHome.ajax
+                                .url(`${baseUrl}/masters/homes/get-all-data`)
+                                .load();
                             break;
 
                         case 2:
@@ -217,14 +239,18 @@
                             break;
 
                         case 4:
-                            fnFoodSnack.init.tables.tbFoodSnack.columns.adjust();
+                            fnCategoryItem.init.tables.tbCategoryItem.columns.adjust();
                             break;
 
                         case 5:
-                            fnPriceCleaning.init.tables.tbPriceCleaning.columns.adjust();
+                            fnFoodSnack.init.tables.tbFoodSnack.columns.adjust();
                             break;
 
                         case 6:
+                            fnPriceCleaning.init.tables.tbPriceCleaning.columns.adjust();
+                            break;
+
+                        case 7:
                             fnPriceLaundry.init.tables.tbPriceLaundry.columns.adjust();
                             break;
 

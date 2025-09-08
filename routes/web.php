@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodSnackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HotspotController;
+use App\Http\Controllers\Master\CategoryOrderController;
 use App\Http\Controllers\Master\RuleController;
 use App\Http\Controllers\Master\Service\CleaningController;
 use App\Http\Controllers\Master\Service\LaundryController;
@@ -30,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/masters', [MasterController::class, 'index']);
 
     Route::get('/masters/rules/get-all-data', [RuleController::class, 'getAllData']);
+    Route::put('/masters/rules/re-order', [RuleController::class, 'reOrder']);
     Route::resource('/masters/rules', RuleController::class);
 
     Route::get('/masters/homes/get-all-data', [HomeController::class, 'getAllData']);
@@ -51,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/masters/rooms/get-all-data', [RoomController::class, 'getAllData']);
     Route::get('/masters/rooms/view-picture/{room}', [RoomController::class, 'showPicture']);
     Route::resource('/masters/rooms', RoomController::class);
+
+    Route::get('/masters/category-orders/get-all-data', [CategoryOrderController::class, 'getAllData']);
+    Route::resource('/masters/category-orders', CategoryOrderController::class);
 
     Route::get('/masters/food-snacks/get-all-data', [FoodSnackController::class, 'getAllData']);
     Route::get('/masters/food-snacks/upload-picture/{foodSnack}', [FoodSnackController::class, 'getDataUpload']);
@@ -151,6 +156,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/utils/dropdowns/get-bank', [DropdownController::class, 'getBank']);
     Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);
     Route::get('/utils/dropdowns/get-items', [DropdownController::class, 'getItems']);
+    Route::get('/utils/dropdowns/get-category-orders', [DropdownController::class, 'getCategoryOrder']);
 
     Route::get('/utils/prices/get-laundry', [DropdownController::class, 'getLaundry']);
 
