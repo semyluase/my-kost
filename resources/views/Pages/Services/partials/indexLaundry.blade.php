@@ -72,9 +72,9 @@
                                                 <th>No. Transaksi</th>
                                                 <th>No. Kamar</th>
                                                 <th>Jenis</th>
-                                                <th>Tgl Masuk</th>
-                                                <th>Tgl Selesai</th>
-                                                <th>Tgl Ambil</th>
+                                                <th>Tgl. Order</th>
+                                                <th>Tgl. Proses</th>
+                                                <th>Tgl. Selesai</th>
                                                 <th>#</th>
                                             </tr>
                                         </thead>
