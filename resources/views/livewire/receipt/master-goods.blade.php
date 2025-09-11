@@ -30,7 +30,7 @@
                             code:'{{ $g->code_item }}',
                             name:'{{ $g->name }}',
                             category:'{{ $g->category }}',
-                            stock:{{ $stock->qty }} })">
+                            stock:{{ $stock ? $stock->qty : 0 }} })">
                         <div class="card" id="items">
                             <!-- Photo -->
                             @if ($g->picture)
@@ -43,7 +43,7 @@
                                 </div>
                             @endif
                             <div class="card-body">
-                                <h3 class="card-title">{{ $g->name }} ({{ $stock->qty }} Pcs)</h3>
+                                <h3 class="card-title">{{ $g->name }} ({{ $stock ? $stock->qty : 0 }} Pcs)</h3>
                             </div>
                         </div>
                     </a>
