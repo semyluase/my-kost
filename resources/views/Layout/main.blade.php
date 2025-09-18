@@ -23,7 +23,7 @@
     <link href="{{ asset('assets/vendor/datatable/datatables.min.css') }}?{{ rand() }}" rel="stylesheet" />
     <link href="{{ asset('assets/vendor/tabler/css/tabler.min.css') }}?{{ rand() }}" rel="stylesheet" />
     @livewireStyles
-    @vite(['resources/js/app.js', 'vendor/masmerise/livewire-toaster/resources/js'])
+    @vite(['resources/js/app.js'])
     @stack('mystyles')
     <style>
         @import url('https://rsms.me/inter/inter.css');
@@ -40,7 +40,6 @@
         const baseUrl = '{{ url('') }}'
     </script>
     @livewireStyles
-    @vite('resources/js/app.js')
 </head>
 
 <body class=" layout-fluid">
