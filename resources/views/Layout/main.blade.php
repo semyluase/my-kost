@@ -22,7 +22,8 @@
     <link href="{{ asset('assets/vendor/freezeui/freeze-ui.min.css') }}?{{ rand() }}" rel="stylesheet" />
     <link href="{{ asset('assets/vendor/datatable/datatables.min.css') }}?{{ rand() }}" rel="stylesheet" />
     <link href="{{ asset('assets/vendor/tabler/css/tabler.min.css') }}?{{ rand() }}" rel="stylesheet" />
-    @vite(['resources/js/app.js'])
+    @livewireStyles
+    @vite(['resources/js/app.js', 'vendor/masmerise/livewire-toaster/resources/js'])
     @stack('mystyles')
     <style>
         @import url('https://rsms.me/inter/inter.css');
@@ -221,7 +222,6 @@
             swal.fire(event.detail[0].message, event.detail[0].text, event.detail[0].type)
         });
     </script>
-    <script></script>
     @livewireScripts
     @stack('myscript')
 </body>

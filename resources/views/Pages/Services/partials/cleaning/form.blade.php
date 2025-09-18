@@ -54,11 +54,6 @@
                                 <span class="form-selectgroup-label">Transfer</span>
                             </label>
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="select-payment" id="select-payment" value="qris"
-                                    class="form-selectgroup-input">
-                                <span class="form-selectgroup-label">Qris</span>
-                            </label>
-                            <label class="form-selectgroup-item">
                                 <input type="radio" name="select-payment" id="select-payment" value="cash"
                                     class="form-selectgroup-input">
                                 <span class="form-selectgroup-label">Cash</span>
@@ -94,7 +89,7 @@
         <div class="row align-items-center">
             <div class="col-auto ms-auto">
                 <div class="btn-list">
-                    <a href="{{ url('') }}/transactions/orders/cleaning" class="btn btn-danger">
+                    <a href="{{ url('') }}/transactions/orders" class="btn btn-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">

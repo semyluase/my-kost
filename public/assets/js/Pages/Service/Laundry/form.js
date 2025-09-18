@@ -78,7 +78,7 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
 
     console.log(kategori, payment);
 
-    url = `${baseUrl}/transactions/orders/laundry`;
+    url = `${baseUrl}/transactions/orders`;
 
     method = "post";
 
@@ -108,7 +108,7 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
             },
         }).showToast();
 
-        window.location.href = `${baseUrl}/transactions/orders/laundry`;
+        window.location.href = `${baseUrl}/transactions/orders`;
     } else {
         swal.fire("Terjadi kesalahan", results.data.message, "error");
     }
@@ -121,7 +121,7 @@ fnFormLaundry.init.buttons.btnTakeLaundry.addEventListener(
 
         let payment = Array.from(paymentSelect).find((item) => item.checked);
 
-        url = `${baseUrl}/transactions/orders/laundry`;
+        url = `${baseUrl}/transactions/orders`;
 
         method = "post";
 
@@ -152,7 +152,7 @@ fnFormLaundry.init.buttons.btnTakeLaundry.addEventListener(
                 },
             }).showToast();
 
-            window.location.href = `${baseUrl}/transactions/orders/laundry`;
+            window.location.href = `${baseUrl}/transactions/orders`;
         } else {
             swal.fire("Terjadi kesalahan", results.data.message, "error");
         }

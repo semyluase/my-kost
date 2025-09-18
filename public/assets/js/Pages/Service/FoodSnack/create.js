@@ -199,7 +199,6 @@ fnCreateFoodSnack.init.buttons.btnPembayaran.addEventListener(
                     if (item.checked) {
                         switch (item.value) {
                             case "transfer":
-                            case "qris":
                             case "saldo":
                                 jumlahBayarInput.value = parseInt(
                                     totalHarga.textContent.replace(
@@ -252,7 +251,6 @@ tipePaymentSelect.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
             case "transfer":
-            case "qris":
             case "saldo":
                 jumlahBayarInput.value = parseInt(
                     totalHarga.textContent.replace(/[^0-9-,]/g, "")
@@ -344,11 +342,7 @@ fnCreateFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
         jumlahInput.value = "";
 
         if (nobuktiInput.value == "") {
-            window.history.pushState(
-                null,
-                null,
-                `${baseUrl}/transactions/orders/food-snack/create?nobukti=${results.data.nobukti}`
-            );
+            location.href = `${baseUrl}/transactions/orders`;
 
             nobuktiInput.value = results.data.nobukti;
         }

@@ -71,7 +71,6 @@ selectTopUp.forEach((item) => {
             if (item.checked) {
                 switch (item.value) {
                     case "transfer":
-                    case "qris":
                         inputPayment.value = parseInt(
                             inputSubtotal.value.replace(/[^0-9-,]/g, "")
                         );
@@ -107,7 +106,6 @@ selectPayment.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
             case "transfer":
-            case "qris":
                 inputPayment.value = parseInt(
                     inputSubtotal.value.replace(/[^0-9-,]/g, "")
                 );
@@ -149,7 +147,6 @@ inputTopup.addEventListener("keyup", () => {
         if (item.checked) {
             switch (item.value) {
                 case "transfer":
-                case "qris":
                     inputPayment.value = parseInt(
                         inputSubtotal.value.replace(/[^0-9-,]/g, "")
                     );

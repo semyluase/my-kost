@@ -137,7 +137,6 @@ selectPayment.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
             case "transfer":
-            case "qris":
                 inputSubtotal.value = new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
@@ -209,13 +208,7 @@ fnCleaning.init.buttons.btnSimpan.addEventListener("click", async () => {
         }).showToast();
 
         if (nobuktiInput.value == "") {
-            window.history.pushState(
-                null,
-                null,
-                `${baseUrl}/transactions/orders/cleaning/create?nobukti=${results.data.nobukti}`
-            );
-
-            nobuktiInput.value = results.data.nobukti;
+            location.href = `${baseUrl}/transactions/orders`;
         }
 
         fnCleaning.onLoad();

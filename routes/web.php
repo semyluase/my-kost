@@ -134,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/transactions/orders/food-snack', [TransactionFoodSnackController::class, 'update']);
     Route::delete('/transactions/orders/food-snack/{detail}', [TransactionFoodSnackController::class, 'destroyDetail']);
 
+    Route::get('/transactions/generate-receipt', [TransactionServiceController::class, 'generatePdf']);
     Route::resource('/transactions/orders', TransactionServiceController::class);
 
     Route::get('/settings/roles/get-all-data', [RoleController::class, 'getAllData']);

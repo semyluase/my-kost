@@ -107,4 +107,77 @@ class TransactionHeader extends Model
                     group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli) a
                     group by  code_item, name, tanggal, harga_beli, harga_jual) tb");
     }
+
+    function scopeFilterTransactionType($query, $transactionType)
+    {
+        switch ($transactionType) {
+            case 'food':
+                $query->where('is_order', true);
+                break;
+
+            case 'laundry':
+                $query->where('is_laundry', true);
+                break;
+
+            case 'cleaning':
+                $query->where('is_cleaning', true);
+                break;
+
+            case 'top-up':
+                $query->where('is_topup', true);
+                break;
+
+            default:
+                $query;
+                break;
+        }
+
+        return $query;
+    }
+
+    function scopeFilterTransactionStatus($query, $status)
+    {
+        switch ($status) {
+            case 1:
+                $query->where('status', 1);
+                break;
+
+            case '5':
+                $query->where('status', 5);
+                break;
+
+            case 2:
+            case 3:
+            case 4:
+                $query->whereNotIn('status', [1, 5]);
+                break;
+
+            default:
+                $query->where('status', '<>', 5);
+                break;
+        }
+
+        return $query;
+    }
+
+    function scopeFilterTransaction($query, $search)
+    {
+        if (!empty($search)) {
+            $query->whereLike('nobukti', "%$search%")
+                ->orWhereHas('room', function ($query) use ($search) {
+                    $query->whereLike('number_room', "%$search%");
+                });
+        }
+
+        return $query;
+    }
+
+    function scopeFilterByNobukti($query, $nobukti)
+    {
+        if (collect($nobukti)->count() > 0) {
+            $query->whereIn('nobukti', $nobukti);
+        }
+
+        return $query;
+    }
 }

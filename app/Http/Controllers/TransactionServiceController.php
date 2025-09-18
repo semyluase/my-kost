@@ -3,23 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Home;
-use App\Models\Master\Service\Cleaning;
-use App\Models\Master\Service\Laundry;
-use App\Models\Member;
-use App\Models\Member\TopUp;
-use App\Models\Pembayaran;
 use App\Models\Room;
-use App\Models\Service;
-use App\Models\TransactionDetail;
-use App\Models\TransactionHeader;
 use App\Models\User;
+use App\Models\Member;
+use App\Models\Service;
+use App\Models\Pembayaran;
+use App\Models\Member\TopUp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\TransactionDetail;
+use App\Models\TransactionHeader;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Master\Service\Laundry;
+use App\Models\Master\Service\Cleaning;
 
-use function App\Helper\generateNoTrans;
+use function App\Helper\generateCounterTransaction;
 use function App\Helper\makePhoneNumber;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionServiceController extends Controller
 {
@@ -151,7 +153,7 @@ class TransactionServiceController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti = generateNoTrans('LD');
+            $nobukti = generateCounterTransaction('LD');
 
             $mode = 'insert';
         }
@@ -165,7 +167,7 @@ class TransactionServiceController extends Controller
             'room_id'   =>  $room->id,
             'is_laundry'    =>  true,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
-            'user_id'   =>  auth()->user()->id,
+            'user_id'   =>  Auth::user()->id,
         ];
 
         $detail = [
@@ -321,7 +323,7 @@ class TransactionServiceController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti = generateNoTrans('CL');
+            $nobukti = generateCounterTransaction('CL');
 
             $mode = 'insert';
         }
@@ -337,7 +339,7 @@ class TransactionServiceController extends Controller
             'pembayaran'   =>  $request->totalbayar,
             'kembalian'   =>  $request->kembalian,
             'total'   =>  $priceCleaning->price,
-            'user_id'   =>  auth()->user()->id,
+            'user_id'   =>  Auth::user()->id,
             'is_cleaning'    =>  true,
         ];
 
@@ -671,12 +673,12 @@ class TransactionServiceController extends Controller
             ]);
         }
 
-        $nobukti = generateNoTrans('TP');
+        $nobukti = generateCounterTransaction('TP');
 
         $header = [
             'nobukti'   =>  $nobukti,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
-            'user_id'   =>  auth()->user()->id,
+            'user_id'   =>  Auth::user()->id,
         ];
 
         $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
@@ -919,5 +921,26 @@ class TransactionServiceController extends Controller
         return response()->json([
             'data'  =>  $results
         ]);
+    }
+
+    function generatePdf(Request $request)
+    {
+        $serviceTransaction = TransactionHeader::with(['room', 'details', 'details.foodSnack', 'details.categoryCleaning', 'details.categoryLaundry'])->where('is_receipt', false)
+            ->whereNotNull('room_id')
+            ->where('status', '<>', 5)
+            ->filterTransactionType($request->category)
+            ->filterTransaction($request->search)
+            ->filterByNobukti($request->nobuktiCheck ? explode(',', $request->nobuktiCheck) : [])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $home = Home::where('id', Auth::user()->home_id)
+            ->first();
+
+        $pdf = Pdf::loadView('Pages.Services.PDF.receipt', [
+            'transaction'   =>  $serviceTransaction,
+            'home'  =>  $home
+        ]);
+        return $pdf->stream("receipt.pdf");
     }
 }

@@ -28,6 +28,11 @@ function generateCounter($type, $category)
     return $category . '-' . Str::padLeft(1, 5, '0');
 }
 
+function generateCounterTransaction($category)
+{
+    return $category . Carbon::now('Asia/Jakarta')->timestamp;
+}
+
 function makePhoneNumber($phoneNumber)
 {
     $newPhoneNumber = $phoneNumber;
