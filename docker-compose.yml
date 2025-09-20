@@ -45,7 +45,7 @@ services:
                 GROUP_ID: 1001
         volumes:
             - .:/var/www/html
-        command: ["php", "/var/www/html/artisan", "schedule:work", "--tries=5"]
+        command: ["php", "/var/www/html/artisan", "schedule:work"]
         environment:
             - PHP_FPM_POOL_NAME="my-app_schedule"
         healthcheck:
