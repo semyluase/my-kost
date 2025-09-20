@@ -12,7 +12,7 @@ services:
         environment:
             - COMPOSER_HOME=~/.composer
         ports:
-            - 8004:8080
+            - 8003:8080
         volumes:
             - .:/var/www/html
 
