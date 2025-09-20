@@ -675,23 +675,23 @@ class TransactionRentController extends Controller
                 ]);
             }
 
-            $pdf = Pdf::loadView('Pages.Transaction.Pdf.invoicePdf', [
-                'data'  =>  $dataRent,
-                'deposit'  =>  $deposit
-            ]);
+            // $pdf = Pdf::loadView('Pages.Transaction.Pdf.invoicePdf', [
+            //     'data'  =>  $dataRent,
+            //     'deposit'  =>  $deposit
+            // ]);
 
-            $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
-            $pdf->save($filePath);
+            // $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
+            // $pdf->save($filePath);
 
             DB::commit();
 
 
-            Email::create([
-                'to'    =>  $dataRent->member->user->email,
-                'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
-                "attachment"    =>  $filePath,
-                'no_invoice'    =>  $dataRent->no_invoice,
-            ]);
+            // Email::create([
+            //     'to'    =>  $dataRent->member->user->email,
+            //     'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
+            //     "attachment"    =>  $filePath,
+            //     'no_invoice'    =>  $dataRent->no_invoice,
+            // ]);
 
             return response()->json([
                 'data'  =>  [
