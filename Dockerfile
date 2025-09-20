@@ -12,7 +12,7 @@ FROM base AS development
 USER root
 
 # Install the intl extension with root permissions
-RUN install-php-extensions zip mysqli pdo_mysql sockets soap sqlsrv pdo_sqlsrv gd intl
+RUN install-php-extensions zip mysqli pdo_mysql sockets soap gd intl
 
 # Downgrade openssl
 # COPY docker/openssl.cnf /etc/ssl/openssl.cnf

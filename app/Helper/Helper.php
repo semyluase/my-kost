@@ -6,6 +6,40 @@ use App\Models\Counter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+function integerToRoman(int $num): string
+{
+    if ($num <= 0 || $num > 3999) { // Roman numerals typically don't represent zero or numbers above 3999
+        return '';
+    }
+
+    $romanNumerals = [
+        1000 => 'M',
+        900 => 'CM',
+        500 => 'D',
+        400 => 'CD',
+        100 => 'C',
+        90 => 'XC',
+        50 => 'L',
+        40 => 'XL',
+        10 => 'X',
+        9 => 'IX',
+        5 => 'V',
+        4 => 'IV',
+        1 => 'I'
+    ];
+
+    $result = '';
+
+    foreach ($romanNumerals as $value => $roman) {
+        while ($num >= $value) {
+            $result .= $roman;
+            $num -= $value;
+        }
+    }
+
+    return $result;
+}
+
 function generateCounter($type, $category)
 {
     $dataCounter = Counter::where('type', $type)
@@ -26,6 +60,31 @@ function generateCounter($type, $category)
     ]);
 
     return $category . '-' . Str::padLeft(1, 5, '0');
+}
+
+function generateCounterInvoice()
+{
+    $dataCounter = Counter::where('type', 'invoice')
+        ->where('category', 'INV')
+        ->where('tahun', Carbon::now('Asia/Jakarta')->isoFormat('YYYY'))
+        ->first();
+
+    $month = integerToRoman(Carbon::now('Asia/Jakarta')->month);
+    if ($dataCounter) {
+        Counter::find($dataCounter->id)->update([
+            'data' =>  $dataCounter->data + 1
+        ]);
+
+        return 'INV-' . Carbon::now('Asia/Jakarta')->year . '-' . $month . '-' . Str::padLeft($dataCounter->data + 1, 5, '0');
+    }
+
+    Counter::create([
+        'type' =>  'invoice',
+        'category' =>  'INV',
+        'data' =>  1,
+    ]);
+
+    return 'INV-' . Carbon::now('Asia/Jakarta')->year . '-' . $month . '-' . Str::padLeft(1, 5, '0');;
 }
 
 function generateCounterTransaction($category)

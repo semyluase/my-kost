@@ -1,5 +1,6 @@
 const noHPInput = document.querySelector("#nomor-handphone");
 const nameInput = document.querySelector("#name");
+const emailInput = document.querySelector("#email");
 const nomorIdentitasInput = document.querySelector("#nomor-identitas");
 const alamatInput = document.querySelector("#alamat");
 const durasiInput = document.querySelectorAll("input[type=radio][name=durasi]");
@@ -250,6 +251,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
             data = JSON.stringify({
                 noHP: noHPInput.value,
                 name: nameInput.value,
+                email: emailInput.value,
                 tanggalLahir: moment(
                     fnTransaction.init.datePicker.tanggalLahir
                         .getDate()
@@ -280,7 +282,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
 
             data = JSON.stringify({
                 noHP: noHPInput.value,
-                name: nameInput.value,
+                email: emailInput.value,
                 tanggalLahir: moment(
                     fnTransaction.init.datePicker.tanggalLahir
                         .getDate()

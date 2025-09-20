@@ -2,7 +2,7 @@
     <div class="col-12">
         <div class="row mb-3">
             <div class="col-lg-6 col-sm-12 mb-3">
-                <label for="nomor-handphone" class="form-label">Nomor HP <sub>(harus terkoneksi wa)</sub></label>
+                <label for="nomor-handphone" class="form-label">Nomor HP</label>
                 <div class="input-group mb-2">
                     <input type="text" name="nomor-handphone" id="nomor-handphone" class="form-control">
                     <button class="btn btn-primary" type="button" id="btn-view-member" title="Lihat Member">
@@ -25,6 +25,10 @@
             <div class="col-lg-6 col-sm-12 mb-3">
                 <label for="tanggal-lahir" class="form-label">Tanggal Lahir</label>
                 <input class="form-control " placeholder="Select a date" id="tanggal-lahir">
+            </div>
+            <div class="col-lg-6 col-sm-12 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" id="email" class="form-control">
             </div>
             <div class="col-lg-6 col-sm-12 mb-3">
                 <label for="jenis-identitas" class="form-label">Jenis Identitas</label>

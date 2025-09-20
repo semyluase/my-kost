@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailInvoice;
+use App\Models\Room;
+use App\Models\User;
+use App\Models\Email;
+use App\Models\Member;
 use App\Models\Category;
 use App\Models\Deposite;
-use App\Models\Member;
-use App\Models\Room;
-use App\Models\TMP\UserIdentity;
-use App\Models\TransactionRent;
-use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Number;
+use App\Models\TransactionRent;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\TMP\UserIdentity;
 
+use Illuminate\Support\Facades\DB;
 use function App\Helper\makePhoneNumber;
+use Illuminate\Support\Facades\Validator;
+use function App\Helper\generateCounterInvoice;
 
 class TransactionRentController extends Controller
 {
@@ -107,6 +111,7 @@ class TransactionRentController extends Controller
                 'role_id'   =>  3,
                 'home_id'   =>  auth()->user()->home_id,
                 'username'  =>  makePhoneNumber($request->noHP),
+                'email'  =>  $request->email,
                 'phone_number'  =>  makePhoneNumber($request->noHP),
                 'name'  =>  Str::title($request->name),
                 'password'  =>  bcrypt(Carbon::parse($request->tanggalLahir)->isoFormat("DDMMYYYY")),
@@ -119,6 +124,7 @@ class TransactionRentController extends Controller
             $user = User::create($dataUser);
         } else {
             User::find($user->id)->update([
+                'email' =>  $user->email ? $user->email : $request->email,
                 'home_id'   =>  $user->home_id == null ? auth()->user()->home_id : $user->home_id,
                 'foto_identity' =>  $userFoto ? $userFoto->id : null,
             ]);
@@ -181,13 +187,15 @@ class TransactionRentController extends Controller
                     break;
             }
 
+            $noInvoice = generateCounterInvoice();
             $dataRent = [
                 'room_id'   =>  $room->id,
                 'member_id' =>  $member->id,
                 'start_date'    =>  Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD"),
                 'end_date'  =>  $endDateRent,
                 'price' =>  $price,
-                'duration'  =>  $durasi
+                'duration'  =>  $durasi,
+                'no_invoice'    =>  $noInvoice
             ];
         }
 
@@ -251,6 +259,8 @@ class TransactionRentController extends Controller
                 'tanggal_transaksi' =>  Carbon::now('Asia/Jakarta')
             ];
 
+            $noInvoice = generateCounterInvoice();
+
             $insertDataKamarBaru = [
                 'room_id'   =>  $dataKamarBaru->id,
                 'member_id' =>  $dataKamar->rent->member->id,
@@ -261,6 +271,7 @@ class TransactionRentController extends Controller
                 'old_room_id'   =>  $dataKamar->id,
                 'is_approve'    =>  true,
                 'tanggal_transaksi' => Carbon::now('Asia/Jakarta'),
+                'no_invoice'    =>  $noInvoice
             ];
 
             if (TransactionRent::create($insertDataKamarBaru)) {
@@ -325,6 +336,7 @@ class TransactionRentController extends Controller
                     'tanggal_transaksi' =>  Carbon::now('Asia/Jakarta')
                 ];
 
+                $noInvoice = generateCounterInvoice();
                 $insertDataKamarBaru = [
                     'room_id'   =>  $dataKamarBaru->id,
                     'member_id' =>  $dataKamar->rent->member->id,
@@ -338,6 +350,7 @@ class TransactionRentController extends Controller
                     'total_hari_sewa'   =>  $totalSewa,
                     'kurang_bayar'  =>  $kurangBayar,
                     'pembulatan'    =>  $pembulatan,
+                    'no_invoice'    =>  $noInvoice
                 ];
 
                 if (TransactionRent::create($insertDataKamarBaru)) {
@@ -381,6 +394,8 @@ class TransactionRentController extends Controller
                     'tanggal_transaksi' =>  Carbon::now('Asia/Jakarta')
                 ];
 
+                $noInvoice = generateCounterInvoice();
+
                 $insertDataKamarBaru = [
                     'room_id'   =>  $dataKamarBaru->id,
                     'member_id' =>  $dataKamar->rent->member->id,
@@ -391,6 +406,7 @@ class TransactionRentController extends Controller
                     'old_room_id'   =>  $dataKamar->id,
                     'is_approve'    =>  true,
                     'tanggal_transaksi' => Carbon::now('Asia/Jakarta'),
+                    'no_invoice'    =>  $noInvoice
                 ];
 
                 if (TransactionRent::create($insertDataKamarBaru)) {
@@ -661,6 +677,21 @@ class TransactionRentController extends Controller
 
             DB::commit();
 
+            $pdf = Pdf::loadView('Pages.Transaction.Pdf.invoicePdf', [
+                'data'  =>  $dataRent,
+                'deposit'  =>  $deposit
+            ]);
+
+            $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
+            $pdf->save($filePath);
+
+            Email::create([
+                'to'    =>  $dataRent->member->user->email,
+                'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
+                "attachment"    =>  $filePath,
+                'no_invoice'    =>  $dataRent->no_invoice,
+            ]);
+
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,
@@ -687,5 +718,32 @@ class TransactionRentController extends Controller
         return response()->json(
             $member
         );
+    }
+
+    function generatePdf(Request $request)
+    {
+        $dataRent = TransactionRent::with(['member', 'member.user', 'room', 'room.category'])->where('no_invoice', $request->noInvoice)
+            ->latest()
+            ->first();
+
+        $deposit = Deposite::where('user_id', $dataRent->member->user->id)
+            ->where('room_id', $dataRent->room_id)
+            ->where('is_checkout', false)
+            ->first();
+
+        $pdf = Pdf::loadView('Pages.Transaction.Pdf.invoicePdf', [
+            'data'  =>  $dataRent,
+            'deposit'  =>  $deposit
+        ]);
+
+        $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
+        $pdf->save($filePath);
+
+        Email::create([
+            'to'    =>  $dataRent->member->user->email,
+            'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
+            "attachment"    =>  $filePath,
+            'no_invoice'    =>  $dataRent->no_invoice,
+        ]);
     }
 }

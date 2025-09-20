@@ -78,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions/rent-rooms/checkout', [TransactionRentController::class, 'checkout']);
     Route::get('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'detailPayment']);
     Route::get('/transactions/rent-rooms/search-member', [TransactionRentController::class, 'searchMember']);
+    Route::get('/transactions/rent-rooms/generate-pdf', [TransactionRentController::class, 'generatePdf']);
     Route::post('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'saveDetailPayment']);
     Route::post('/transactions/rent-rooms/upload-identity', [UserIdentityController::class, 'uploadIdentity']);
     Route::post('/transactions/rent-rooms/upload-foto-orang', [UserIdentityController::class, 'uploadFotoOrang']);
