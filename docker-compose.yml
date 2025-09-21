@@ -26,7 +26,7 @@ services:
                 GROUP_ID: 1001
         volumes:
             - .:/var/www/html
-        command: ["php", "/var/www/html/artisan", "queue:listen", "--tries=5"]
+        command: ["php", "/var/www/html/artisan", "queue:work"]
         environment:
             - PHP_FPM_POOL_NAME="my-app_queue"
         healthcheck:
