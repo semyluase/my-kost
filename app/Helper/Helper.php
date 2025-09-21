@@ -82,6 +82,7 @@ function generateCounterInvoice()
         'type' =>  'invoice',
         'category' =>  'INV',
         'data' =>  1,
+        'tahun' =>  Carbon::now('Asia/Jakarta')->year
     ]);
 
     return 'INV-' . Carbon::now('Asia/Jakarta')->year . '-' . $month . '-' . Str::padLeft(1, 5, '0');;
