@@ -119,7 +119,9 @@
             <div class="col-auto">
                 <ul>
                     @foreach ($data->member->user->location->rule as $value)
-                        <li>{{ $value->rule->name }}</li>
+                        @if ($value->rule)
+                            <li>{{ $value->rule->name }}</li>
+                        @endif
                     @endforeach
                 </ul>
             </div>
