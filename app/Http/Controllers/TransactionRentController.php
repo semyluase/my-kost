@@ -680,18 +680,17 @@ class TransactionRentController extends Controller
             //     'deposit'  =>  $deposit
             // ]);
 
-            // $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
+            $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
             // $pdf->save($filePath);
 
+            Email::create([
+                'to'    =>  $dataRent->member->user->email,
+                'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
+                "attachment"    =>  $filePath,
+                'no_invoice'    =>  $dataRent->no_invoice,
+            ]);
+
             DB::commit();
-
-
-            // Email::create([
-            //     'to'    =>  $dataRent->member->user->email,
-            //     'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
-            //     "attachment"    =>  $filePath,
-            //     'no_invoice'    =>  $dataRent->no_invoice,
-            // ]);
 
             return response()->json([
                 'data'  =>  [
