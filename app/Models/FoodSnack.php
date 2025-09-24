@@ -35,6 +35,11 @@ class FoodSnack extends Model
         return $this->belongsTo(CategoryOrder::class, 'category', 'short_name');
     }
 
+    function stock()
+    {
+        return $this->belongsTo(Stock::class, 'code_item', 'code_item');
+    }
+
     function scopeGetData($query)
     {
         return $query->select('*')

@@ -15,11 +15,6 @@
                         <span class="form-selectgroup-label">Transfer</span>
                     </label>
                     <label class="form-selectgroup-item">
-                        <input type="radio" name="tipe-pembayaran" id="tipe-pembayaran" value="qris"
-                            class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">Qris</span>
-                    </label>
-                    <label class="form-selectgroup-item">
                         <input type="radio" name="tipe-pembayaran" id="tipe-pembayaran" value="cash"
                             class="form-selectgroup-input">
                         <span class="form-selectgroup-label">Cash</span>

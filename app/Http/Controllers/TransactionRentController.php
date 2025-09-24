@@ -675,13 +675,7 @@ class TransactionRentController extends Controller
                 ]);
             }
 
-            // $pdf = Pdf::loadView('Pages.Transaction.Pdf.invoicePdf', [
-            //     'data'  =>  $dataRent,
-            //     'deposit'  =>  $deposit
-            // ]);
-
             $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
-            // $pdf->save($filePath);
 
             Email::create([
                 'to'    =>  $dataRent->member->user->email,

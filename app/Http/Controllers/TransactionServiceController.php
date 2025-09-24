@@ -158,7 +158,7 @@ class TransactionServiceController extends Controller
             $mode = 'insert';
         }
 
-        $room = Room::where('slug', $request->noKamar)->first();
+        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
 
         $price = Laundry::where('kode_item', $request->kategori)->where('is_active', true)->first();
 
@@ -167,7 +167,8 @@ class TransactionServiceController extends Controller
             'room_id'   =>  $room->id,
             'is_laundry'    =>  true,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
-            'user_id'   =>  Auth::user()->id,
+            'total' =>  $price->price,
+            'user_id'   =>  $room->rent->member->user_id,
         ];
 
         $detail = [
@@ -184,6 +185,7 @@ class TransactionServiceController extends Controller
             'kembalian'    =>  $request->totalPayment ? $request->totalPayment - $price->harga : 0,
             'is_verified'   =>  $request->totalPayment ? true : false,
             'is_payment'   =>  $request->totalPayment ? true : false,
+            'user_id'   =>  $room->rent->member->user_id,
         ];
 
         if ($mode == 'insert') {
@@ -678,7 +680,8 @@ class TransactionServiceController extends Controller
         $header = [
             'nobukti'   =>  $nobukti,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
-            'user_id'   =>  Auth::user()->id,
+            'user_id'   =>  $member->user_id,
+            'total' =>  $request->jumlahTopup,
         ];
 
         $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');

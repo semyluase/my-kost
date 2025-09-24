@@ -342,7 +342,7 @@ fnCreateFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
         jumlahInput.value = "";
 
         if (nobuktiInput.value == "") {
-            location.href = `${baseUrl}/transactions/orders`;
+            location.href = `${baseUrl}/transactions/orders/food-snack/create?nobukti=${results.data.nobukti}`;
 
             nobuktiInput.value = results.data.nobukti;
         }

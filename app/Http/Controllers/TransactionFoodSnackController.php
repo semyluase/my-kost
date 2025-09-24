@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryOrder;
 use App\Models\FoodSnack;
 use App\Models\Member\TopUp;
 use App\Models\Room;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
+use function App\Helper\generateCounterTransaction;
 use function App\Helper\generateNoTrans;
 
 class TransactionFoodSnackController extends Controller
@@ -71,12 +73,12 @@ class TransactionFoodSnackController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti  = generateNoTrans('FS');
+            $nobukti  = generateCounterTransaction('FS');
 
             $mode = 'insert';
         }
 
-        $room = Room::where('slug', $request->noKamar)->first();
+        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
 
         $foodSnack = FoodSnack::where('code_item', $request->kodeBarang)
             ->first();
@@ -90,7 +92,8 @@ class TransactionFoodSnackController extends Controller
                 'room_id'   =>  $room->id,
                 'tanggal'   =>  Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"),
                 'is_order'  =>  true,
-                'user_id'   =>  auth()->user()->id,
+                'total' =>  $foodSnack->price,
+                'user_id'   =>  $room->rent->member->user_id,
             ];
 
             $detail = [
@@ -102,6 +105,7 @@ class TransactionFoodSnackController extends Controller
                 'room_id'   =>  $room->id,
                 'no_room'   =>  $room->number_room,
                 'harga_jual'    =>  $foodSnack->price,
+                'user_id'   =>  $room->rent->member->user_id,
             ];
 
             $updateStock = [
@@ -165,19 +169,35 @@ class TransactionFoodSnackController extends Controller
                     'qty'   =>  $dataDetail->qty + $request->jumlah,
                 ];
 
+                $updateHeader = [
+                    'total' =>  $stock->harga_jual * ($dataDetail->qty + $request->jumlah)
+                ];
+
                 $updateStock = [
                     'qty'   =>  $stock->qty - $request->jumlah,
                 ];
 
                 if (TransactionDetail::where('id', $dataDetail->id)->update($detail)) {
                     if (Stock::where('code_item', $foodSnack->code_item)->update($updateStock)) {
-                        DB::commit();
+                        if (TransactionHeader::where('nobukti', $nobukti)->update($updateHeader)) {
+
+                            DB::commit();
+
+                            return response()->json([
+                                'data'  =>  [
+                                    'status'    =>  true,
+                                    'message'   =>  "Transaksi berhasil diproses",
+                                    'nobukti'   =>  $nobukti,
+                                ]
+                            ]);
+                        }
+                        DB::rollBack();
 
                         return response()->json([
                             'data'  =>  [
-                                'status'    =>  true,
-                                'message'   =>  "Transaksi berhasil diproses",
-                                'nobukti'   =>  $nobukti,
+                                'status'    =>  false,
+                                'message'   =>  "Transaksi gagal diproses",
+                                'nobukti'   =>  "",
                             ]
                         ]);
                     }
@@ -213,6 +233,14 @@ class TransactionFoodSnackController extends Controller
                 'room_id'   =>  $room->id,
                 'no_room'   =>  $room->number_room,
                 'harga_jual'    =>  $foodSnack->price,
+                'user_id'   =>  $room->rent->member->user_id,
+            ];
+
+            $header = TransactionHeader::where('nobukti', $nobukti)
+                ->first();
+
+            $updateHeader = [
+                'total' =>  $header->total + ($request->jumlah * $foodSnack->price)
             ];
 
             $updateStock = [
@@ -221,13 +249,24 @@ class TransactionFoodSnackController extends Controller
 
             if (TransactionDetail::create($detail)) {
                 if (Stock::where('code_item', $foodSnack->code_item)->update($updateStock)) {
-                    DB::commit();
+                    if (TransactionHeader::where('id', $header->id)->update($updateHeader)) {
+                        DB::commit();
+
+                        return response()->json([
+                            'data'  =>  [
+                                'status'    =>  true,
+                                'message'   =>  "Transaksi berhasil diproses",
+                                'nobukti'   =>  $nobukti,
+                            ]
+                        ]);
+                    }
+                    DB::rollBack();
 
                     return response()->json([
                         'data'  =>  [
-                            'status'    =>  true,
-                            'message'   =>  "Transaksi berhasil diproses",
-                            'nobukti'   =>  $nobukti,
+                            'status'    =>  false,
+                            'message'   =>  "Transaksi gagal diproses",
+                            'nobukti'   =>  "",
                         ]
                     ]);
                 }
@@ -278,7 +317,7 @@ class TransactionFoodSnackController extends Controller
                 'tipe_pembayaran'   =>  $request->tipePayment,
                 'pembayaran'    =>  $request->payment,
                 'kembalian' =>  $request->kembalian,
-                'status'    =>  5
+                'status'    =>  1
             ];
 
             $memberCredit = [
@@ -322,7 +361,7 @@ class TransactionFoodSnackController extends Controller
             'tipe_pembayaran'   =>  $request->tipePayment,
             'pembayaran'    =>  $request->payment,
             'kembalian' =>  $request->kembalian,
-            'status'    =>  5
+            'status'    =>  1
         ];
 
         if (TransactionHeader::where('id', $dataHeader->id)->update($header)) {
@@ -512,7 +551,7 @@ class TransactionFoodSnackController extends Controller
 
     function getListMenu()
     {
-        $kategori = Stock::groupBy(['kategori'])->get();
+        $kategori = CategoryOrder::where('is_active', true)->get();
 
         return response()->json(view('Pages.Services.partials.foodSnack.offCanvas.parts.menu', [
             'categories'    =>  $kategori
