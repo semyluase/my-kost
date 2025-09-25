@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tr_transaction_d', function (Blueprint $table) {
-            $table->dropColumn('is_express');
-            $table->dropColumn('category_laundry_id');
+            if (Schema::hasColumn('tr_deposites', 'is_express')) {
+                $table->dropColumn('is_express');
+            }
+
+            if (Schema::hasColumn('tr_deposites', 'category_laundry_id')) {
+                $table->dropColumn('category_laundry_id');
+            }
         });
     }
 
