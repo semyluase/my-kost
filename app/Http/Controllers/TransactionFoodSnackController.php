@@ -92,6 +92,7 @@ class TransactionFoodSnackController extends Controller
                 'room_id'   =>  $room->id,
                 'tanggal'   =>  Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"),
                 'is_order'  =>  true,
+                'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
                 'total' =>  $foodSnack->price,
                 'user_id'   =>  $room->rent->member->user_id,
             ];
@@ -357,7 +358,7 @@ class TransactionFoodSnackController extends Controller
         }
 
         $header = [
-            'total' =>  $request->totalHarga,
+            'total' =>  $request->totalharga,
             'tipe_pembayaran'   =>  $request->tipePayment,
             'pembayaran'    =>  $request->payment,
             'kembalian' =>  $request->kembalian,

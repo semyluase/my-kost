@@ -167,6 +167,7 @@ class TransactionServiceController extends Controller
             'room_id'   =>  $room->id,
             'is_laundry'    =>  true,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
+            'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $price->price,
             'user_id'   =>  $room->rent->member->user_id,
         ];
@@ -244,78 +245,6 @@ class TransactionServiceController extends Controller
         }
     }
 
-    function storeLaundryPayment(Request $request)
-    {
-        if ($request->payment == 'tunai') {
-            $validator = Validator::make($request->all(), [
-                'totalBayar'    =>  'required',
-            ], [
-                'totalBayar.required'   =>  "Harap isi total bayar"
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  $validator->errors()
-                    ]
-                ]);
-            }
-        }
-
-        $dataLaundry = TransactionDetail::with(['categorylaundry'])->where('nobukti', $request->nobukti)
-            ->first();
-
-        $dataHeader = [
-            'tipe_pembayaran'   =>  $request->payment,
-            'pembayaran'    =>  $request->totalBayar,
-            'kembalian' =>  $request->totalBayar - $dataLaundry->categorylaundry->price,
-            'total' =>  $dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price,
-        ];
-
-        $dataDetail = [
-            'tipe_pembayaran'   =>  $request->payment,
-            'pembayaran'    =>  $request->totalBayar,
-            'kembalian' =>  $request->totalBayar - ($dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price),
-            'harga_laundry' =>  $dataLaundry->harga_laundry ? $dataLaundry->harga_laundry : $dataLaundry->categorylaundry->price,
-            'is_verify' =>  true,
-            'is_payment'    =>  true,
-        ];
-
-        DB::beginTransaction();
-
-        if (TransactionDetail::where('nobukti', $request->nobukti)->update($dataDetail)) {
-            if (TransactionHeader::where('nobukti', $request->nobukti)->update($dataHeader)) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  "Laundry berhasil dibayar"
-                    ]
-                ]);
-            }
-
-            DB::rollBack();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  "Laundry gagal dibayar"
-                ]
-            ]);
-        }
-
-        DB::rollBack();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  "Laundry gagal dibayar"
-            ]
-        ]);
-    }
-
     public function storeCleaning(Request $request)
     {
         DB::beginTransaction();
@@ -330,7 +259,7 @@ class TransactionServiceController extends Controller
             $mode = 'insert';
         }
 
-        $room = Room::where('slug', $request->noKamar)->first();
+        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
         $priceCleaning = Cleaning::where('is_active', true)->first();
 
         $header = [
@@ -341,13 +270,11 @@ class TransactionServiceController extends Controller
             'pembayaran'   =>  $request->totalbayar,
             'kembalian'   =>  $request->kembalian,
             'total'   =>  $priceCleaning->price,
-            'user_id'   =>  Auth::user()->id,
+            'tgl_request' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
+            'user_id'   =>  $room->rent->member->user_id,
             'is_cleaning'    =>  true,
         ];
 
-        $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
-
-        // dd(Carbon::parse($request->tanggal)->isoFormat("Y-M-D"));
         $detail = [
             'nobukti'   =>  $nobukti,
             'is_service'    =>  true,
@@ -361,6 +288,7 @@ class TransactionServiceController extends Controller
             'is_cleaning'    =>  true,
             'is_payment'    =>  true,
             'is_verify'    =>  true,
+            'user_id'   =>  $room->rent->member->user_id,
         ];
 
         if ($mode == 'insert') {
@@ -401,7 +329,7 @@ class TransactionServiceController extends Controller
 
         if ($mode == 'update') {
             if (TransactionHeader::where('nobukti', $nobukti)->update([
-                'status'    =>  2
+                'status'    =>  1
             ])) {
                 if (TransactionDetail::where('nobukti', $nobukti)->update($detail)) {
                     DB::commit();
@@ -438,218 +366,6 @@ class TransactionServiceController extends Controller
         }
     }
 
-    function receiveLaundry(Request $request)
-    {
-        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
-            ->first();
-
-        DB::beginTransaction();
-
-        if (TransactionDetail::find($transactionDetail->id)->update([
-            'tgl_masuk' =>  Carbon::now('Asia/Jakarta')
-        ])) {
-            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
-                'status'    =>  2,
-            ])) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  'Laundry sudah diterima',
-                    ]
-                ]);
-            }
-
-            DB::rollback();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  'Laundry gagal diterima',
-                ]
-            ]);
-        }
-
-        DB::rollback();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  'Laundry gagal diterima',
-            ]
-        ]);
-    }
-
-    function finishLaundry(Request $request)
-    {
-        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
-            ->first();
-
-        DB::beginTransaction();
-
-        if (TransactionDetail::find($transactionDetail->id)->update([
-            'tgl_selesai' =>  Carbon::now('Asia/Jakarta')
-        ])) {
-            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
-                'status'    =>  4,
-            ])) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  'Laundry sudah selesai',
-                    ]
-                ]);
-            }
-
-            DB::rollback();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  'Laundry belum selesai',
-                ]
-            ]);
-        }
-
-        DB::rollback();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  'Laundry belum selesai',
-            ]
-        ]);
-    }
-
-    function takeLaundry(Request $request)
-    {
-        $transactionDetail = TransactionDetail::where('nobukti', $request->nobukti)
-            ->first();
-
-        DB::beginTransaction();
-
-        if (TransactionDetail::find($transactionDetail->id)->update([
-            'tgl_ambil' =>  Carbon::now('Asia/Jakarta')
-        ])) {
-            if (TransactionHeader::where('nobukti', $transactionDetail->nobukti)->update([
-                'status'    =>  5,
-            ])) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  'Laundry sudah diambil',
-                    ]
-                ]);
-            }
-
-            DB::rollback();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  'Laundry gagal diambil',
-                ]
-            ]);
-        }
-
-        DB::rollback();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  'Laundry gagal diambil',
-            ]
-        ]);
-    }
-
-    function startCleaning(Request $request)
-    {
-        DB::beginTransaction();
-
-        $transaction = TransactionDetail::where('nobukti', $request->nobukti)->first();
-
-        if (TransactionDetail::where('id', $transaction->id)->update([
-            'tgl_mulai_cleaning'    =>  Carbon::now("Asia/Jakarta")
-        ])) {
-            if (TransactionHeader::where('nobukti', $request->nobukti)->update([
-                'status'    => 3
-            ])) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  "Mulai membersihkan kamar " . $transaction->no_room,
-                    ]
-                ]);
-            }
-
-            DB::rollback();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  "Gagal mulai membersihkan kamar " . $transaction->no_room,
-                ]
-            ]);
-        }
-
-        DB::rollback();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  "Gagal mulai membersihkan kamar " . $transaction->no_room,
-            ]
-        ]);
-    }
-
-    function stopCleaning(Request $request)
-    {
-        DB::beginTransaction();
-
-        $transaction = TransactionDetail::where('nobukti', $request->nobukti)->first();
-
-        if (TransactionDetail::where('id', $transaction->id)->update([
-            'tgl_selesai_cleaning'    =>  Carbon::now("Asia/Jakarta")
-        ])) {
-            if (TransactionHeader::where('nobukti', $request->nobukti)->update([
-                'status'    =>  5
-            ])) {
-                DB::commit();
-
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  true,
-                        'message'   =>  "Selesai membersihkan kamar " . $transaction->no_room,
-                    ]
-                ]);
-            }
-            DB::rollback();
-
-            return response()->json([
-                'data'  =>  [
-                    'status'    =>  false,
-                    'message'   =>  "Gagal selesai membersihkan kamar " . $transaction->no_room,
-                ]
-            ]);
-        }
-
-        DB::rollback();
-
-        return response()->json([
-            'data'  =>  [
-                'status'    =>  false,
-                'message'   =>  "Gagal selesai membersihkan kamar " . $transaction->no_room,
-            ]
-        ]);
-    }
-
     function storeTopup(Request $request)
     {
         DB::beginTransaction();
@@ -681,6 +397,7 @@ class TransactionServiceController extends Controller
             'nobukti'   =>  $nobukti,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
             'user_id'   =>  $member->user_id,
+            'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $request->jumlahTopup,
         ];
 

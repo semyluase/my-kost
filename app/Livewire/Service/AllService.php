@@ -27,7 +27,7 @@ class AllService extends Component
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('tgl_request', 'asc')
             ->get();
 
         return view('livewire.service.all-service', [

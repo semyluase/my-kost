@@ -12,7 +12,7 @@
         <div class="row mb-3">
             @if (collect($foodSnacks)->count() > 0)
                 @foreach ($foodSnacks as $fs)
-                    <div class="col-6 mb-3 {{ $fs->stock->qty < 0 ? 'bg-gray-500' : '' }}">
+                    <div class="col-md-6 mb-3 {{ $fs->stock->qty < 0 ? 'bg-gray-500' : '' }}">
                         <a href="javascript:;"
                             onclick="fnCreateFoodSnack.onSelectBarang('{{ $fs->code_item }}', '{{ $fs->name }}','{{ $fs->stock->harga_jual }}',{{ $fs->stock->qty }})">
                             <div class="card {{ $fs->stock->qty < 0 ? 'disabled' : '' }}">

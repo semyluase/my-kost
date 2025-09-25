@@ -407,7 +407,7 @@ fnCreateFoodSnack.init.buttons.btnProsesPembayaran.addEventListener(
             swal.fire("Berhasil", results.data.message, "success").then(
                 (result) => {
                     if (result.isConfirmed) {
-                        window.location.href = `${baseUrl}/transactions/orders/food-snack`;
+                        window.location.href = `${baseUrl}/transactions/orders`;
                     }
                 }
             );

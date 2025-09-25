@@ -24,7 +24,11 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="row row-deck row-cards">
-
+                @livewire('Dashboard.Counter.CounterOrder')
+                @livewire('Dashboard.Counter.CounterLaundry')
+                @livewire('Dashboard.Counter.CounterCleaning')
+                @livewire('Dashboard.Counter.CounterTopup')
+                @livewire('Dashboard.Table.TableRoom')
             </div>
         </div>
     </div>
