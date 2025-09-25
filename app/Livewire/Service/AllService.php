@@ -52,6 +52,22 @@ class AllService extends Component
         ]);
     }
 
+    function printTransactionDaily()
+    {
+        $transactions = TransactionHeader::whereBetween('tgl_request', [
+            Carbon::now('Asia/Jakarta')->startOfDay(),
+            Carbon::now('Asia/Jakarta')->endOfDay()
+        ])->get();
+
+        $this->checkTransaction = $transactions->pluck('nobukti')->toArray();
+
+        $this->dispatch('allService.generate-pdf', [
+            'category'  =>  $this->categoryService,
+            'search'    =>  $this->search,
+            'nobuktiCheck'  =>  $this->checkTransaction,
+        ]);
+    }
+
     function receiptOrderLaundry($nobukti)
     {
         DB::beginTransaction();
