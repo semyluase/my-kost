@@ -14,16 +14,12 @@
                         $badge = '<span class="status status-primary">Transfer</span>';
                         break;
 
-                    case 'qris':
-                        $badge = '<span class="status status-info">Qris</span>';
-                        break;
-
                     default:
                         $badge = '<span class="status status-green">Cash</span>';
                         break;
                 }
             @endphp
-            <div class="col-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="card">
                     <div class="card-header">
                         <div class="row align-content-center">
@@ -33,8 +29,6 @@
                                         {{ $tp->nobukti }}
                                         @if ($tp->tipe_pembayaran == 'transfer')
                                             <span class="status status-primary">Transfer</span>
-                                        @elseif ($tp->tipe_pembayaran == 'qris')
-                                            <span class="status status-info">Qris</span>
                                         @elseif ($tp->tipe_pembayaran == 'cash')
                                             <span class="status status-green">Cash</span>
                                         @endif

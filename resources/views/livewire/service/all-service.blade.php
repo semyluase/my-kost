@@ -4,7 +4,7 @@
         use Illuminate\Support\Number;
     @endphp
     <div class="row g-2 align-items-center mb-3">
-        <div class="col">
+        <div class="col-md-4 mb-3">
             <button class="btn btn-primary" wire:click="printTransaction()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -26,9 +26,9 @@
                 Cetak (Hari Ini)
             </button>
         </div>
-        <div class="col-8 ms-auto d-print-none">
+        <div class="col-md-8 ms-auto d-print-none">
             <div class="row justify-content-end">
-                <div class="col-2">
+                <div class="col-md-3 mb-3">
                     <select wire:model.live="statusService" class="form-select">
                         <option value="">All Status</option>
                         <option value="1">Terima Order</option>
@@ -36,7 +36,7 @@
                         <option value="5">Selesai Order</option>
                     </select>
                 </div>
-                <div class="col-2">
+                <div class="col-md-3 mb-3">
                     <select wire:model.live="categoryService" class="form-select">
                         <option value="">All Order</option>
                         <option value="food">Food</option>
@@ -45,17 +45,11 @@
                         <option value="top-up">Top Up</option>
                     </select>
                 </div>
-                <div class="col-2">
+                <div class="col-md-3 mb-3">
                     <input type="text" wire:model.live.debounce.300ms="search" class="form-control"
                         placeholder="Search">
                 </div>
             </div>
-            {{-- <div class="col-2 col-md-2">
-            </div>
-            <div class="col-2 col-md-2">
-            </div>
-            <div class="col-2 col-md-2">
-            </div> --}}
         </div>
     </div>
     <div class="row mb-3">

@@ -38,7 +38,7 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="row row-deck row-cards">
-                <div class="col-6">
+                <div class="col-md-6">
                     @include('Pages.Services.partials.laundry.form')
                 </div>
             </div>

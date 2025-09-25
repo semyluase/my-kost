@@ -29,17 +29,17 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="row row-deck row-cards">
-                <div class="col-6">
+                <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <label for="member" class="form-label">Member (No. HP/Username/Email)</label>
                                     <input type="text" name="member" id="member" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-6">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Jumlah Top Up</label>
                                     <div class="row mb-3">
                                         <div class="col-12">
@@ -89,7 +89,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6 mb-3">
                                     <div class="row mb-3">
                                         <div class="col-12">
                                             <label class="form-label">Cara Pembayaran</label>
@@ -117,11 +117,11 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-6">
+                                <div class="col-md-6 mb-3">
                                     <label for="payment" class="form-label">Total Pembayaran</label>
                                     <input type="number" name="payment" id="payment" class="form-control">
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6 mb-3">
                                     <label for="kembalian" class="form-label">Total Kembalian</label>
                                     <input type="text" name="kembalian" id="kembalian"
                                         class="form-control bg-gray-500" readonly>
@@ -161,7 +161,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body overflow-scroll">
                             <div class="row mb-3">

@@ -11,11 +11,11 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6">
+            <div class="col-md-6 mb-3">
                 <label for="no-kamar" class="form-label">No Kamar</label>
                 <select name="no-kamar" id="no-kamar" class="form-select choices"></select>
             </div>
-            <div class="col-6">
+            <div class="col-md-6 mb-3">
                 <label for="quantity" class="form-label">Berat</label>
                 <input type="number" name="quantity" id="quantity" class="form-control" step="any"
                     value="{{ $laundry ? $laundry->qty_laundry : '' }}" {{ $laundry ? 'disabled' : '' }}>
@@ -25,7 +25,7 @@
             <div class="col-12">
                 <label for="" class="mb-3">Kategori</label>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-md-6 mb-3">
                         <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
                             @foreach ($laundryPrice as $price)
                                 <label class="form-selectgroup-item flex-fill">
@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6">
+            <div class="col-md-6 mb-3">
                 <label for="">Pembayaran</label>
                 <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
                     @foreach ($payments as $pay)
@@ -81,7 +81,7 @@
                     @endforeach
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-md-6 mb-3">
                 <div class="row mb-3">
                     <div class="col-12">
                         <label for="pembayaran" class="form-label">Total Bayar</label>

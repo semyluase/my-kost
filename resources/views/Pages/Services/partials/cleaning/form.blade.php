@@ -11,11 +11,11 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <label for="no-kamar" class="form-label">No Kamar</label>
                 <select name="no-kamar" id="no-kamar" class="form-select choices"></select>
             </div>
-            <div class="col-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <label for="tanggal-cleaning" class="form-label">Tanggal</label>
                 <div class="input-icon mb-2">
                     <input class="form-control" placeholder="Select a date" id="tanggal">
@@ -35,7 +35,7 @@
                     </span>
                 </div>
             </div>
-            <div class="col-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <label for="waktu-cleaning" class="form-label">Jam (<span class="text-gray-500">format
                         hh:mm</span>)</label>
                 <input type="text" name="waktu-cleaning" id="waktu-cleaning" class="form-control"
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-6">
+            <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-12">
                         <label class="form-label">Cara Pembayaran</label>
@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-12">
                         <label for="payment" class="form-label">Total Pembayaran</label>
