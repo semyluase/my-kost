@@ -9,6 +9,7 @@ use App\Models\Email;
 use App\Models\Member;
 use App\Models\Category;
 use App\Models\Deposite;
+use App\Models\Log\TransactionRent as LogTransactionRent;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -326,7 +327,7 @@ class TransactionRentController extends Controller
                 $pembulatan = 0;
                 if (substr($kurangBayar, -3) < 500 && substr($kurangBayar, -3) > 0) {
                     $pembulatan = 500 - substr($kurangBayar, -3);
-                } else {
+                } elseif (substr($kurangBayar, -3) > 500 && substr($kurangBayar, -3) < 0) {
                     $pembulatan = 1000 - substr($kurangBayar, -3);
                 }
 
@@ -512,6 +513,14 @@ class TransactionRentController extends Controller
 
         if (Deposite::where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
             if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
+                LogTransactionRent::create(
+                    [
+                        'room_id'   =>  $room->id,
+                        'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                        'is_check_out'   =>  true,
+                        'jumlah'    =>  $request->pengembalian,
+                    ]
+                );
                 DB::commit();
 
                 return response()->json([
@@ -660,6 +669,44 @@ class TransactionRentController extends Controller
             ->where('is_checkout', false)
             ->first();
 
+        if ($request->status == 'checkin') {
+            LogTransactionRent::insert([
+                [
+                    'room_id'   =>  $room->id,
+                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                    'is_check_in'   =>  true,
+                    'jumlah'    =>  $dataRent->price,
+                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                ],
+                [
+                    'room_id'   =>  $room->id,
+                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                    'is_deposit'   =>  true,
+                    'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit),
+                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                ],
+            ]);
+        } elseif ($request->status == 'upgrade') {
+            LogTransactionRent::create(
+                [
+                    'room_id'   =>  $dataRent->room_id,
+                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                    'is_upgrade'   =>  true,
+                    'jumlah'    =>  $dataRent->kurang_bayar,
+                ]
+            );
+        } else {
+            LogTransactionRent::create(
+                [
+                    'room_id'   =>  $room->id,
+                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                    'is_downgrade'   =>  true,
+                    'jumlah'    =>  $dataRent->price,
+                ]
+            );
+        }
         if (TransactionRent::find($dataRent->id)->update([
             'is_approve'   =>  true,
         ])) {

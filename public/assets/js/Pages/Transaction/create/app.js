@@ -133,6 +133,7 @@ const fnTransaction = {
                 unBlockUI();
                 if (response.id) {
                     nameInput.value = response.name;
+                    emailInput.value = response.email;
                     fnTransaction.init.dropdowns.jenisIdentitasDropdown.setChoiceByValue(
                         response.member == null
                             ? ""
@@ -155,8 +156,6 @@ const fnTransaction = {
                         : "";
 
                     tokenFotoOrang = response.foto ? response.foto.token : "";
-
-                    console.log(response.member);
 
                     if (response.member) {
                         if (response.member.user_identity) {

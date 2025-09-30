@@ -21,11 +21,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($dataDetails as $detail)
+                            @forelse ($dataDetails as $detail)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $detail->code_item }}</td>
-                                    <td>{{ $detail->foodSnack->name }}</td>
+                                    <td>{{ $detail->foodSnack ? $detail->foodSnack->name : '' }}</td>
                                     <td>{{ $detail->qty }}</td>
                                     <td>{{ $detail->harga_beli }}</td>
                                     <td>{{ number_format($detail->qty * $detail->harga_beli) }}</td>
@@ -47,11 +47,22 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-danger text-center">Tidak ada data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('listGoods.swal-modal', event => {
+                swal.fire(event[0].message, event[0].text, event[0].type)
+            });
+        });
+    </script>
 </div>

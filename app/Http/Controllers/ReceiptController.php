@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 use function App\Helper\formatExcel_Idr;
+use function App\Helper\generateCounterTransaction;
 use function App\Helper\generateNoTrans;
 use function App\Helper\styleExcel_Calibry;
 use function App\Helper\styleExcel_TableBorder;
@@ -74,7 +75,7 @@ class ReceiptController extends Controller
             ]);
         }
         if ($nobukti == '') {
-            $nobukti = generateNoTrans('RC');
+            $nobukti = generateCounterTransaction('RC');
             $mode = "insert";
         }
 
@@ -129,7 +130,6 @@ class ReceiptController extends Controller
                 ]
             ]);
         }
-
 
         if (TransactionHeader::create($header)) {
             if (TransactionDetail::create($detail)) {

@@ -12,23 +12,23 @@ use Livewire\Component;
 class ListGoods extends Component
 {
     public $noBukti;
-    protected $listeners = ['listGoodsRefresh' => 'refreshList'];
 
+    function mount()
+    {
+        $this->noBukti = request('nobukti');
+    }
+    #[On('listGoods.render')]
     public function render()
     {
-        $dataHeader = TransactionHeader::where('nobukti', $this->noBukti)
-            ->first();
-
         $dataDetails = TransactionDetail::with(['foodSnack'])->where('nobukti', $this->noBukti)
             ->get();
 
-
         return view('livewire.receipt.list-goods', [
-            'dataHeader'    =>  $dataHeader,
             'dataDetails'   =>  $dataDetails,
         ]);
     }
 
+    #[On('listGoods.refreshList')]
     function refreshList($noBukti)
     {
         $this->noBukti = $noBukti;
@@ -42,17 +42,17 @@ class ListGoods extends Component
         if (TransactionDetail::where('id', $id)->delete()) {
             DB::commit();
 
-            $this->dispatchBrowserEvent('swal:modal', [
+            $this->dispatch('listGoods.swal-modal', [
                 'type' => 'success',
                 'message' => 'Berhasil',
-                'text' => 'Data berhasil dihapus'
+                'text' => 'Data dihapus'
             ]);
 
             $this->refreshList($this->noBukti);
         } else {
             DB::rollBack();
 
-            $this->dispatchBrowserEvent('swal:modal', [
+            $this->dispatch('listGoods.swal-modal', [
                 'type' => 'error',
                 'message' => 'Terjadi kesalahan',
                 'text' => 'Data gagal dihapus'

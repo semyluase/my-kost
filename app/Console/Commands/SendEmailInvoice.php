@@ -23,7 +23,7 @@ class SendEmailInvoice extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send Email Invoice';
 
     /**
      * Execute the console command.

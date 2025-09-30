@@ -83,6 +83,8 @@ fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
                 const results = await onSaveJson(
                     `${baseUrl}/transactions/rent-rooms/detail-rents/${fnDetailSewa.init.buttons.btnSave.dataset.room}`,
                     JSON.stringify({
+                        status: fnDetailSewa.init.buttons.btnSave.dataset
+                            .status,
                         deposit: depositInput.value,
                         _token: fnDetailSewa.init.buttons.btnSave.dataset.csrf,
                     }),

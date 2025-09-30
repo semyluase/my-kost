@@ -13,6 +13,7 @@ use App\Http\Controllers\Master\Service\LaundryController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\RoomController;
@@ -143,6 +144,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/settings/role-menus/get-menu-data', [RoleMenuController::class, 'getMenuData']);
     Route::resource('/settings/role-menus', RoleMenuController::class);
+
+    Route::get('/reports/generate-data', [ReportController::class, 'downloadExcel']);
+    Route::get('/reports', [ReportController::class, 'index']);
 
     Route::get('/settings/users/get-all-data', [UserController::class, 'getAllData']);
     Route::get('/settings/users/profiles', [UserController::class, 'profile']);

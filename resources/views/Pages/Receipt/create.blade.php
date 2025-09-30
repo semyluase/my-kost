@@ -33,13 +33,13 @@
         <div class="container-xl">
             <div class="row row-deck row-cards">
                 <div class="col-6 mb-3">
-                    @include('Pages.Receipt.partials.form')
+                    @livewire('Receipt.AddGoods')
                 </div>
                 <div class="col-6 mb-3">
-                    @include('Pages.Receipt.partials.goods')
+                    @livewire('Receipt.MasterGoods')
                 </div>
-                <div class="col-12">
-                    @include('Pages.Receipt.partials.table')
+                <div class="col-12 mb-3">
+                    @livewire('Receipt.ListGoods')
                 </div>
             </div>
         </div>
@@ -48,6 +48,6 @@
         <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/bundle.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/toastify/toastify.js') }}?{{ rand() }}"></script>
-        <script src="{{ asset('assets/js/Pages/Receipt/create.js') }}?{{ rand() }}"></script>
+        {{-- <script src="{{ asset('assets/js/Pages/Receipt/create.js') }}?{{ rand() }}"></script> --}}
     @endpush
 @endsection
