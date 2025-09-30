@@ -190,6 +190,12 @@ noHPInput.addEventListener("keyup", async (event) => {
     }
 });
 
+noHPInput.addEventListener("blur", async (event) => {
+    if (noHPInput != "") {
+        await fnTransaction.searchMember(noHPInput.value);
+    }
+});
+
 durasiInput.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
