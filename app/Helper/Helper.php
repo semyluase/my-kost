@@ -4,6 +4,7 @@ namespace App\Helper;
 
 use App\Models\Counter;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 function integerToRoman(int $num): string
@@ -44,6 +45,7 @@ function generateCounter($type, $category)
 {
     $dataCounter = Counter::where('type', $type)
         ->where('category', $category)
+        ->where('home_id', Auth::user()->home_id)
         ->first();
 
     if ($dataCounter) {
@@ -57,6 +59,7 @@ function generateCounter($type, $category)
         'type' =>  $type,
         'category' =>  $category,
         'data' =>  1,
+        'home_id'   =>  Auth::user()->home_id,
     ]);
 
     return $category . '-' . Str::padLeft(1, 5, '0');
@@ -67,6 +70,7 @@ function generateCounterInvoice()
     $dataCounter = Counter::where('type', 'invoice')
         ->where('category', 'INV')
         ->where('tahun', Carbon::now('Asia/Jakarta')->isoFormat('YYYY'))
+        ->where('home_id', Auth::user()->home_id)
         ->first();
 
     $month = integerToRoman(Carbon::now('Asia/Jakarta')->month);
@@ -82,7 +86,8 @@ function generateCounterInvoice()
         'type' =>  'invoice',
         'category' =>  'INV',
         'data' =>  1,
-        'tahun' =>  Carbon::now('Asia/Jakarta')->year
+        'tahun' =>  Carbon::now('Asia/Jakarta')->year,
+        'home_id'   =>  Auth::user()->home_id
     ]);
 
     return 'INV-' . Carbon::now('Asia/Jakarta')->year . '-' . $month . '-' . Str::padLeft(1, 5, '0');;

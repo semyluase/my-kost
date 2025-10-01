@@ -3,10 +3,12 @@
 namespace App\Livewire\Service;
 
 use Akaunting\Money\Money;
+use App\Models\Email;
 use App\Models\TransactionDetail;
 use App\Models\TransactionHeader;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -24,6 +26,7 @@ class AllService extends Component
     {
         $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
             ->whereNotNull('room_id')
+            ->where('home_id', Auth::user()->home_id)
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
@@ -43,6 +46,22 @@ class AllService extends Component
                 'message' => 'Terjadi kesalahan',
                 'text' => 'Harap pilih transaksi yang akan dicetak'
             ]);
+        }
+
+        if ($this->checkAllTransaction) {
+            $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
+                ->whereNotNull('room_id')
+                ->filterTransactionType($this->categoryService)
+                ->filterTransactionStatus($this->statusService)
+                ->filterTransaction($this->search)
+                ->orderBy('tgl_request', 'asc')
+                ->get();
+
+            if ($serviceTransaction) {
+                foreach ($serviceTransaction as $key => $value) {
+                    $this->checkTransaction[] = $value->nobukti;
+                }
+            }
         }
 
         $this->dispatch('allService.generate-pdf', [
@@ -120,12 +139,25 @@ class AllService extends Component
     {
         DB::beginTransaction();
 
-        if (TransactionHeader::where('nobukti', $nobukti)->update([
+        $transaction = TransactionHeader::with(['user'])->where('nobukti', $nobukti)
+            ->first();
+
+        if (TransactionHeader::find($transaction->id)->update([
             'status'    =>  5
         ])) {
             if (TransactionDetail::where('nobukti', $nobukti)->update([
                 'tgl_selesai' =>  Carbon::now('Asia/Jakarta')
             ])) {
+                $filePath = public_path('assets/invoice/' . $nobukti . '.pdf');
+
+                Email::create([
+                    'to'    =>  $transaction->user->email,
+                    'subject'   =>  "Receipt " . $nobukti,
+                    "attachment"    =>  $filePath,
+                    'no_invoice'    =>  $nobukti,
+                    'is_order'  =>  true,
+                ]);
+
                 DB::commit();
 
                 $this->dispatch('allService.swal-modal', [
@@ -216,12 +248,25 @@ class AllService extends Component
     {
         DB::beginTransaction();
 
-        if (TransactionHeader::where('nobukti', $nobukti)->update([
+        $transaction = TransactionHeader::with(['user'])->where('nobukti', $nobukti)
+            ->first();
+
+        if (TransactionHeader::find($transaction->id)->update([
             'status'    =>  5
         ])) {
             if (TransactionDetail::where('nobukti', $nobukti)->update([
                 'tgl_selesai_cleaning' =>  Carbon::now('Asia/Jakarta')
             ])) {
+                $filePath = public_path('assets/invoice/' . $nobukti . '.pdf');
+
+                Email::create([
+                    'to'    =>  $transaction->user->email,
+                    'subject'   =>  "Receipt " . $nobukti,
+                    "attachment"    =>  $filePath,
+                    'no_invoice'    =>  $nobukti,
+                    'is_order'  =>  true,
+                ]);
+
                 DB::commit();
 
                 $this->dispatch('allService.swal-modal', [
@@ -296,9 +341,22 @@ class AllService extends Component
     {
         DB::beginTransaction();
 
-        if (TransactionHeader::where('nobukti', $nobukti)->update([
+        $transaction = TransactionHeader::with(['user'])->where('nobukti', $nobukti)
+            ->first();
+
+        if (TransactionHeader::find($transaction->id)->update([
             'status'    =>  5
         ])) {
+            $filePath = public_path('assets/invoice/' . $nobukti . '.pdf');
+
+            Email::create([
+                'to'    =>  $transaction->user->email,
+                'subject'   =>  "Receipt " . $nobukti,
+                "attachment"    =>  $filePath,
+                'no_invoice'    =>  $nobukti,
+                'is_order'  =>  true,
+            ]);
+
             DB::commit();
 
             $this->dispatch('allService.swal-modal', [

@@ -44,10 +44,15 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'city'  =>  'required',
+            'phone'  =>  'required',
+            'email'  =>  'required|email',
             'address'   =>  'required'
         ], [
             'name.required' =>  'Nama wajib diisi',
             'city.required' =>  'Kota wajib diisi',
+            'phone.required' =>  'No. Telp wajib diisi',
+            'email.required' =>  'Email wajib diisi',
+            'email.email' =>  'Format Email salah',
             'address.required' =>  'Alamat wajib diisi',
         ]);
 
@@ -81,6 +86,8 @@ class HomeController extends Controller
             'name'  =>  Str::upper($request->name),
             'slug'  =>  $slug,
             'city'  =>  Str::upper($request->city),
+            'phone_number'  =>  $request->phone,
+            'email'  =>  $request->email,
             'address'  =>  Str::title($request->address),
         ];
 
@@ -240,10 +247,15 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name'  =>  'required',
             'city'  =>  'required',
+            'phone'  =>  'required',
+            'email'  =>  'required|email',
             'address'   =>  'required'
         ], [
             'name.required' =>  'Nama wajib diisi',
             'city.required' =>  'Kota wajib diisi',
+            'phone.required' =>  'No. Telp wajib diisi',
+            'email.required' =>  'Email wajib diisi',
+            'email.email' =>  'Format Email salah',
             'address.required' =>  'Alamat wajib diisi',
         ]);
 
@@ -279,6 +291,8 @@ class HomeController extends Controller
             'name'  =>  Str::upper($request->name),
             'slug'  =>  $slug,
             'city'  =>  Str::upper($request->city),
+            'phone_number'  =>  $request->phone,
+            'email'  =>  $request->email,
             'address'  =>  Str::title($request->address),
         ];
 
@@ -522,7 +536,7 @@ class HomeController extends Controller
 
                     $results[] = [
                         $no,
-                        $value->name,
+                        $value->name . '<div class="text-secondary">' . $value->phone_number . '</div><div class="text-secondary">' . $value->email . '</div>',
                         $value->city . '</br>' . $value->address,
                         $homeRules,
                         $picture,

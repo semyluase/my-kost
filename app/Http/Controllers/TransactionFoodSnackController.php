@@ -11,6 +11,7 @@ use App\Models\TransactionDetail;
 use App\Models\TransactionHeader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -95,6 +96,7 @@ class TransactionFoodSnackController extends Controller
                 'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
                 'total' =>  $foodSnack->price,
                 'user_id'   =>  $room->rent->member->user_id,
+                'home_id'   =>  Auth::user()->home_id,
             ];
 
             $detail = [
@@ -171,7 +173,8 @@ class TransactionFoodSnackController extends Controller
                 ];
 
                 $updateHeader = [
-                    'total' =>  $stock->harga_jual * ($dataDetail->qty + $request->jumlah)
+                    'total' =>  $stock->harga_jual * ($dataDetail->qty + $request->jumlah),
+                    'home_id'   =>  Auth::user()->home_id,
                 ];
 
                 $updateStock = [
@@ -241,7 +244,8 @@ class TransactionFoodSnackController extends Controller
                 ->first();
 
             $updateHeader = [
-                'total' =>  $header->total + ($request->jumlah * $foodSnack->price)
+                'total' =>  $header->total + ($request->jumlah * $foodSnack->price),
+                'home_id'   =>  Auth::user()->home_id,
             ];
 
             $updateStock = [
@@ -362,7 +366,8 @@ class TransactionFoodSnackController extends Controller
             'tipe_pembayaran'   =>  $request->tipePayment,
             'pembayaran'    =>  $request->payment,
             'kembalian' =>  $request->kembalian,
-            'status'    =>  1
+            'status'    =>  1,
+            'home_id'   =>  Auth::user()->home_id,
         ];
 
         if (TransactionHeader::where('id', $dataHeader->id)->update($header)) {

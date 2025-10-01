@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\FoodSnack;
 use App\Helper\Helper;
 use App\Models\FoodSnackPicture;
+use App\Models\Home;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Number;
@@ -70,9 +72,34 @@ class FoodSnackController extends Controller
         ];
 
         if (FoodSnack::create($data)) {
+            if (Auth::user()->role->slug == 'super-admin') {
+                $home = Home::where('is_active', true)
+                    ->get();
+
+                if ($home) {
+                    foreach ($home as $key => $value) {
+                        Stock::create([
+                            'home_id'   =>  Auth::user()->home_id,
+                            'code_item' =>  $counter,
+                            'harga_jual' =>  $request->price,
+                            'home_id'   =>  $value->id
+                        ]);
+                    }
+                }
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Data Makanan & Minuman berhasil disimpan'
+                    ]
+                ]);
+            }
+
             Stock::create([
+                'home_id'   =>  Auth::user()->home_id,
                 'code_item' =>  $counter,
                 'harga_jual' =>  $request->price,
+                'home_id'   =>  Auth::user()->home_id
             ]);
 
             return response()->json([
@@ -189,9 +216,30 @@ class FoodSnackController extends Controller
         ];
 
         if (FoodSnack::find($foodSnack->id)->update($data)) {
+            if (Auth::user()->role->slug == 'super-admin') {
+                $stock = Stock::where('code_item', $foodSnack->code_item)->get();
+
+                if ($stock) {
+                    foreach ($stock as $key => $value) {
+                        Stock::where('id', $value->id)
+                            ->update([
+                                'harga_jual' =>  $request->price,
+                            ]);
+                    }
+                }
+
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  true,
+                        'message'   =>  'Data Makanan & Minuman berhasil diubah'
+                    ]
+                ]);
+            }
+
             Stock::where('code_item', $foodSnack->code_item)->update([
                 'harga_jual' =>  $request->price,
             ]);
+
             return response()->json([
                 'data'  =>  [
                     'status'    =>  true,

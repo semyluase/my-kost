@@ -729,6 +729,7 @@ class TransactionRentController extends Controller
                 'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
                 "attachment"    =>  $filePath,
                 'no_invoice'    =>  $dataRent->no_invoice,
+                'is_rent'   =>  true,
             ]);
 
             DB::commit();
@@ -785,6 +786,7 @@ class TransactionRentController extends Controller
             'subject'   =>  "Konfirmasi Pembayaran Pemesanan Kamar " . $dataRent->room->number_room . " - [" . $dataRent->member->user->name . "]",
             "attachment"    =>  $filePath,
             'no_invoice'    =>  $dataRent->no_invoice,
+            'is_rent'   =>  true,
         ]);
     }
 }

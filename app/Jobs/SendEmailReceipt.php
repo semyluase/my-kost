@@ -2,24 +2,27 @@
 
 namespace App\Jobs;
 
-use App\Mail\Invoice\InvoiceRoomMail;
+use App\Mail\Invoice\InvoiceOrderMail;
 use App\Models\Email;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 
-class SendEmailInvoice
+class SendEmailReceipt
 {
     use Dispatchable;
 
     public $data;
-    public $dataRent;
+    public $dataTransaction;
+
     /**
      * Create a new job instance.
      */
-    public function __construct($data, $dataRent)
+    public function __construct($data, $dataTransaction)
     {
         $this->data = $data;
-        $this->dataRent = $dataRent;
+        $this->dataTransaction = $dataTransaction;
     }
 
     /**
@@ -27,7 +30,7 @@ class SendEmailInvoice
      */
     public function handle(): void
     {
-        Mail::to($this->data->to)->queue(new InvoiceRoomMail($this->data, $this->dataRent));
+        Mail::to($this->data->to)->queue(new InvoiceOrderMail($this->data, $this->dataTransaction));
 
         Email::find($this->data->id)->update([
             'is_send'   =>  true

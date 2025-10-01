@@ -170,6 +170,7 @@ class TransactionServiceController extends Controller
             'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $price->price,
             'user_id'   =>  $room->rent->member->user_id,
+            'home_id'   =>  Auth::user()->home_id,
         ];
 
         $detail = [
@@ -273,6 +274,7 @@ class TransactionServiceController extends Controller
             'tgl_request' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
             'user_id'   =>  $room->rent->member->user_id,
             'is_cleaning'    =>  true,
+            'home_id'   =>  Auth::user()->home_id,
         ];
 
         $detail = [
@@ -399,6 +401,7 @@ class TransactionServiceController extends Controller
             'user_id'   =>  $member->user_id,
             'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $request->jumlahTopup,
+            'home_id'   =>  Auth::user()->home_id,
         ];
 
         $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
@@ -662,5 +665,26 @@ class TransactionServiceController extends Controller
             'home'  =>  $home
         ]);
         return $pdf->stream("receipt.pdf");
+    }
+
+    function generatePdfEmail(Request $request)
+    {
+        $dataTransaction = TransactionHeader::where('nobukti', $request->nobukti)
+            ->first();
+
+        $path = public_path('assets/image/Asset 1.png');
+        $imageData = file_get_contents($path);
+        $mimeType = mime_content_type($path);
+        $base64 = base64_encode($imageData);
+        $dataUri = 'data:' . $mimeType . ';base64,' . $base64;
+
+        $pdf = Pdf::loadView('Pages.Services.PDF.receiptEmailAttach', [
+            'data'  =>  $dataTransaction,
+            'image' =>  $dataUri
+        ]);
+
+        // $filePath = public_path('assets/invoice/' . $dataTransaction->nobukti . '.pdf');
+        return $pdf->stream($dataTransaction->nobukti . '.pdf');
+        // $pdf->save($filePath);
     }
 }

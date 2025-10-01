@@ -29,6 +29,11 @@ class TransactionHeader extends Model
         return $this->belongsTo(Room::class, 'room_id', 'id');
     }
 
+    function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     function scopeGetDataLaundry($query, $startDate, $endDate)
     {
         return $query->select('*')

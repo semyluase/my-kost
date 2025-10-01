@@ -1,6 +1,8 @@
 const nameHome = document.querySelector("#name-home");
 const slugHome = document.querySelector("#slug-home");
 const cityHome = document.querySelector("#city-home");
+const phoneHome = document.querySelector("#phone-home");
+const emailHome = document.querySelector("#email-home");
 const addressHome = document.querySelector("#address-home");
 const slugUploadHome = document.querySelector("#slug-upload-home");
 const viewGambarHome = document.querySelector("#view-gambar-home");
@@ -156,6 +158,8 @@ const fnHome = {
                 nameHome.value = response.name;
                 slugHome.value = response.slug;
                 cityHome.value = response.city;
+                phoneHome.value = response.phone_number;
+                emailHome.value = response.email;
                 addressHome.value = response.address;
 
                 const sharedFacility = document.querySelectorAll(
@@ -307,6 +311,8 @@ fnHome.init.buttons.btnAdd.addEventListener("click", () => {
     nameHome.value = "";
     slugHome.value = "";
     cityHome.value = "";
+    phoneHome.value = "";
+    emailHome.value = "";
     addressHome.value = "";
 
     const sharedFacility = document.querySelectorAll(
@@ -359,6 +365,8 @@ fnHome.init.buttons.btnSave.addEventListener("click", async () => {
             data = JSON.stringify({
                 name: nameHome.value,
                 city: cityHome.value,
+                phone: phoneHome.value,
+                email: emailHome.value,
                 address: addressHome.value,
                 sharedFacilities: sharedFacilities,
                 rules: rules,
@@ -374,6 +382,8 @@ fnHome.init.buttons.btnSave.addEventListener("click", async () => {
             data = JSON.stringify({
                 name: nameHome.value,
                 city: cityHome.value,
+                phone: phoneHome.value,
+                email: emailHome.value,
                 address: addressHome.value,
                 sharedFacilities: sharedFacilities,
                 rules: rules,
@@ -427,6 +437,26 @@ fnHome.init.buttons.btnSave.addEventListener("click", async () => {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.city[0],
+                "error"
+            );
+
+            return false;
+        }
+
+        if (results.data.message.phone[0]) {
+            swalWithBootstrapButtons.fire(
+                "Something Wrong",
+                results.data.message.phone[0],
+                "error"
+            );
+
+            return false;
+        }
+
+        if (results.data.message.email[0]) {
+            swalWithBootstrapButtons.fire(
+                "Something Wrong",
+                results.data.message.email[0],
                 "error"
             );
 

@@ -8,14 +8,14 @@
                         <div class="text-secondary">Hari ini</div>
                     </div>
                 </div>
-                <div class="h1 mb-3">{{ $counterUncomplete }}/{{ $counterComplete }}</div>
+                <div class="h1 mb-3">{{ $counterComplete }}/{{ $counterTotal }}</div>
                 <div class="progress progress-sm">
                     @php
-                        $total = $counterComplete != 0 ? ($counterUncomplete / $counterComplete) * 100 : 0;
+                        $total = $counterTotal != 0 ? ($counterComplete / $counterTotal) * 100 : 0;
                     @endphp
                     <div class="progress-bar bg-success" style="width: {{ $total }}" role="progressbar"
-                        aria-valuenow="{{ $counterUncomplete }}" aria-valuemin="0"
-                        aria-valuemax="{{ $counterComplete }}" aria-label="{{ $total }} Selesai">
+                        aria-valuenow="{{ $counterComplete }}" aria-valuemin="0" aria-valuemax="{{ $counterTotal }}"
+                        aria-label="{{ $total }} Selesai">
                         <span class="visually-hidden">{{ $total }} Selesai</span>
                     </div>
                 </div>

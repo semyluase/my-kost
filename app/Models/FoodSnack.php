@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class FoodSnack extends Model
 {
@@ -37,7 +38,11 @@ class FoodSnack extends Model
 
     function stock()
     {
-        return $this->belongsTo(Stock::class, 'code_item', 'code_item');
+        if (Auth::user()->role->slug == 'super-admin') {
+            return $this->belongsTo(Stock::class, 'code_item', 'code_item');
+        }
+
+        return $this->belongsTo(Stock::class, 'code_item', 'code_item')->where('home_id', Auth::user()->home_id);
     }
 
     function scopeGetData($query)

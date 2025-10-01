@@ -50,12 +50,11 @@ class AddGoods extends Component
         return view('livewire.receipt.add-goods');
     }
 
-    function selectGoods($code, $name, $category, $stock)
+    function selectGoods($code, $name, $category)
     {
         $this->code = $code;
         $this->name = $name;
         $this->category = $category;
-        $this->stock = $stock;
     }
 
     function calculateTotal()
@@ -217,7 +216,9 @@ class AddGoods extends Component
         $totalUpdate = 0;
         if ($detailTransaction) {
             foreach ($detailTransaction as $key => $value) {
-                $stock = Stock::where('code_item', $value->code_item)->first();
+                $stock = Stock::where('code_item', $value->code_item)
+                    ->where('home_id', Auth::user()->home_id)
+                    ->first();
 
                 if (Stock::where('id', $stock->id)->update([
                     'qty'   =>  $stock->qty + $value->qty,

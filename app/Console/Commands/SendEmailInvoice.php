@@ -31,6 +31,7 @@ class SendEmailInvoice extends Command
     public function handle()
     {
         $dataEmail = Email::where('is_send', false)
+            ->where('is_rent', true)
             ->get();
 
         if ($dataEmail) {

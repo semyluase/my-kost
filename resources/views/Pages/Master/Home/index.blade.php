@@ -61,6 +61,18 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-12">
+                        <label for="phone-home" class="form-label">No. Telp</label>
+                        <input type="text" name="phone-home" id="phone-home" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="email-home" class="form-label">Email</label>
+                        <input type="email" name="email-home" id="email-home" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
                         <label for="address-home" class="form-label">Alamat</label>
                         <textarea name="address-home" id="address-home" class="form-control" rows="5"></textarea>
                     </div>
