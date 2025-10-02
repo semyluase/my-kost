@@ -17,7 +17,7 @@ use Illuminate\Support\Number;
 use App\Models\TransactionRent;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\TMP\UserIdentity;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use function App\Helper\makePhoneNumber;
 use Illuminate\Support\Facades\Validator;
@@ -94,14 +94,14 @@ class TransactionRentController extends Controller
             ->first();
 
         $rent = null;
-        if ($member) {
-            $rent = TransactionRent::where('room_id', $room->id)
-                ->where('member_id', $member->id)
-                ->where('end_date', '>', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
-                ->where('is_checkout_abnormal', false)
-                ->where('is_checkout_normal', false)
-                ->first();
-        }
+        // if ($member) {
+        //     $rent = TransactionRent::where('room_id', $room->id)
+        //         ->where('member_id', $member->id)
+        //         ->where('end_date', '>', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
+        //         ->where('is_checkout_abnormal', false)
+        //         ->where('is_checkout_normal', false)
+        //         ->first();
+        // }
 
         $dataUser = array();
         $dataMember = array();
@@ -275,17 +275,26 @@ class TransactionRentController extends Controller
                 'no_invoice'    =>  $noInvoice
             ];
 
+            $deposit = Deposite::where('user_id', $dataKamar->rent->member->user->id)
+                ->where('room_id', $dataKamar->id)
+                ->where('is_checkout', false)
+                ->first();
+
             if (TransactionRent::create($insertDataKamarBaru)) {
                 if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
-                    DB::commit();
+                    if (Deposite::where('id', $deposit->id)->update([
+                        'room_id'   =>  $dataKamarBaru->id
+                    ])) {
+                        DB::commit();
 
-                    return response()->json([
-                        'data'  =>  [
-                            'status'    =>  true,
-                            'message'   =>  'Berhasil simpan transaksi',
-                            'url'   =>  '/transactions/rent-rooms',
-                        ]
-                    ]);
+                        return response()->json([
+                            'data'  =>  [
+                                'status'    =>  true,
+                                'message'   =>  'Berhasil simpan transaksi',
+                                'url'   =>  '/transactions/rent-rooms',
+                            ]
+                        ]);
+                    }
 
                     DB::rollback();
 
@@ -354,15 +363,34 @@ class TransactionRentController extends Controller
                     'no_invoice'    =>  $noInvoice
                 ];
 
+                $deposit = Deposite::where('user_id', $dataKamar->rent->member->user->id)
+                    ->where('room_id', $dataKamar->id)
+                    ->where('is_checkout', false)
+                    ->first();
+
                 if (TransactionRent::create($insertDataKamarBaru)) {
                     if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
-                        DB::commit();
+                        if (Deposite::find($deposit->id)->update([
+                            'room_id'   =>  $dataKamarBaru->id,
+                        ])) {
+
+                            DB::commit();
+
+                            return response()->json([
+                                'data'  =>  [
+                                    'status'    =>  true,
+                                    'message'   =>  'Berhasil Upgrade kamar',
+                                    'url'   =>  '/transactions/rent-rooms/detail-rents/' . $dataKamarBaru->number_room,
+                                ]
+                            ]);
+                        }
+                        DB::rollback();
 
                         return response()->json([
                             'data'  =>  [
-                                'status'    =>  true,
-                                'message'   =>  'Berhasil Upgrade kamar',
-                                'url'   =>  '/transactions/rent-rooms/detail-rents/' . $dataKamarBaru->number_room,
+                                'status'    =>  false,
+                                'message'   =>  'Gagal Upgrade kamar',
+                                'url'   =>  null,
                             ]
                         ]);
                     }
@@ -410,17 +438,26 @@ class TransactionRentController extends Controller
                     'no_invoice'    =>  $noInvoice
                 ];
 
+                $deposit = Deposite::where('user_id', $dataKamar->rent->member->user->id)
+                    ->where('room_id', $dataKamar->id)
+                    ->where('is_checkout', false)
+                    ->first();
+
                 if (TransactionRent::create($insertDataKamarBaru)) {
                     if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
-                        DB::commit();
+                        if (Deposite::find($deposit->id)->update([
+                            'room_id'   =>  $dataKamarBaru->id
+                        ])) {
+                            DB::commit();
 
-                        return response()->json([
-                            'data'  =>  [
-                                'status'    =>  true,
-                                'message'   =>  'Berhasil simpan transaksi',
-                                'url'   =>  '/transactions/rent-rooms',
-                            ]
-                        ]);
+                            return response()->json([
+                                'data'  =>  [
+                                    'status'    =>  true,
+                                    'message'   =>  'Berhasil simpan transaksi',
+                                    'url'   =>  '/transactions/rent-rooms',
+                                ]
+                            ]);
+                        }
 
                         DB::rollback();
 
@@ -586,8 +623,16 @@ class TransactionRentController extends Controller
     function getAllData(Request $request)
     {
         $rooms = collect(Room::with(['rent', 'rent.member', 'rent.member.user'])->searchCategory($request->category)
+            ->where('home_id', Auth::user()->home_id)
             ->orderBy('number_room')
             ->get())->chunk(10);
+
+        if (Auth::user()->role->slug == 'super_admin') {
+            $rooms = collect(Room::with(['rent', 'rent.member', 'rent.member.user'])->searchCategory($request->category)
+                ->where('home_id', Auth::user()->home_id)
+                ->orderBy('number_room')
+                ->get())->chunk(10);
+        }
 
         $results = array();
 
@@ -678,6 +723,7 @@ class TransactionRentController extends Controller
                     'jumlah'    =>  $dataRent->price,
                     'created_at'    =>  Carbon::now('Asia/Jakarta'),
                     'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                    'home_id'   =>  Auth::user()->home_id,
                 ],
                 [
                     'room_id'   =>  $room->id,
@@ -686,6 +732,7 @@ class TransactionRentController extends Controller
                     'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit),
                     'created_at'    =>  Carbon::now('Asia/Jakarta'),
                     'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                    'home_id'   =>  Auth::user()->home_id,
                 ],
             ]);
         } elseif ($request->status == 'upgrade') {
@@ -695,6 +742,7 @@ class TransactionRentController extends Controller
                     'tgl'   =>  Carbon::now('Asia/Jakarta'),
                     'is_upgrade'   =>  true,
                     'jumlah'    =>  $dataRent->kurang_bayar,
+                    'home_id'   =>  Auth::user()->home_id,
                 ]
             );
         } else {
@@ -704,9 +752,11 @@ class TransactionRentController extends Controller
                     'tgl'   =>  Carbon::now('Asia/Jakarta'),
                     'is_downgrade'   =>  true,
                     'jumlah'    =>  $dataRent->price,
+                    'home_id'   =>  Auth::user()->home_id,
                 ]
             );
         }
+
         if (TransactionRent::find($dataRent->id)->update([
             'is_approve'   =>  true,
         ])) {

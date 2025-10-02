@@ -87,7 +87,26 @@
                             <td>1.</td>
                             <td>{{ $data->room->number_room }}</td>
                             <td>{{ $data->room->category->name }}</td>
-                            <td>{{ Carbon::parse($data->start_date)->diffInDays(Carbon::parse($data->end_date)) + 1 }}
+                            <td>
+                                @switch($data->duration)
+                                    @case('daily')
+                                        Harian
+                                    @break
+
+                                    @case('weekly')
+                                        Mingguan
+                                    @break
+
+                                    @case('monthly')
+                                        Bulanan
+                                    @break
+
+                                    @case('yearly')
+                                        Bulanan
+                                    @break
+
+                                    @default
+                                @endswitch
                             </td>
                             <td>{{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
                             </td>
