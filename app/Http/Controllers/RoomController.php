@@ -58,7 +58,7 @@ class RoomController extends Controller
             ]);
         }
 
-        $slug = SlugService::createSlug(Room::class, 'slug', $request->name, ['unique' => false]);
+        $slug = SlugService::createSlug(Room::class, 'slug', $request->name . ' ' . $request->home, ['unique' => false]);
 
         $validator = Validator::make(['slug' => $slug], [
             'slug'  =>  'unique:rooms,slug'
@@ -177,7 +177,7 @@ class RoomController extends Controller
             ]);
         }
 
-        $slug = SlugService::createSlug(Room::class, 'slug', $request->name, ['unique' => false]);
+        $slug = SlugService::createSlug(Room::class, 'slug', $request->name . ' ' . $request->home, ['unique' => false]);
 
         if ($slug != $room->slug) {
             $validator = Validator::make(['slug' => $slug], [
