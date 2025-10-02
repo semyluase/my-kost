@@ -1,4 +1,4 @@
-let url, data, method, noKamarLama;
+let url, data, method, slug;
 
 const fnChangeRoom = {
     init: {
@@ -52,7 +52,7 @@ fnChangeRoom.init.buttons.btnSave.addEventListener("click", async () => {
     url = `${baseUrl}/transactions/rent-rooms/change-room`;
 
     data = JSON.stringify({
-        noKamarLama: noKamarLama,
+        noKamarLama: slug,
         noKamarBaru:
             fnChangeRoom.init.dropdowns.nomorKamarDropdown.getValue(true),
         _token: fnChangeRoom.init.buttons.btnSave.dataset.csrf,

@@ -246,11 +246,11 @@ class TransactionRentController extends Controller
         }
 
         $dataKamar = Room::with(['category', 'category.prices', 'rent', 'rent.member', 'rent.member.user'])
-            ->where('number_room', $request->noKamarLama)
+            ->where('slug', $request->noKamarLama)
             ->first();
 
         $dataKamarBaru = Room::with(['category', 'category.prices', 'rent', 'rent.member', 'rent.member.user'])
-            ->where('number_room', $request->noKamarBaru)
+            ->where('slug', $request->noKamarBaru)
             ->first();
 
         if ($dataKamar->category->slug == $dataKamarBaru->category->slug) {
@@ -380,7 +380,7 @@ class TransactionRentController extends Controller
                                 'data'  =>  [
                                     'status'    =>  true,
                                     'message'   =>  'Berhasil Upgrade kamar',
-                                    'url'   =>  '/transactions/rent-rooms/detail-rents/' . $dataKamarBaru->number_room,
+                                    'url'   =>  '/transactions/rent-rooms/detail-rents/' . $dataKamarBaru->slug,
                                 ]
                             ]);
                         }
@@ -443,6 +443,7 @@ class TransactionRentController extends Controller
                     ->where('is_checkout', false)
                     ->first();
 
+                dd($dataKamar->id);
                 if (TransactionRent::create($insertDataKamarBaru)) {
                     if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
                         if (Deposite::find($deposit->id)->update([
