@@ -12,7 +12,7 @@
         use Illuminate\Support\Number;
 
         $room = Room::with(['category', 'rent', 'rent.member', 'rent.member.user'])
-            ->where('number_room', request()->room)
+            ->where('slug', request()->room)
             ->first();
     @endphp
     <!-- Page header -->
@@ -58,7 +58,8 @@
                                             </div>
                                             <div>
                                                 Pindah Kamar merupakan Fungsi untuk pemindahan kamar atau downgrade kamar.
-                                                Perlu diinfokan ke Penghuni bahwa Uang Sewa tidak kembali. Jika Upgrade Kamar, Penghuni harus membayar selisih uang sewa!
+                                                Perlu diinfokan ke Penghuni bahwa Uang Sewa tidak kembali. Jika Upgrade
+                                                Kamar, Penghuni harus membayar selisih uang sewa!
                                             </div>
                                         </div>
                                     </div>

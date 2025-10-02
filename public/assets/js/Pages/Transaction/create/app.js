@@ -191,7 +191,7 @@ noHPInput.addEventListener("keyup", async (event) => {
 });
 
 noHPInput.addEventListener("blur", async (event) => {
-    if (noHPInput != "") {
+    if (noHPInput != "" && nameInput.value == "") {
         await fnTransaction.searchMember(noHPInput.value);
     }
 });

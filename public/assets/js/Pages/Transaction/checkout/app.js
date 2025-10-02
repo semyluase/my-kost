@@ -40,7 +40,7 @@ fnCheckout.init.buttons.btnSave.addEventListener("click", async () => {
     url = `${baseUrl}/transactions/rent-rooms/checkout`;
 
     data = JSON.stringify({
-        noKamar: nomorKamar,
+        slug: slug,
         jenisPengembalian: jenisPengembalian,
         bank:
             fnCheckout.init.dropdowns.bankDropdown.getValue(true) == undefined

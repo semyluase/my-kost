@@ -119,7 +119,7 @@
         <script src="{{ asset('assets/vendor/tabler/libs/dropzone/dist/dropzone-min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/js/Pages/Transaction/checkout/app.js') }}?{{ rand() }}"></script>
         <script>
-            nomorKamar = "{{ $room->number_room }}"
+            slug = "{{ $room->slug }}"
         </script>
     @endpush
 @endsection

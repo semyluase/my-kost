@@ -531,7 +531,7 @@ class TransactionRentController extends Controller
             }
         }
 
-        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
+        $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->slug)->first();
 
         // dd($room);
         $dataUpdateDeposit = [
