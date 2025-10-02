@@ -18,8 +18,16 @@ class AllService extends Component
     public $categoryService = "";
     public $statusService = "";
     public $search = "";
+    public $startDate = "";
+    public $endDate = "";
     public $checkTransaction = [];
     public $checkAllTransaction = false;
+
+    function mount()
+    {
+        $this->startDate = Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD");
+        $this->endDate = Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD");
+    }
 
     #[On('service.render')]
     public function render()
@@ -30,17 +38,61 @@ class AllService extends Component
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
+            ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
             ->orderBy('tgl_request', 'asc')
             ->get();
+
+        if (Auth::user()->role->slug == 'super-admin') {
+            $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
+                ->whereNotNull('room_id')
+                ->filterTransactionType($this->categoryService)
+                ->filterTransactionStatus($this->statusService)
+                ->filterTransaction($this->search)
+                ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
+                ->orderBy('tgl_request', 'asc')
+                ->get();
+        }
 
         return view('livewire.service.all-service', [
             'serviceTransaction'    =>  $serviceTransaction
         ]);
     }
 
+    #[On('allService.searchData')]
+    function searchData($startDate, $endDate)
+    {
+        $this->startDate = Carbon::parse($startDate)->isoFormat("YYYY-MM-DD");
+        $this->endDate = Carbon::parse($endDate)->isoFormat("YYYY-MM-DD");
+
+        $this->render();
+    }
+
+    function checkAllOrder()
+    {
+        if (!$this->checkAllTransaction) {
+            $this->checkTransaction = [];
+            return false;
+        }
+
+        $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
+            ->whereNotNull('room_id')
+            ->filterTransactionType($this->categoryService)
+            ->filterTransactionStatus($this->statusService)
+            ->filterTransaction($this->search)
+            ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
+            ->orderBy('tgl_request', 'asc')
+            ->get();
+
+        if ($serviceTransaction) {
+            foreach ($serviceTransaction as $key => $value) {
+                $this->checkTransaction[] = $value->nobukti;
+            }
+        }
+    }
+
     function printTransaction()
     {
-        if (!$this->checkAllTransaction && empty($this->checkTransaction)) {
+        if (empty($this->checkTransaction)) {
             $this->dispatch('allService.swal-modal', [
                 'type' => 'error',
                 'message' => 'Terjadi kesalahan',

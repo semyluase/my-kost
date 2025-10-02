@@ -3,7 +3,32 @@
         use Illuminate\Support\Carbon;
         use Illuminate\Support\Number;
     @endphp
+    <link rel="stylesheet"
+        href="{{ asset('assets/vendor/tabler/libs/litepicker/dist/css/litepicker.css') }}?{{ rand() }}">
     <div class="row g-2 align-items-center mb-3">
+        <div class="col-md-12 mb-3">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="input-icon mb-2">
+                        <input class="form-control" placeholder="Select a date" id="search-date" onselect="searchData()">
+                        <span
+                            class="input-icon-addon"><!-- Download SVG icon from http://tabler.io/icons/icon/calendar -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="icon icon-1">
+                                <path
+                                    d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z">
+                                </path>
+                                <path d="M16 3v4"></path>
+                                <path d="M8 3v4"></path>
+                                <path d="M4 11h16"></path>
+                                <path d="M11 15h1"></path>
+                                <path d="M12 15v3"></path>
+                            </svg></span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-md-4 mb-3">
             <button class="btn btn-primary" wire:click="printTransaction()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -61,7 +86,7 @@
                             <th rowspan="2">
                                 <label class="form-check">
                                     <input class="form-check-input border-1 border-blue" type="checkbox"
-                                        wire:model="checkAllTransaction">
+                                        wire:model="checkAllTransaction" wire:click="checkAllOrder()">
                                 </label>
                             </th>
                             <th rowspan="2">No.</th>
@@ -84,7 +109,8 @@
                                 <td>
                                     <label class="form-check">
                                         <input class="form-check-input border-1 border-blue" type="checkbox"
-                                            wire:model="checkTransaction" value="{{ $value->nobukti }}">
+                                            wire:model="checkTransaction" value="{{ $value->nobukti }}"
+                                            {{ in_array($value->nobukti, $checkTransaction) ? 'checked' : '' }}>
                                     </label>
                                 </td>
                                 <td>{{ $loop->iteration }}</td>
@@ -345,7 +371,37 @@
                 </table>
             </div>
         </div>
+        <script src="{{ asset('assets/vendor/momentJS/moment-with-locales.min.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/bundle.js') }}?{{ rand() }}"></script>
         <script>
+            const tanggalSearch = new Litepicker({
+                element: document.querySelector("#search-date"),
+                buttonText: {
+                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+                },
+                format: "DD/MM/YYYY",
+                singleMode: false,
+                startDate: moment('{{ $startDate }}'),
+                endDate: moment('{{ $endDate }}'),
+                lang: "id-ID",
+            })
+
+            const searchData = () => {
+                Livewire.dispatch('allService.searchData', {
+                    startDate: `${moment(tanggalSearch
+                        .getStartDate().toJSDate()).format("YYYY-MM-DD")}`,
+                    endDate: `${moment(tanggalSearch
+                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`
+                })
+            }
+
+            tanggalSearch.updateInput = () => {
+                searchData();
+            }
+
             document.addEventListener('livewire:initialized', () => {
                 Livewire.on('allService.swal-modal', event => {
                     swal.fire(event[0].message, event[0].text, event[0].type)
