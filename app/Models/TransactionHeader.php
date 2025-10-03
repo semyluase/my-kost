@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionHeader extends Model
 {
@@ -181,6 +182,25 @@ class TransactionHeader extends Model
     {
         if (collect($nobukti)->count() > 0) {
             $query->whereIn('nobukti', $nobukti);
+        }
+
+        return $query;
+    }
+
+    function scopeFilterByBranch($query)
+    {
+        if (Auth::user()->role->slug != 'super-admin') {
+            dd(Auth::user()->role->slug);
+            $query->where('home_id', Auth::user()->home_id);
+        }
+
+        return $query;
+    }
+
+    function scopeFilterByDate($query, $startDate, $endDate)
+    {
+        if ($startDate && $endDate) {
+            $query->whereBetween('tgl_request', [$startDate, $endDate]);
         }
 
         return $query;

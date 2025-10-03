@@ -34,24 +34,13 @@ class AllService extends Component
     {
         $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
             ->whereNotNull('room_id')
-            ->where('home_id', Auth::user()->home_id)
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
-            ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
+            ->filterByBranch()
+            ->filterByDate($this->startDate, $this->endDate)
             ->orderBy('tgl_request', 'asc')
             ->get();
-
-        if (Auth::user()->role->slug == 'super-admin') {
-            $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
-                ->whereNotNull('room_id')
-                ->filterTransactionType($this->categoryService)
-                ->filterTransactionStatus($this->statusService)
-                ->filterTransaction($this->search)
-                ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
-                ->orderBy('tgl_request', 'asc')
-                ->get();
-        }
 
         return view('livewire.service.all-service', [
             'serviceTransaction'    =>  $serviceTransaction
@@ -79,7 +68,8 @@ class AllService extends Component
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
-            ->whereBetween('tgl_request', [$this->startDate, $this->endDate])
+            ->filterByBranch()
+            ->filterByDate($this->startDate, $this->endDate)
             ->orderBy('tgl_request', 'asc')
             ->get();
 
