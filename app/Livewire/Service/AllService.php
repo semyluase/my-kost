@@ -23,12 +23,6 @@ class AllService extends Component
     public $checkTransaction = [];
     public $checkAllTransaction = false;
 
-    function mount()
-    {
-        $this->startDate = Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD");
-        $this->endDate = Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD");
-    }
-
     #[On('service.render')]
     public function render()
     {
