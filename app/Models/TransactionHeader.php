@@ -190,7 +190,6 @@ class TransactionHeader extends Model
     function scopeFilterByBranch($query)
     {
         if (Auth::user()->role->slug != 'super-admin') {
-            dd(Auth::user()->role->slug);
             $query->where('home_id', Auth::user()->home_id);
         }
 
