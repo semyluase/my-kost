@@ -18,8 +18,8 @@ class AllService extends Component
     public $categoryService = "";
     public $statusService = "";
     public $search = "";
-    public $startDate = "";
-    public $endDate = "";
+    public $startDate;
+    public $endDate;
     public $checkTransaction = [];
     public $checkAllTransaction = false;
 

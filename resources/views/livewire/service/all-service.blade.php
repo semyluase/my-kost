@@ -9,22 +9,18 @@
         <div class="col-md-12 mb-3">
             <div class="row">
                 <div class="col-md-3">
-                    <div class="input-icon mb-2">
-                        <input class="form-control" placeholder="Select a date" id="search-date" onselect="searchData()">
-                        <span
-                            class="input-icon-addon"><!-- Download SVG icon from http://tabler.io/icons/icon/calendar -->
+                    <div class="input-group">
+                        <input class="form-control" placeholder="Select a date" id="search-date">
+                        <button class="btn btn-primary" onclick="searchData()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="icon icon-1">
-                                <path
-                                    d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z">
-                                </path>
-                                <path d="M16 3v4"></path>
-                                <path d="M8 3v4"></path>
-                                <path d="M4 11h16"></path>
-                                <path d="M11 15h1"></path>
-                                <path d="M12 15v3"></path>
-                            </svg></span>
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-search">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                                <path d="M21 21l-6 -6" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -392,14 +388,10 @@
             const searchData = () => {
                 Livewire.dispatch('allService.searchData', {
                     startDate: `${moment(tanggalSearch
-                        .getStartDate().toJSDate()).format("YYYY-MM-DD")}`,
+                    .getStartDate().toJSDate()).format("YYYY-MM-DD")}`,
                     endDate: `${moment(tanggalSearch
-                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`
+                    .getEndDate().toJSDate()).format("YYYY-MM-DD")}`
                 })
-            }
-
-            tanggalSearch.updateInput = () => {
-                searchData();
             }
 
             document.addEventListener('livewire:initialized', () => {
