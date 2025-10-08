@@ -110,6 +110,8 @@
                                                 Deposit
                                             @elseif ($rent->is_upgrade && $rent->jumlah != 0)
                                                 Upgrade Kamar
+                                            @elseif ($rent->is_downgrade)
+                                                Downgrade Kamar
                                             @endif
                                         </td>
                                         <td>

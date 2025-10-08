@@ -330,7 +330,7 @@ class TransactionRentController extends Controller
             $hargaKamarLama = $dataKamar->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
             $hargaKamarBaru = $dataKamarBaru->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
             if ($hargaKamarLama < $hargaKamarBaru) {
-                $sisaSewa = round(Carbon::now('Asia/Jakarta')->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
+                $sisaSewa = round(Carbon::now('Asia/Jakarta')->diffInDays(Carbon::parse($dataKamar->rent->end_date), true) + 1, 0);
                 $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
                 $kurangBayar = round((($sisaSewa / $totalSewa) * $hargaKamarBaru) - (($sisaSewa / $totalSewa) * $hargaKamarLama), 0);
                 $pembulatan = 0;
@@ -373,6 +373,16 @@ class TransactionRentController extends Controller
                         if (Deposite::find($deposit->id)->update([
                             'room_id'   =>  $dataKamarBaru->id,
                         ])) {
+
+                            LogTransactionRent::create(
+                                [
+                                    'room_id'   =>  $dataKamar->room_id,
+                                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                                    'is_downgrade'   =>  true,
+                                    'jumlah'    =>  0,
+                                    'home_id'   =>  Auth::user()->home_id,
+                                ]
+                            );
 
                             DB::commit();
 
