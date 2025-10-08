@@ -12,20 +12,11 @@ use Livewire\WithPagination;
 
 class Report extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    // use WithPagination, WithoutUrlPagination;
 
     public string $startDate;
     public string $endDate;
-    public int $length = 10;
-    public int $lengthOrder = 10;
     public $loading = false;
-
-    protected $paginationTheme = 'bootstrap';
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
 
     function mount()
     {
@@ -36,11 +27,11 @@ class Report extends Component
     public function render()
     {
         $transactions = TransactionHeader::with(['room', 'details'])->whereBetween('tanggal', [$this->startDate, $this->endDate])
-            ->paginate($this->lengthOrder == '' ? 0 : $this->lengthOrder);
+            ->get();
 
         $rents = TransactionRent::with(['room'])->whereBetween('tgl', [$this->startDate, $this->endDate])
             ->orderBy('created_at')
-            ->paginate($this->length);
+            ->get();
 
         return view('livewire.reports.report', [
             'transactions'  =>  $transactions,
@@ -64,13 +55,6 @@ class Report extends Component
         $this->loading();
         $this->startDate = Carbon::parse($startDate)->startOfDay();
         $this->endDate = Carbon::parse($endDate)->endOfDay();
-
-        // $transactions = TransactionHeader::with(['room', 'details'])->whereBetween('tanggal', [$this->startDate, $this->endDate])
-        //     ->get();
-
-        // $rents = TransactionRent::with(['room'])->whereBetween('tgl', [$this->startDate, $this->endDate])
-        //     ->orderBy('created_at')
-        //     ->get();
 
         $this->dispatch('report.generateExcel', [
             'startDate' =>  $this->startDate,

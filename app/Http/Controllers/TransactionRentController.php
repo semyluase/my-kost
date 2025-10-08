@@ -373,17 +373,6 @@ class TransactionRentController extends Controller
                         if (Deposite::find($deposit->id)->update([
                             'room_id'   =>  $dataKamarBaru->id,
                         ])) {
-
-                            LogTransactionRent::create(
-                                [
-                                    'room_id'   =>  $dataKamar->room_id,
-                                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
-                                    'is_downgrade'   =>  true,
-                                    'jumlah'    =>  0,
-                                    'home_id'   =>  Auth::user()->home_id,
-                                ]
-                            );
-
                             DB::commit();
 
                             return response()->json([
@@ -458,6 +447,16 @@ class TransactionRentController extends Controller
                         if (Deposite::find($deposit->id)->update([
                             'room_id'   =>  $dataKamarBaru->id
                         ])) {
+                            LogTransactionRent::create(
+                                [
+                                    'room_id'   =>  $dataKamarBaru->id,
+                                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                                    'is_downgrade'   =>  true,
+                                    'jumlah'    =>  0,
+                                    'home_id'   =>  Auth::user()->home_id,
+                                ]
+                            );
+
                             DB::commit();
 
                             return response()->json([
@@ -725,25 +724,24 @@ class TransactionRentController extends Controller
             ->first();
 
         if ($request->status == 'checkin') {
-            LogTransactionRent::insert([
-                [
-                    'room_id'   =>  $room->id,
-                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
-                    'is_check_in'   =>  true,
-                    'jumlah'    =>  $dataRent->price,
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'home_id'   =>  Auth::user()->home_id,
-                ],
-                [
-                    'room_id'   =>  $room->id,
-                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
-                    'is_deposit'   =>  true,
-                    'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit),
-                    'created_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'updated_at'    =>  Carbon::now('Asia/Jakarta'),
-                    'home_id'   =>  Auth::user()->home_id,
-                ],
+            LogTransactionRent::create([
+                'room_id'   =>  $room->id,
+                'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                'is_check_in'   =>  true,
+                'jumlah'    =>  $dataRent->price,
+                'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                'home_id'   =>  Auth::user()->home_id,
+            ]);
+
+            LogTransactionRent::create([
+                'room_id'   =>  $room->id,
+                'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                'is_deposit'   =>  true,
+                'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit),
+                'created_at'    =>  Carbon::now('Asia/Jakarta'),
+                'updated_at'    =>  Carbon::now('Asia/Jakarta'),
+                'home_id'   =>  Auth::user()->home_id,
             ]);
         } elseif ($request->status == 'upgrade') {
             LogTransactionRent::create(

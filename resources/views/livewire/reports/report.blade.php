@@ -63,17 +63,6 @@
                     <div class="card-header">
                         <h3 class="card-title">Sewa Kamar</h3>
                     </div>
-                    <div class="card-body border-bottom py-3">
-                        <div class="d-flex">
-                            <div class="text-secondary">
-                                <div class="mx-2 d-inline-block">
-                                    <input type="text" class="form-control form-control-sm" wire:model.live="length"
-                                        size="3">
-                                </div>
-                                Data
-                            </div>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-selectable card-table table-vcenter text-nowrap datatable">
                             <thead>
@@ -162,11 +151,6 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="card-footer">
-                        <div class="row g-2 justify-content-center justify-content-sm-between">
-                            {{ $rents->links() }}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -175,17 +159,6 @@
                 <div class="card card-borderless">
                     <div class="card-header">
                         <h3 class="card-title">Layanan Lain</h3>
-                    </div>
-                    <div class="card-body border-bottom py-3">
-                        <div class="d-flex">
-                            <div class="text-secondary">
-                                <div class="mx-2 d-inline-block">
-                                    <input type="text" class="form-control form-control-sm"
-                                        wire:model.live="lengthOrder" size="3">
-                                </div>
-                                Data
-                            </div>
-                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-selectable card-table table-vcenter text-nowrap datatable">
@@ -291,11 +264,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row g-2 justify-content-center justify-content-sm-between">
-                            {{ $transactions->links() }}
-                        </div>
                     </div>
                 </div>
             </div>
