@@ -122,6 +122,13 @@ class ReportController extends Controller
                     $sheet->setCellValue("H$row", 0);
                 }
 
+                if ($value->is_downgrade) {
+                    $sheet->setCellValue("D$row", "Sewa Kamar");
+                    $sheet->setCellValue("F$row", "Downgrade Kamar");
+                    $sheet->setCellValue("G$row", 0);
+                    $sheet->setCellValue("H$row", 0);
+                }
+
                 $sheet->setCellValue("E$row", Carbon::parse($value->tgl)->isoFormat("DD-MM-YYYY"));
 
                 $no++;
