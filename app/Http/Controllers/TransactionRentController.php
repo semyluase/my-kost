@@ -443,7 +443,6 @@ class TransactionRentController extends Controller
                     ->where('is_checkout', false)
                     ->first();
 
-                dd($dataKamar->id);
                 if (TransactionRent::create($insertDataKamarBaru)) {
                     if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
                         if (Deposite::find($deposit->id)->update([
