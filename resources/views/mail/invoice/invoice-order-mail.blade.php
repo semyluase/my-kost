@@ -85,7 +85,7 @@
     <div class="email-container">
         <div class="header">
             <img src="{{ public_path('assets/image/Asset 1.png') }}" alt="Logo Toko">
-            <h2>{{ $dataTransactionTransaction->user->location->name }}</h2>
+            <h2>{{ $dataTransaction->user->location->name }}</h2>
         </div>
 
         <div class="info">
