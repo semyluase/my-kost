@@ -92,7 +92,7 @@
         <h2>{{ $data->user->location->name }}</h2>
         <div class="info">
             {{ $data->user->location->address }}<br>
-            {{ Str::startWith('0', $data->user->location->phone_number) ? Str::replaceFirst('0', '+62', $data->user->location->phone_number) : (Str::startsWith($data->user->location->phone_number, '62') ? '+' . $data->user->location->phone_number : $data->user->location->phone_number) }}<br>
+            {{ $data->user->location->phone_number }}<br>
             Tanggal: {{ Carbon::now('Asia/Jakarta')->isoFormat('DD/MM/YYYY - HH:mm') }}
             <div class="receipt-number">Receipt No: {{ $data->nobukti }}</div>
         </div>
