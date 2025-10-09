@@ -36,6 +36,6 @@ class SendEmailReceipt
             'is_send'   =>  true
         ]);
 
-        unlink($this->data->attachment);
+        // unlink($this->data->attachment);
     }
 }
