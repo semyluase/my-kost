@@ -840,8 +840,10 @@ class TransactionRentController extends Controller
             'deposit'  =>  $deposit
         ]);
 
-        $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
-        $pdf->save($filePath);
+        $filePath = public_path("assets/invoice/" . $dataRent->no_invoice . ".pdf");
+        // dd($filePath);
+        // $pdf->save($filePath);
+        return $pdf->stream($dataRent->no_invoice . ".pdf");
 
         Email::create([
             'to'    =>  $dataRent->member->user->email,

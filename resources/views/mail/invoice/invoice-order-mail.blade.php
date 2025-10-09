@@ -96,7 +96,7 @@
         </div>
 
         <div class="receipt-details">
-            <strong>Receipt No:</strong> {{ $dataTransactionTransaction->nobukti }}<br>
+            <strong>Receipt No:</strong> {{ $dataTransaction->nobukti }}<br>
             <strong>Tanggal:</strong> {{ Carbon::now('Asia/Jakarta')->isoFormat('LL') }}<br>
             <strong>Waktu:</strong> {{ Carbon::now('Asia/Jakarta')->isoFormat('HH:mm') }} WIB
         </div>
