@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\Invoice\InvoiceRoomMail;
 use App\Models\Email;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendEmailInvoice
@@ -27,12 +28,16 @@ class SendEmailInvoice
      */
     public function handle(): void
     {
-        Mail::to($this->data->to)->queue(new InvoiceRoomMail($this->data, $this->dataRent));
+        try {
+            Mail::to($this->data->to)->queue(new InvoiceRoomMail($this->data, $this->dataRent));
 
-        Email::find($this->data->id)->update([
-            'is_send'   =>  true
-        ]);
+            Email::find($this->data->id)->update([
+                'is_send'   =>  true
+            ]);
 
-        // unlink($this->data->attachment);
+            unlink($this->data->attachment);
+        } catch (\Throwable $th) {
+            Log::info($th->getMessage());
+        }
     }
 }
