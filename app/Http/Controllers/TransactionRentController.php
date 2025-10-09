@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Category;
 use App\Models\Deposite;
 use App\Models\Log\TransactionRent as LogTransactionRent;
+use App\Models\Master\Bank;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -542,6 +543,7 @@ class TransactionRentController extends Controller
 
         $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->slug)->first();
 
+        $bank = Bank::find($request->bank)->first();
         // dd($room);
         $dataUpdateDeposit = [
             'pengembalian'  =>  $request->pengembalian,
@@ -566,6 +568,7 @@ class TransactionRentController extends Controller
                         'is_check_out'   =>  true,
                         'jumlah'    =>  $request->pengembalian,
                         'rekening'    =>  $request->noRek,
+                        'bank'  =>  $bank->nama,
                     ]
                 );
                 DB::commit();

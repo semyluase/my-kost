@@ -158,20 +158,22 @@ class ReportController extends Controller
         $merge[] = "B$row:B" . ($row + 1);
         $sheet->setCellValue("C$row", "Tanggal Pemesanan");
         $merge[] = "C$row:C" . ($row + 1);
-        $sheet->setCellValue("D$row", "Jenis Layanan");
+        $sheet->setCellValue("D$row", "Tipe Pembayaran");
         $merge[] = "D$row:D" . ($row + 1);
-        $sheet->setCellValue("E$row", "Status");
+        $sheet->setCellValue("E$row", "Jenis Layanan");
         $merge[] = "E$row:E" . ($row + 1);
-        $sheet->setCellValue("F$row", "Jumlah");
-        $merge[] = "F$row:H" . ($row + 1);
+        $sheet->setCellValue("F$row", "Status");
+        $merge[] = "F$row:F" . ($row + 1);
+        $sheet->setCellValue("G$row", "Jumlah");
+        $merge[] = "G$row:I$row";
         $row++;
-        $sheet->setCellValue("F$row", "Outstanding");
-        $sheet->setCellValue("G$row", "Pemasukan");
-        $sheet->setCellValue("H$row", "Pengeluaran");
+        $sheet->setCellValue("G$row", "Outstanding");
+        $sheet->setCellValue("H$row", "Pemasukan");
+        $sheet->setCellValue("I$row", "Pengeluaran");
 
-        $styling[] = ['col' => "A" . ($row - 1) . ":H$row", 'style' => styleExcel_Calibry("14pt", true)];
-        $styling[] = ['col' => "A" . ($row - 1) . ":H$row", 'style' => styleExcel_TextMiddle()];
-        $styling[] = ['col' => "A" . ($row - 1) . ":H$row", 'style' => styleExcel_TableBorder()];
+        $styling[] = ['col' => "A" . ($row - 1) . ":I$row", 'style' => styleExcel_Calibry("14pt", true)];
+        $styling[] = ['col' => "A" . ($row - 1) . ":I$row", 'style' => styleExcel_TextMiddle()];
+        $styling[] = ['col' => "A" . ($row - 1) . ":I$row", 'style' => styleExcel_TableBorder()];
 
         $row++;
         $startRowTransaction = $row;
@@ -182,44 +184,45 @@ class ReportController extends Controller
                 $sheet->setCellValue("A$row", $no);
                 $sheet->setCellValue("B$row", ($value->room ? $value->room->number_room : "-"));
                 $sheet->setCellValue("C$row", Carbon::parse($value->tgl)->isoFormat("DD-MM-YYYY"));
+                $sheet->setCellValue("D$row", $value->tipe_pembayaran);
                 if ($value->is_laundry) {
-                    $sheet->setCellValue("D$row", "Laundry");
+                    $sheet->setCellValue("E$row", "Laundry");
                 }
 
                 if ($value->is_order) {
-                    $sheet->setCellValue("D$row", "Food");
+                    $sheet->setCellValue("E$row", "Food");
                 }
 
                 if ($value->is_cleaning) {
-                    $sheet->setCellValue("D$row", "Pembersihan");
+                    $sheet->setCellValue("E$row", "Pembersihan");
                 }
 
                 if ($value->is_receipt) {
-                    $sheet->setCellValue("D$row", "Pembelian Barang");
+                    $sheet->setCellValue("E$row", "Pembelian Barang");
                 }
 
                 if ($value->is_topup) {
-                    $sheet->setCellValue("D$row", "Top Up");
+                    $sheet->setCellValue("E$row", "Top Up");
                 }
 
                 if ($value->pembayaran > 0) {
-                    $sheet->setCellValue("E$row", "LUNAS");
-                    $sheet->setCellValue("F$row", 0);
+                    $sheet->setCellValue("F$row", "LUNAS");
+                    $sheet->setCellValue("G$row", 0);
+                    $sheet->setCellValue("H$row", $value->total);
+                    $sheet->setCellValue("I$row", 0);
+                } else {
+                    $sheet->setCellValue("F$row", "BELUM LUNAS");
                     $sheet->setCellValue("G$row", $value->total);
                     $sheet->setCellValue("H$row", 0);
-                } else {
-                    $sheet->setCellValue("E$row", "BELUM LUNAS");
-                    $sheet->setCellValue("F$row", $value->total);
-                    $sheet->setCellValue("G$row", 0);
-                    $sheet->setCellValue("H$row", 0);
+                    $sheet->setCellValue("I$row", 0);
                 }
 
 
                 if ($value->is_receipt) {
-                    $sheet->setCellValue("E$row", "SELESAI");
-                    $sheet->setCellValue("F$row", 0);
+                    $sheet->setCellValue("F$row", "SELESAI");
                     $sheet->setCellValue("G$row", 0);
-                    $sheet->setCellValue("H$row", $value->total);
+                    $sheet->setCellValue("H$row", 0);
+                    $sheet->setCellValue("I$row", $value->total);
                 }
 
                 $no++;
@@ -227,14 +230,14 @@ class ReportController extends Controller
             }
         }
 
-        $merge[] = "A$row:E$row";
+        $merge[] = "A$row:F$row";
         $sheet->setCellValue("A$row", "Total");
-        $sheet->setCellValue("F$row", "=SUM(F$startRowTransaction:F" . ($row - 1) . ")");
         $sheet->setCellValue("G$row", "=SUM(G$startRowTransaction:G" . ($row - 1) . ")");
         $sheet->setCellValue("H$row", "=SUM(H$startRowTransaction:H" . ($row - 1) . ")");
+        $sheet->setCellValue("I$row", "=SUM(I$startRowTransaction:I" . ($row - 1) . ")");
 
-        $sheet->getStyle("F$startRowTransaction:H$row")->getNumberFormat()->setFormatCode(formatExcel_Idr());
-        $styling[] = ['col' => "A$startRowTransaction:H$row", 'style' => styleExcel_TableBorder()];
+        $sheet->getStyle("G$startRowTransaction:I$row")->getNumberFormat()->setFormatCode(formatExcel_Idr());
+        $styling[] = ['col' => "A$startRowTransaction:I$row", 'style' => styleExcel_TableBorder()];
 
         if ($merge) {
             foreach ($merge as $row) {

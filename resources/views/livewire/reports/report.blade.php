@@ -95,6 +95,7 @@
                                                 Check In
                                             @elseif ($rent->is_check_out)
                                                 Check Out
+                                                <div>Bank : {{ $rent->bank }}</div>
                                                 <div>Rekening : {{ $rent->rekening }}</div>
                                             @elseif ($rent->is_deposit)
                                                 Deposit
@@ -169,6 +170,7 @@
                                     <th rowspan="2">No. Kamar</th>
                                     <th rowspan="2">Tanggal Pemesanan</th>
                                     <th rowspan="2">Jenis Layanan</th>
+                                    <th rowspan="2">Jenis Pembayaran</th>
                                     <th rowspan="2">Status</th>
                                     <th colspan="3">Jumlah</th>
                                 </tr>
@@ -201,6 +203,7 @@
                                                 Pembelian Barang
                                             @endif
                                         </td>
+                                        <td>{{ $transaction->tipe_pembayaran }}</td>
                                         <td>{{ !$transaction->is_receipt ? ($transaction->pembayaran > 0 ? 'LUNAS' : 'BELUM LUNAS') : ($transaction->status == 5 ? 'SUDAH POSTING' : 'BELUM POSTING') }}
                                         </td>
                                         <td>
