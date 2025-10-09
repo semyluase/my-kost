@@ -26,7 +26,7 @@ class Receipt extends Component
         $receipt = TransactionHeader::where('is_receipt', true)
             ->where('home_id', Auth::user()->home_id)
             ->orderBy('tanggal', "desc")
-            ->paginate($this->lenght);
+            ->get();
 
         return view('livewire.receipt.receipt', [
             'receipts'  =>  $receipt,
