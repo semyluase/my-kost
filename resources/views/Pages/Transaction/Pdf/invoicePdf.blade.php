@@ -69,7 +69,7 @@
                 @php
                     $total =
                         $data->room->category->prices->where('type', $data->duration)->first()->price +
-                        $deposit->jumlah;
+                        ($deposit ? $deposit->jumlah : 0);
                 @endphp
                 <table class="table table-striped" style="width: 100%;">
                     <thead>
