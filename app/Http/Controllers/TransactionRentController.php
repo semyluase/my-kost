@@ -565,6 +565,7 @@ class TransactionRentController extends Controller
                         'tgl'   =>  Carbon::now('Asia/Jakarta'),
                         'is_check_out'   =>  true,
                         'jumlah'    =>  $request->pengembalian,
+                        'rekening'    =>  $request->noRek,
                     ]
                 );
                 DB::commit();

@@ -49,14 +49,24 @@
                         <label class="form-label">Cara Pembayaran</label>
                         <div class="form-selectgroup">
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="select-payment" id="select-payment" value="transfer"
+                                <input type="radio" name="select-payment" id="select-payment" value="saldo"
                                     class="form-selectgroup-input" checked="">
+                                <span class="form-selectgroup-label">Saldo</span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="select-payment" id="select-payment" value="transfer"
+                                    class="form-selectgroup-input">
                                 <span class="form-selectgroup-label">Transfer</span>
                             </label>
                             <label class="form-selectgroup-item">
                                 <input type="radio" name="select-payment" id="select-payment" value="cash"
                                     class="form-selectgroup-input">
                                 <span class="form-selectgroup-label">Cash</span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="select-payment" id="select-payment" value="qris"
+                                    class="form-selectgroup-input">
+                                <span class="form-selectgroup-label">Qris</span>
                             </label>
                         </div>
                     </div>
@@ -79,7 +89,8 @@
                 <div class="row mb-3">
                     <div class="col-12">
                         <label for="kembalian" class="form-label">Total Kembalian</label>
-                        <input type="text" name="kembalian" id="kembalian" class="form-control bg-gray-500" readonly>
+                        <input type="text" name="kembalian" id="kembalian" class="form-control bg-gray-500"
+                            readonly>
                     </div>
                 </div>
             </div>

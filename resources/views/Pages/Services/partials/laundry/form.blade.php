@@ -65,20 +65,50 @@
             <div class="col-md-6 mb-3">
                 <label for="">Pembayaran</label>
                 <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
-                    @foreach ($payments as $pay)
-                        <label class="form-selectgroup-item flex-fill">
-                            <input type="radio" name="payment" value="{{ $pay->slug }}"
-                                class="form-selectgroup-input" {{ $loop->first ? 'checked' : '' }}>
-                            <div class="form-selectgroup-label d-flex align-items-center p-3">
-                                <div class="me-3">
-                                    <span class="form-selectgroup-check"></span>
-                                </div>
-                                <div>
-                                    {{ $pay->tipe }}
-                                </div>
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="payment" value="saldo" class="form-selectgroup-input" checked>
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
                             </div>
-                        </label>
-                    @endforeach
+                            <div>
+                                Saldo
+                            </div>
+                        </div>
+                    </label>
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="payment" value="cash" class="form-selectgroup-input">
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                Cash
+                            </div>
+                        </div>
+                    </label>
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="payment" value="transfer" class="form-selectgroup-input">
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                Transfer
+                            </div>
+                        </div>
+                    </label>
+                    <label class="form-selectgroup-item flex-fill">
+                        <input type="radio" name="payment" value="qris" class="form-selectgroup-input">
+                        <div class="form-selectgroup-label d-flex align-items-center p-3">
+                            <div class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </div>
+                            <div>
+                                Qris
+                            </div>
+                        </div>
+                    </label>
                 </div>
             </div>
             <div class="col-md-6 mb-3">

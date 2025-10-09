@@ -19,8 +19,13 @@
                                 <div class="row row-0">
                                     <div class="col-3">
                                         <!-- Photo -->
-                                        <img src="data:image/{{ Str::afterLast($fs->picture->file_name, '.') }};base64,{{ $fs->picture->blob }}"
-                                            class="w-100 h-100 object-cover card-img-start">
+                                        @if ($fs->picture)
+                                            <img src="data:image/{{ Str::afterLast($fs->picture->file_name, '.') }};base64,{{ $fs->picture->blob }}"
+                                                class="w-100 h-100 object-cover card-img-start">
+                                        @else
+                                            <img src="{{ asset('assets/image/nocontent.jpg') }}"
+                                                class="w-100 h-100 object-cover card-img-start">
+                                        @endif
                                     </div>
                                     <div class="col">
                                         <div class="card-body">

@@ -52,7 +52,7 @@
     @push('myscript')
         <script>
             let nobukti = "{{ $foodSnack ? $foodSnack->nobukti : '' }}"
-            let noKamar = "{{ $foodSnack ? $foodSnack->room->number_room : '' }}"
+            let noKamar = "{{ $foodSnack ? $foodSnack->room->slugadd_colum : '' }}"
             let status = "{{ $foodSnack ? ($foodSnack->status == 5 ? 'LUNAS' : 'BELUM LUNAS') : 'BELUM LUNAS' }}"
         </script>
         <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>

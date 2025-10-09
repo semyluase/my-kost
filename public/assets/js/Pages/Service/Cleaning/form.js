@@ -59,6 +59,7 @@ const fnCleaning = {
                 switch (item.value) {
                     case "transfer":
                     case "qris":
+                    case "saldo":
                         inputPayment.value = new Intl.NumberFormat("id-ID", {
                             style: "currency",
                             currency: "IDR",
@@ -136,7 +137,9 @@ inputPayment.addEventListener("keyup", (event) => {
 selectPayment.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
+            case "saldo":
             case "transfer":
+            case "qris":
                 inputSubtotal.value = new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
@@ -213,6 +216,16 @@ fnCleaning.init.buttons.btnSimpan.addEventListener("click", async () => {
 
         fnCleaning.onLoad();
     } else {
+        if (results.data.message.jamRequest) {
+            swal.fire(
+                "Terjadi kesalahan",
+                results.data.message.jamRequest[0],
+                "error"
+            );
+
+            return false;
+        }
+
         swal.fire("Terjadi kesalahan", results.data.message, "error");
     }
 });

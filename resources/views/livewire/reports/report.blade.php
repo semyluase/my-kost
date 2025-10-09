@@ -95,6 +95,7 @@
                                                 Check In
                                             @elseif ($rent->is_check_out)
                                                 Check Out
+                                                <div>Rekening : {{ $rent->rekening }}</div>
                                             @elseif ($rent->is_deposit)
                                                 Deposit
                                             @elseif ($rent->is_upgrade && $rent->jumlah != 0)
@@ -126,6 +127,7 @@
                                         <td>
                                             @if ($rent->is_check_out)
                                                 {{ Number::currency($rent->jumlah, in: 'IDR', locale: 'id') }}
+
                                                 @php
                                                     $totalPengeluaran += $rent->jumlah;
                                                 @endphp

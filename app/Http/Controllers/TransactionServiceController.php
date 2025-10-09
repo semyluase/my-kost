@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Email;
 use App\Models\Home;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Member;
 use App\Models\Service;
 use App\Models\Pembayaran;
+use Illuminate\Support\Str;
 use App\Models\Member\TopUp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\TransactionRent;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\TransactionDetail;
 use App\Models\TransactionHeader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 use App\Models\Master\Service\Laundry;
 use App\Models\Master\Service\Cleaning;
-
-use function App\Helper\generateCounterTransaction;
 use function App\Helper\makePhoneNumber;
 use Illuminate\Support\Facades\Validator;
+use function App\Helper\generateCounterTransaction;
 
 class TransactionServiceController extends Controller
 {
@@ -146,6 +149,14 @@ class TransactionServiceController extends Controller
 
     public function storeLaundry(Request $request)
     {
+        if (!$request->noKamar) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  "Harap pilih kamar"
+                ]
+            ]);
+        }
         DB::beginTransaction();
 
         $nobukti = $request->nobukti;
@@ -162,6 +173,20 @@ class TransactionServiceController extends Controller
 
         $price = Laundry::where('kode_item', $request->kategori)->where('is_active', true)->first();
 
+        $saldo = TopUp::where('user_id', $room->rent->member->user->id)
+            ->first();
+
+        if ($saldo) {
+            if ($saldo->credit < $price->price) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  "Maaf, Saldo penghuni tidak cukup"
+                    ]
+                ]);
+            }
+        }
+
         $header = [
             'nobukti'   =>  $nobukti,
             'room_id'   =>  $room->id,
@@ -169,6 +194,8 @@ class TransactionServiceController extends Controller
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
             'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $price->price,
+            'pembayaran'    =>  $request->totalPayment,
+            'tipe_pembayaran'    =>  $request->payment,
             'user_id'   =>  $room->rent->member->user_id,
             'home_id'   =>  Auth::user()->home_id,
         ];
@@ -193,6 +220,11 @@ class TransactionServiceController extends Controller
         if ($mode == 'insert') {
             if (TransactionHeader::create($header)) {
                 if (TransactionDetail::create($detail)) {
+                    if ($request->payment == 'saldo') {
+                        TopUp::find($saldo->id)->update([
+                            'credit'    =>  $saldo->credit - $request->totalPayment
+                        ]);
+                    }
                     DB::commit();
 
                     return response()->json([
@@ -248,6 +280,31 @@ class TransactionServiceController extends Controller
 
     public function storeCleaning(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'jamRequest'    =>  'required',
+        ], [
+            'jamRequest.required'    =>  'Jam Request harus diisi'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  $validator->errors()
+                ]
+            ]);
+        }
+
+        if (!Str::contains($request->jamRequest, ':')) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  "Format Jam Request harus HH:mm"
+                ]
+            ]);
+        }
+
+
         DB::beginTransaction();
 
         $nobukti = $request->nobukti;
@@ -263,12 +320,26 @@ class TransactionServiceController extends Controller
         $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->noKamar)->first();
         $priceCleaning = Cleaning::where('is_active', true)->first();
 
+        $saldo = TopUp::where('user_id', $room->rent->member->user->id)
+            ->first();
+
+        if ($saldo) {
+            if ($saldo->credit < $request->totalBayar) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  'Maaf, Saldo tidak mencukupi untuk transaksi ini'
+                    ]
+                ]);
+            }
+        }
+
         $header = [
             'nobukti'   =>  $nobukti,
             'room_id'   =>  $room->id,
             'tanggal'   =>  Carbon::parse($request->tanggal),
             'tipe_pembayaran'   =>  $request->typePayment,
-            'pembayaran'   =>  $request->totalbayar,
+            'pembayaran'   =>  $request->totalBayar,
             'kembalian'   =>  $request->kembalian,
             'total'   =>  $priceCleaning->price,
             'tgl_request' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
@@ -296,6 +367,12 @@ class TransactionServiceController extends Controller
         if ($mode == 'insert') {
             if (TransactionHeader::create($header)) {
                 if (TransactionDetail::create($detail)) {
+                    if ($request->typePayment == 'saldo') {
+                        TopUp::where('id', $saldo->id)->update([
+                            'credit'    =>  $saldo->credit - $request->totalBayar
+                        ]);
+                    }
+
                     DB::commit();
 
                     return response()->json([
@@ -372,15 +449,10 @@ class TransactionServiceController extends Controller
     {
         DB::beginTransaction();
 
-        $member = User::where('phone_number', makePhoneNumber($request->member))->first();
-
-        if (!$member) {
-            $member = User::where('email', $request->member)->first();
-        }
-
-        if (!$member) {
-            $member = User::where('username', $request->member)->first();
-        }
+        $member = User::where('phone_number', makePhoneNumber($request->member))
+            ->orWhere('email', $request->member)
+            ->orWhere('username', Str::lower($request->member))
+            ->first();
 
         if (!$member) {
             DB::rollBack();
@@ -393,15 +465,26 @@ class TransactionServiceController extends Controller
             ]);
         }
 
+        $rent = TransactionRent::where('member_id', $member->member->id)
+            ->where('is_change_room', false)
+            ->where('is_checkout_abnormal', false)
+            ->where('is_checkout_normal', false)
+            ->first();
+
         $nobukti = generateCounterTransaction('TP');
 
         $header = [
             'nobukti'   =>  $nobukti,
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
-            'user_id'   =>  $member->user_id,
+            'user_id'   =>  $member->id,
+            'room_id'   =>  $rent->room_id,
             'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $request->jumlahTopup,
             'home_id'   =>  Auth::user()->home_id,
+            'pembayaran'    =>  $request->payment,
+            'status'    =>  5,
+            'is_topup'  =>  true,
+            'tipe_pembayaran'    =>  $request->typePayment,
         ];
 
         $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
@@ -427,6 +510,15 @@ class TransactionServiceController extends Controller
                     if (TopUp::where('id', $credit->id)->update([
                         'credit'    => $credit->credit + $request->jumlahTopup
                     ])) {
+                        $filePath = public_path('assets/invoice/' . $nobukti . '.pdf');
+
+                        Email::create([
+                            'to'    =>  $member->email,
+                            'subject'   =>  "Receipt " . $nobukti,
+                            "attachment"    =>  $filePath,
+                            'no_invoice'    =>  $nobukti,
+                            'is_order'  =>  true,
+                        ]);
                         DB::commit();
 
                         return response()->json([
@@ -453,6 +545,15 @@ class TransactionServiceController extends Controller
                     'user_id'   => $member->id,
                     'credit'    => $request->jumlahTopup
                 ])) {
+                    $filePath = public_path('assets/invoice/' . $nobukti . '.pdf');
+
+                    Email::create([
+                        'to'    =>  $member->email,
+                        'subject'   =>  "Receipt " . $nobukti,
+                        "attachment"    =>  $filePath,
+                        'no_invoice'    =>  $nobukti,
+                        'is_order'  =>  true,
+                    ]);
                     DB::commit();
 
                     return response()->json([

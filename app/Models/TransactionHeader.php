@@ -150,7 +150,7 @@ class TransactionHeader extends Model
                 $query->where('status', 1);
                 break;
 
-            case '5':
+            case 5:
                 $query->where('status', 5);
                 break;
 
@@ -161,7 +161,7 @@ class TransactionHeader extends Model
                 break;
 
             default:
-                $query->where('status', '<>', 5);
+                $query->whereNotIn('status', [5, 6]);
                 break;
         }
 

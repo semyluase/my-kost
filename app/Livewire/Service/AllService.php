@@ -28,6 +28,7 @@ class AllService extends Component
     {
         $serviceTransaction = TransactionHeader::with(['room'])->where('is_receipt', false)
             ->whereNotNull('room_id')
+            ->whereNotNull('tgl_request')
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)

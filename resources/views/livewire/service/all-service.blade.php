@@ -136,7 +136,7 @@
                                     @endisset
                                 </td>
                                 <td>
-                                    {{ Carbon::parse($value->tgl_request)->isoFormat('LL HH:mm:ss') }}
+                                    {{ $value->tgl_request ? Carbon::parse($value->tgl_request)->isoFormat('LL HH:mm:ss') : '' }}
                                 </td>
                                 <td>
                                     {{ Number::currency($value->total, in: 'IDR', locale: 'id') }}

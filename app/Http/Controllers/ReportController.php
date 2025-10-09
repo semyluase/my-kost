@@ -111,6 +111,7 @@ class ReportController extends Controller
                 if ($value->is_check_out) {
                     $sheet->setCellValue("D$row", "Sewa Kamar");
                     $sheet->setCellValue("F$row", "Check Out");
+                    $spreadsheet->getActiveSheet()->setCellValueExplicit("F$row", "Check Out\nNo Rekening : " . $value->rekening, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     $sheet->setCellValue("G$row", 0);
                     $sheet->setCellValue("H$row", $value->jumlah);
                 }

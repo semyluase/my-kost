@@ -68,6 +68,77 @@ categorySelect.forEach((item) => {
         quantityInput.value = item.dataset.weight;
 
         subTotalInput.value = parseInt(item.dataset.price);
+
+        console.log(parseInt(item.dataset.price));
+
+        paymentSelect.forEach((item) => {
+            if (item.checked) {
+                switch (item.value) {
+                    case "transfer":
+                    case "qris":
+                    case "saldo":
+                        paymentTotalInput.value = parseInt(
+                            subTotalInput.value.replace(/[^0-9-,]/g, "")
+                        );
+
+                        subTotal = parseInt(
+                            subTotalInput.value.replace(/[^0-9-,]/g, "")
+                        );
+
+                        kembalian =
+                            paymentTotalInput.value.replace(/[^0-9-,]/g, "") -
+                            subTotal;
+
+                        if (kembalian >= 0) {
+                            kembalianInput.value = kembalian;
+                        }
+                        break;
+
+                    default:
+                        paymentTotalInput.value = "";
+                        kembalianInput.value = "";
+                        break;
+                }
+            }
+        });
+    });
+});
+
+paymentSelect.forEach((item) => {
+    item.addEventListener("click", async () => {
+        // if (quantityInput.value == "") {
+        //     swal.fire("Terjadi kesalahan", "Berat tidak boleh kosong", "error");
+        //     return false;
+        // }
+
+        if (item.checked) {
+            switch (item.value) {
+                case "transfer":
+                case "qris":
+                case "saldo":
+                    paymentTotalInput.value = parseInt(
+                        subTotalInput.value.replace(/[^0-9-,]/g, "")
+                    );
+
+                    subTotal = parseInt(
+                        subTotalInput.value.replace(/[^0-9-,]/g, "")
+                    );
+
+                    kembalian =
+                        paymentTotalInput.value.replace(/[^0-9-,]/g, "") -
+                        subTotal;
+
+                    if (kembalian >= 0) {
+                        kembalianInput.value = kembalian;
+                    }
+                    break;
+
+                default:
+                    paymentTotalInput.value = "";
+                    kembalianInput.value = "";
+                    break;
+            }
+        }
     });
 });
 
@@ -76,9 +147,7 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
 
     let payment = Array.from(paymentSelect).find((item) => item.checked);
 
-    console.log(kategori, payment);
-
-    url = `${baseUrl}/transactions/orders`;
+    url = `${baseUrl}/transactions/orders/laundry`;
 
     method = "post";
 
