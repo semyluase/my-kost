@@ -38,7 +38,7 @@ class SendEmailReceipt extends Command
                 $dataTransaction = TransactionHeader::where('nobukti', $value->no_invoice)
                     ->first();
 
-                $pdf = Pdf::loadView('Pages.Services.PDF.receipt', [
+                $pdf = Pdf::loadView('Pages.Services.PDF.receiptEmailAttach', [
                     'data'  =>  $dataTransaction,
                 ]);
 
