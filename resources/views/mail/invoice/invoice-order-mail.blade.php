@@ -91,7 +91,7 @@
         <div class="info">
             {{ $dataTransaction->user->location->address }}<br>
             Telp.
-            {{ Str::startWith('0', $dataTransaction->user->location->phone_number) ? Str::replaceFirst('0', '+62', $dataTransaction->user->location->phone_number) : (Str::startsWith($dataTransaction->user->location->phone_number, '62') ? '+' . $dataTransaction->user->location->phone_number : $dataTransaction->user->location->phone_number) }}<br>
+            {{ Str::startsWith('0', $dataTransaction->user->location->phone_number) ? Str::replaceFirst('0', '+62', $dataTransaction->user->location->phone_number) : (Str::startsWith($dataTransaction->user->location->phone_number, '62') ? '+' . $dataTransaction->user->location->phone_number : $dataTransaction->user->location->phone_number) }}<br>
             Tanggal: {{ Carbon::now('Asia/Jakarta')->isoFormat('DD/MM/YYYY - HH:mm') }}
         </div>
 
