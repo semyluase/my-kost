@@ -88,6 +88,8 @@ class AddGoods extends Component
             'user_id'   =>  Auth::id(),
             'is_receipt'    =>  true,
             "total"    =>  $this->qty * $this->price,
+            "home_id"   =>  Auth::user()->home_id,
+            'tgl_request'   =>  Carbon::now("Asia/Jakarta")
         ];
 
         $detail = [

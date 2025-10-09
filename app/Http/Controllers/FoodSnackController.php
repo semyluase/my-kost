@@ -65,7 +65,7 @@ class FoodSnackController extends Controller
         $counter = generateCounter('food-snack', $request->category);
 
         $data = [
-            'name'  =>  Str::title($request->name),
+            'name'  =>  Str::title(Str::replace("'", "", $request->name)),
             'code_item' =>  $counter,
             'category'  =>  $request->category,
             'price' =>  $request->price,
@@ -210,7 +210,7 @@ class FoodSnackController extends Controller
         }
 
         $data = [
-            'name'  =>  Str::title($request->name),
+            'name'  =>  Str::title(Str::replace("'", "", $request->name)),
             'category'  =>  $request->category,
             'price' =>  $request->price,
         ];

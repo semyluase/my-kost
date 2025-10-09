@@ -99,6 +99,7 @@ class TransactionHeader extends Model
                     on ttd.nobukti = tth.nobukti
                     where fs.code_item = '$codeItem'
                     and tth.tanggal between '$startDate' and '$endDate'
+                    and tth.home_id = '" . Auth::user()->home_id . "'
                     group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli
                     union all
                     select fs.code_item, fs.name, tth.tanggal, 0 as qty_in,
@@ -110,6 +111,7 @@ class TransactionHeader extends Model
                     on ttd.nobukti = tth.nobukti
                     where fs.code_item = '$codeItem'
                     and tth.tanggal between '$startDate' and '$endDate'
+                    and tth.home_id = '" . Auth::user()->home_id . "'
                     group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli) a
                     group by  code_item, name, tanggal, harga_beli, harga_jual) tb");
     }
