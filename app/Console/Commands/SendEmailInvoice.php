@@ -8,6 +8,7 @@ use App\Models\Email;
 use App\Models\TransactionRent;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class SendEmailInvoice extends Command
 {
@@ -52,7 +53,12 @@ class SendEmailInvoice extends Command
                 $filePath = public_path('assets/invoice/' . $dataRent->no_invoice . '.pdf');
                 $pdf->save($filePath);
 
-                JobsSendEmailInvoice::dispatch($value, $dataRent);
+                if (File::exists($value->attachment)) {
+                    JobsSendEmailInvoice::dispatch($value, $dataRent);
+                } else {
+                    $pdf->save($filePath);
+                    JobsSendEmailInvoice::dispatch($value, $dataRent);
+                }
             }
         }
     }
