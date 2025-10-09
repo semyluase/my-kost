@@ -112,6 +112,7 @@
                             </td>
                             <td>{{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
                             </td>
+                            @if ($deposit)
                         <tr>
                             <td>2.</td>
                             <td>{{ $data->room->number_room }}</td>
@@ -122,6 +123,7 @@
                             <td>{{ Number::currency($deposit->jumlah, in: 'IDR', locale: 'id') }}
                             </td>
                         </tr>
+                        @endif
                     </tbody>
                     <tfoot>
                         <tr>
