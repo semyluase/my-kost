@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Log\TransactionRent;
-use App\Models\TransactionHeader;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\TransactionHeader;
+use App\Models\Log\TransactionRent;
+use function App\Helper\formatExcel_Idr;
 use Illuminate\Support\Facades\Response;
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-use function App\Helper\formatExcel_Idr;
 use function App\Helper\styleExcel_Calibry;
 use function App\Helper\styleExcel_Heading;
-use function App\Helper\styleExcel_TableBorder;
 use function App\Helper\styleExcel_TextMiddle;
+use function App\Helper\styleExcel_TableBorder;
 
 class ReportController extends Controller
 {
@@ -184,7 +185,7 @@ class ReportController extends Controller
                 $sheet->setCellValue("A$row", $no);
                 $sheet->setCellValue("B$row", ($value->room ? $value->room->number_room : "-"));
                 $sheet->setCellValue("C$row", Carbon::parse($value->tgl)->isoFormat("DD-MM-YYYY"));
-                $sheet->setCellValue("D$row", $value->tipe_pembayaran);
+                $sheet->setCellValue("D$row", Str::upper($value->tipe_pembayaran));
                 if ($value->is_laundry) {
                     $sheet->setCellValue("E$row", "Laundry");
                 }

@@ -203,7 +203,7 @@
                                                 Pembelian Barang
                                             @endif
                                         </td>
-                                        <td>{{ $transaction->tipe_pembayaran }}</td>
+                                        <td>{{ Str::upper($transaction->tipe_pembayaran) }}</td>
                                         <td>{{ !$transaction->is_receipt ? ($transaction->pembayaran > 0 ? 'LUNAS' : 'BELUM LUNAS') : ($transaction->status == 5 ? 'SUDAH POSTING' : 'BELUM POSTING') }}
                                         </td>
                                         <td>
@@ -262,7 +262,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="4">Total</th>
+                                    <th colspan="5">Total</th>
                                     <th>{{ Number::currency($totalOutstanding, in: 'IDR', locale: 'id') }}</th>
                                     <th>{{ Number::currency($totalPemasukan, in: 'IDR', locale: 'id') }}</th>
                                     <th>{{ Number::currency($totalPengeluaran, in: 'IDR', locale: 'id') }}</th>

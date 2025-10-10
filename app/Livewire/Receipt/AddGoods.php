@@ -175,6 +175,7 @@ class AddGoods extends Component
     {
         DB::beginTransaction();
 
+
         if (TransactionHeader::where('nobukti', $this->noBukti)->delete()) {
             if (TransactionDetail::where('nobukti', $this->noBukti)->delete()) {
                 DB::commit();
@@ -189,13 +190,17 @@ class AddGoods extends Component
                 $this->reset();
                 $this->redirect(url('/inventories/receipts'));
             } else {
-                DB::rollback();
+                DB::commit();
 
                 $this->dispatch('addGoods.swal-modal', [
-                    'type' => 'error',
-                    'message' => 'Terjadi kesalahan',
-                    'text' => 'Gagal menghapus data transaksi'
+                    'type' => 'success',
+                    'message' => 'Berhasil',
+                    'text' => 'Berhasil menghapus data transaksi'
                 ]);
+
+                $this->dispatch("listGoodsRefresh", noBukti: null);
+                $this->reset();
+                $this->redirect(url('/inventories/receipts'));
             }
         } else {
             DB::rollback();

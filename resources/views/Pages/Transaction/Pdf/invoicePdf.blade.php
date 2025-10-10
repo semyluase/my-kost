@@ -23,7 +23,7 @@
         </div>
         <div class="row mt-4 mb-3">
             <div class="col-auto ms-auto">
-                <div class="h4 text-dark">Invoice</div>
+                <div class="h4 text-dark">Payment Receipt</div>
                 <p class="h6 text-dark">No : {{ $data->no_invoice }}</p>
                 <p class="h6 text-dark">Tanggal :
                     {{ Carbon::parse($data->updated_at)->isoFormat('LLLL') }}</p>
@@ -67,9 +67,19 @@
             <h3>Detail Transaksi</h3>
             <div class="col-12">
                 @php
+                    $total = 0;
+
                     $total =
                         $data->room->category->prices->where('type', $data->duration)->first()->price +
                         ($deposit ? $deposit->jumlah : 0);
+
+                    if ($data->oldRoom) {
+                        if ($data->oldRoom->oldRent) {
+                            if ($data->oldRoom->oldRent->is_upgrade) {
+                                $total = $data->kurang_bayar;
+                            }
+                        }
+                    }
                 @endphp
                 <table class="table table-striped" style="width: 100%;">
                     <thead>
@@ -108,11 +118,38 @@
                                     @default
                                 @endswitch
                             </td>
-                            <td>{{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                            <td>
+                                @if ($data->oldRoom)
+                                    @if ($data->oldRoom->oldRent)
+                                        @if ($data->oldRoom->oldRent->is_upgrade)
+                                            {{ Number::currency($data->kurang_bayar, in: 'IDR', locale: 'id') }}
+                                        @else
+                                            {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                        @endif
+                                    @else
+                                        {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                    @endif
+                                @else
+                                    {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                @endif
                             </td>
-                            <td>{{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                            <td>
+                                @if ($data->oldRoom)
+                                    @if ($data->oldRoom->oldRent)
+                                        @if ($data->oldRoom->oldRent->is_upgrade)
+                                            {{ Number::currency($data->kurang_bayar, in: 'IDR', locale: 'id') }}
+                                        @else
+                                            {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                        @endif
+                                    @else
+                                        {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                    @endif
+                                @else
+                                    {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                @endif
                             </td>
                             @if ($deposit)
+                                @if (!$data->oldRoom)
                         <tr>
                             <td>2.</td>
                             <td>{{ $data->room->number_room }}</td>
@@ -123,6 +160,7 @@
                             <td>{{ Number::currency($deposit->jumlah, in: 'IDR', locale: 'id') }}
                             </td>
                         </tr>
+                        @endif
                         @endif
                     </tbody>
                     <tfoot>
