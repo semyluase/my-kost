@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\InteractsWithQueue;
@@ -57,7 +58,7 @@ class InvoiceOrderMail extends Mailable
     public function attachments(): array
     {
         return [
-            $this->data->attachment
+            Attachment::fromPath($this->data->attachment)->as($this->data->no_invoice . ".pdf")->withMime('application/pdf'),
         ];
     }
 }

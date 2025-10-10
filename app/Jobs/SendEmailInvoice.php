@@ -35,7 +35,7 @@ class SendEmailInvoice
                 'is_send'   =>  true
             ]);
 
-            unlink($this->data->attachment);
+            // unlink($this->data->attachment);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
         }
