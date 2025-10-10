@@ -1,3 +1,5 @@
+const sisaDurasiInput = document.querySelector("#sisa-durasi");
+
 let url, data, method, slug;
 
 const fnChangeRoom = {
@@ -55,6 +57,7 @@ fnChangeRoom.init.buttons.btnSave.addEventListener("click", async () => {
         noKamarLama: slug,
         noKamarBaru:
             fnChangeRoom.init.dropdowns.nomorKamarDropdown.getValue(true),
+        sisaDurasi: sisaDurasiInput.value,
         _token: fnChangeRoom.init.buttons.btnSave.dataset.csrf,
     });
 

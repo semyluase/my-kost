@@ -272,6 +272,8 @@ class TransactionRentController extends Controller
                 'duration'  =>  $dataKamar->rent->duration,
                 'old_room_id'   =>  $dataKamar->id,
                 'is_approve'    =>  true,
+                'total_hari_sewa'    =>  Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true) + 1,
+                'sisa_hari_sewa'    =>  intval($request->sisaDurasi),
                 'tanggal_transaksi' => Carbon::now('Asia/Jakarta'),
                 'no_invoice'    =>  $noInvoice
             ];
@@ -330,8 +332,9 @@ class TransactionRentController extends Controller
         if ($dataKamar->category->slug != $dataKamarBaru->category->slug) {
             $hargaKamarLama = $dataKamar->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
             $hargaKamarBaru = $dataKamarBaru->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
+
             if ($hargaKamarLama < $hargaKamarBaru) {
-                $sisaSewa = round(Carbon::now('Asia/Jakarta')->diffInDays(Carbon::parse($dataKamar->rent->end_date), true) + 1, 0);
+                $sisaSewa = intval($request->sisaDurasi);
                 $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
                 $kurangBayar = round((($sisaSewa / $totalSewa) * $hargaKamarBaru) - (($sisaSewa / $totalSewa) * $hargaKamarLama), 0);
                 $pembulatan = 0;
@@ -363,6 +366,8 @@ class TransactionRentController extends Controller
                     'pembulatan'    =>  $pembulatan,
                     'no_invoice'    =>  $noInvoice
                 ];
+
+                // dd([$hargaKamarLama, $hargaKamarBaru, $sisaSewa, $insertDataKamarBaru]);
 
                 $deposit = Deposite::where('user_id', $dataKamar->rent->member->user->id)
                     ->where('room_id', $dataKamar->id)
@@ -434,6 +439,8 @@ class TransactionRentController extends Controller
                     'duration'  =>  $dataKamar->rent->duration,
                     'old_room_id'   =>  $dataKamar->id,
                     'is_approve'    =>  true,
+                    'total_hari_sewa'    =>  Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true) + 1,
+                    'tsisa_hari_sewa'    =>  intval($request->sisaDurasi),
                     'tanggal_transaksi' => Carbon::now('Asia/Jakarta'),
                     'no_invoice'    =>  $noInvoice
                 ];
