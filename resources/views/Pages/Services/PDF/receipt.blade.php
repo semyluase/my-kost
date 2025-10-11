@@ -124,8 +124,10 @@
                                 @if (collect($value->details)->count() > 0)
                                     @if ($value->is_cleaning)
                                         @if ($value->details->first()->categoryCleaning)
-                                            {{ $value->details->first()->categoryCleaning->name }}
-                                            {{ Carbon::parse($value->details->first()->tgl_request_cleaning)->isoFormat('HH:mm') }}
+                                            <div>{{ $value->details->first()->categoryCleaning->description }}</div>
+                                            <div>
+                                                {{ Carbon::parse($value->details->first()->tgl_request_cleaning)->isoFormat('HH:mm') }}
+                                            </div>
                                         @else
                                             -
                                         @endif

@@ -244,6 +244,15 @@ fnTopup.init.buttons.btnSave.addEventListener("click", async () => {
             }
         );
     } else {
+        if (results.data.message.member) {
+            swal.fire(
+                "Terjadi kesalahan",
+                results.data.message.member[0],
+                "error"
+            );
+            return false;
+        }
+
         swal.fire("Terjadi kesalahan", results.data.message, "error");
     }
 });

@@ -16,6 +16,27 @@
                 <select name="no-kamar" id="no-kamar" class="form-select choices"></select>
             </div>
             <div class="col-md-6 mb-3">
+                <label for="kategori" class="form-label">Kategori Pembersihan</label>
+                <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                    @foreach ($categoryCleaning as $value)
+                        <label class="form-selectgroup-item flex-fill">
+                            <input type="radio" name="kategori-cleaning" id="kategori-cleaning"
+                                value="{{ $value->kode_item }}" class="form-selectgroup-input"
+                                {{ $cleaning ? ($value->kode_item == $cleaning->code_item ? 'checked' : '') : ($loop->first ? 'checked' : '') }}
+                                data-harga="{{ $value->price }}">
+                            <div class="form-selectgroup-label d-flex align-items-center p-3">
+                                <div class="me-3">
+                                    <span class="form-selectgroup-check"></span>
+                                </div>
+                                <div>
+                                    {{ $value->description }}
+                                </div>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
                 <label for="tanggal-cleaning" class="form-label">Tanggal</label>
                 <div class="input-icon mb-2">
                     <input class="form-control" placeholder="Select a date" id="tanggal">
@@ -74,8 +95,8 @@
                 <div class="row mb-3">
                     <div class="col-12">
                         <label for="sub-total" class="form-label">Sub Total</label>
-                        <input type="text" name="sub-total" id="sub-total" class="form-control bg-gray-500" readonly
-                            value="{{ $priceCleaning->price }}">
+                        <input type="text" name="sub-total" id="sub-total" class="form-control bg-gray-500"
+                            readonly>
                     </div>
                 </div>
             </div>

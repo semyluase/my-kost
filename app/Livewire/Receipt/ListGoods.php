@@ -37,18 +37,38 @@ class ListGoods extends Component
 
     function removeItem($id)
     {
+        $detail = TransactionDetail::where('id', $id)
+            ->first();
+
         DB::beginTransaction();
 
         if (TransactionDetail::where('id', $id)->delete()) {
-            DB::commit();
+            $header = TransactionHeader::where('nobukti', $detail->nobukti)
+                ->first();
+            if (TransactionHeader::where('nobukti', $detail->nobukti)
+                ->update([
+                    'total' =>  $header->total - ($detail->qty * $detail->harga_beli)
+                ])
+            ) {
+                DB::commit();
 
-            $this->dispatch('listGoods.swal-modal', [
-                'type' => 'success',
-                'message' => 'Berhasil',
-                'text' => 'Data dihapus'
-            ]);
+                $this->dispatch('listGoods.swal-modal', [
+                    'type' => 'success',
+                    'message' => 'Berhasil',
+                    'text' => 'Data dihapus'
+                ]);
 
-            $this->refreshList($this->noBukti);
+                $this->refreshList($this->noBukti);
+            } else {
+
+                DB::rollBack();
+
+                $this->dispatch('listGoods.swal-modal', [
+                    'type' => 'error',
+                    'message' => 'Terjadi kesalahan',
+                    'text' => 'Data gagal dihapus'
+                ]);
+            }
         } else {
             DB::rollBack();
 

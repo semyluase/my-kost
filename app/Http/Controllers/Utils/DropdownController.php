@@ -10,6 +10,7 @@ use App\Models\Home;
 use App\Models\Location;
 use App\Models\Master\Bank;
 use App\Models\Master\CategoryLaundry;
+use App\Models\Master\Service\Cleaning;
 use App\Models\Member;
 use App\Models\Role;
 use App\Models\Room;

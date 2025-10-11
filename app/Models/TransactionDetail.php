@@ -33,7 +33,7 @@ class TransactionDetail extends Model
 
     function categoryCleaning()
     {
-        return $this->belongsTo(Cleaning::class, 'cleaning_id', 'id');
+        return $this->belongsTo(Cleaning::class, 'code_item', 'kode_item');
     }
 
     function scopeGetReceipt($query, $nobukti)

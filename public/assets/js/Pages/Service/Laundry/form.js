@@ -154,7 +154,7 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
     data = JSON.stringify({
         nobukti: nobuktiInput.value,
         noKamar: fnFormLaundry.init.dropdowns.noKamarDropdown.getValue(true),
-        kategori: kategori.value,
+        kategori: kategori ? kategori.value : "",
         berat: quantityInput.value,
         payment: payment.value,
         totalPayment: paymentTotalInput.value,
@@ -179,6 +179,23 @@ fnFormLaundry.init.buttons.btnSave.addEventListener("click", async () => {
 
         window.location.href = `${baseUrl}/transactions/orders`;
     } else {
+        if (results.data.message.noKamar) {
+            swal.fire(
+                "Terjadi kesalahan",
+                results.data.message.noKamar[0],
+                "error"
+            );
+            return false;
+        }
+
+        if (results.data.message.kategori) {
+            swal.fire(
+                "Terjadi kesalahan",
+                results.data.message.kategori[0],
+                "error"
+            );
+            return false;
+        }
         swal.fire("Terjadi kesalahan", results.data.message, "error");
     }
 });

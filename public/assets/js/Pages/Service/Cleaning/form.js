@@ -5,9 +5,15 @@ const inputSubtotal = document.querySelector("#sub-total");
 const inputPayment = document.querySelector("#payment");
 const inputKembalian = document.querySelector("#kembalian");
 
+const kategoriCleaning = document.querySelectorAll(
+    'input[name="kategori-cleaning"]'
+);
+
 let url,
     data,
     method,
+    kategori,
+    price,
     subTotal,
     kembalian,
     typePayment,
@@ -47,6 +53,14 @@ const fnCleaning = {
             "Pilih Kamar",
             noKamar
         );
+
+        let kategori = Array.from(kategoriCleaning).find(
+            (item) => item.checked
+        );
+
+        price = kategori ? kategori.dataset.harga : 0;
+
+        inputSubtotal.value = price;
 
         inputSubtotal.value = new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -101,6 +115,62 @@ const fnCleaning = {
 };
 
 fnCleaning.onLoad();
+
+kategoriCleaning.forEach((item) => {
+    item.addEventListener("click", () => {
+        inputSubtotal.value = item.dataset.harga;
+
+        inputSubtotal.value = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            trailingZeroDisplay: "stripIfInteger",
+        }).format(parseInt(inputSubtotal.value.replace(/[^0-9-,]/g, "")));
+
+        selectPayment.forEach((item) => {
+            if (item.checked) {
+                switch (item.value) {
+                    case "transfer":
+                    case "qris":
+                    case "saldo":
+                        inputPayment.value = new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            trailingZeroDisplay: "stripIfInteger",
+                        }).format(
+                            parseInt(
+                                inputSubtotal.value.replace(/[^0-9-,]/g, "")
+                            )
+                        );
+
+                        subTotal = parseInt(
+                            inputSubtotal.value.replace(/[^0-9-,]/g, "")
+                        );
+
+                        kembalian =
+                            inputPayment.value.replace(/[^0-9-,]/g, "") -
+                            subTotal;
+
+                        if (kembalian >= 0) {
+                            inputKembalian.value = new Intl.NumberFormat(
+                                "id-ID",
+                                {
+                                    style: "currency",
+                                    currency: "IDR",
+                                    trailingZeroDisplay: "stripIfInteger",
+                                }
+                            ).format(kembalian);
+                        }
+                        break;
+
+                    default:
+                        inputPayment.value = "";
+                        inputKembalian.value = "";
+                        break;
+                }
+            }
+        });
+    });
+});
 
 inputPayment.addEventListener("keyup", (event) => {
     if (event.key == "Backspace" || event.key == "Delete") {
@@ -172,6 +242,12 @@ selectPayment.forEach((item) => {
 });
 
 fnCleaning.init.buttons.btnSimpan.addEventListener("click", async () => {
+    Array.from(kategoriCleaning).forEach((item) => {
+        if (item.checked) {
+            kategori = item.value;
+        }
+    });
+
     Array.from(selectPayment).forEach((item) => {
         if (item.checked) {
             typePayment = item.value;
@@ -185,6 +261,7 @@ fnCleaning.init.buttons.btnSimpan.addEventListener("click", async () => {
     data = JSON.stringify({
         nobukti: nobuktiInput.value,
         noKamar: fnCleaning.init.dropdowns.kamarDropdown.getValue(true),
+        kategori: kategori,
         jamRequest: jamRequestInput.value,
         typePayment: typePayment,
         totalBayar: inputPayment.value.replace(/[^0-9-,]/g, ""),

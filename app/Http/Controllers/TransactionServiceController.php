@@ -25,6 +25,7 @@ use App\Models\Master\Service\Cleaning;
 use function App\Helper\makePhoneNumber;
 use Illuminate\Support\Facades\Validator;
 use function App\Helper\generateCounterTransaction;
+use function React\Promise\all;
 
 class TransactionServiceController extends Controller
 {
@@ -124,8 +125,8 @@ class TransactionServiceController extends Controller
             ->where('is_cleaning', true)
             ->first();
 
-        $priceCleaning = Cleaning::where('is_active', true)
-            ->first();
+        $categoryCleaning = Cleaning::where('is_active', true)
+            ->get();
 
         $home = Home::where('id', auth()->user()->home_id)
             ->first();
@@ -135,7 +136,7 @@ class TransactionServiceController extends Controller
             'pageTitle' =>  "Transaksi Cleaning",
             'home'   =>  $home,
             'cleaning'   =>  $cleaning,
-            'priceCleaning'   =>  $priceCleaning,
+            'categoryCleaning'   =>  $categoryCleaning,
         ]);
     }
 
@@ -149,11 +150,19 @@ class TransactionServiceController extends Controller
 
     public function storeLaundry(Request $request)
     {
-        if (!$request->noKamar) {
+        $validator = Validator::make($request->all(), [
+            'noKamar'   =>  'required',
+            'kategori'  =>  'required',
+        ], [
+            'noKamar.required'  =>  'Harap pilih kamar',
+            'kategori.required' =>  'Harap pilih kategori laundry'
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'data'  =>  [
                     'status'    =>  false,
-                    'message'   =>  "Harap pilih kamar"
+                    'message'   =>  $validator->errors()
                 ]
             ]);
         }
@@ -282,8 +291,10 @@ class TransactionServiceController extends Controller
     public function storeCleaning(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'noKamar'    =>  'required',
             'jamRequest'    =>  'required',
         ], [
+            'noKamar.required'    =>  'Kamar harus dipilih',
             'jamRequest.required'    =>  'Jam Request harus diisi'
         ]);
 
@@ -301,6 +312,18 @@ class TransactionServiceController extends Controller
                 'data'  =>  [
                     'status'    =>  false,
                     'message'   =>  "Format Jam Request harus HH:mm"
+                ]
+            ]);
+        }
+
+        $dataCleaning = TransactionHeader::where('tgl_request', Carbon::createFromFormat("Y-m-d H:i", $request->tanggal . ' ' . $request->jamRequest))
+            ->first();
+
+        if ($dataCleaning) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  'Jam pembersihan sudah ada, mohon diisi kembali jam lainnya'
                 ]
             ]);
         }
@@ -351,6 +374,7 @@ class TransactionServiceController extends Controller
 
         $detail = [
             'nobukti'   =>  $nobukti,
+            'code_item'    =>  $request->kategori,
             'is_service'    =>  true,
             'tgl_request_cleaning' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
             'room_id'   =>  $room->id,
@@ -448,6 +472,21 @@ class TransactionServiceController extends Controller
 
     function storeTopup(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'member'    =>  'required'
+        ], [
+            'member.required'   =>  "No HP/Email/Username Member harus diisi"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  false,
+                    'message'   =>  $validator->errors()
+                ]
+            ]);
+        }
+
         DB::beginTransaction();
 
         $member = User::where('phone_number', makePhoneNumber($request->member))
@@ -487,8 +526,6 @@ class TransactionServiceController extends Controller
             'is_topup'  =>  true,
             'tipe_pembayaran'    =>  $request->typePayment,
         ];
-
-        $now = Carbon::now('Asia/Jakarta')->greaterThan(Carbon::createFromFormat('Y-m-d H:i', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD") . " 18:00", 'Asia/Jakarta')) ? Carbon::now('Asia/Jakarta')->addDays(1) : Carbon::now('Asia/Jakarta');
 
         $detail = [
             'nobukti'   =>  $nobukti,
