@@ -176,6 +176,7 @@ class TransactionServiceController extends Controller
         $saldo = TopUp::where('user_id', $room->rent->member->user->id)
             ->first();
 
+        // dd($saldo);
         if ($saldo) {
             if ($saldo->credit < $price->price) {
                 return response()->json([
@@ -194,7 +195,7 @@ class TransactionServiceController extends Controller
             'tanggal'   =>  Carbon::now('Asia/Jakarta'),
             'tgl_request'   =>  Carbon::now('Asia/Jakarta'),
             'total' =>  $price->price,
-            'pembayaran'    =>  $request->totalPayment,
+            'pembayaran'    =>  intval($request->totalPayment),
             'tipe_pembayaran'    =>  $request->payment,
             'user_id'   =>  $room->rent->member->user_id,
             'home_id'   =>  Auth::user()->home_id,
