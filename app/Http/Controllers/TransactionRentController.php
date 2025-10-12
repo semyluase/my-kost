@@ -336,14 +336,21 @@ class TransactionRentController extends Controller
             $hargaKamarBaru = $dataKamarBaru->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
 
             if ($hargaKamarLama < $hargaKamarBaru) {
-                $sisaSewa = intval($request->sisaDurasi);
-                $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
-                $kurangBayar = round((($sisaSewa / $totalSewa) * $hargaKamarBaru) - (($sisaSewa / $totalSewa) * $hargaKamarLama), 0);
-                $pembulatan = 0;
-                if (substr($kurangBayar, -3) < 500 && substr($kurangBayar, -3) > 0) {
-                    $pembulatan = 500 - substr($kurangBayar, -3);
-                } elseif (substr($kurangBayar, -3) > 500 && substr($kurangBayar, -3) < 0) {
-                    $pembulatan = 1000 - substr($kurangBayar, -3);
+                if (Carbon::parse($dataKamar->rent->start_date)->startOfDay()->addHours(12)->diffInHours(Carbon::now('Asia/Jakarta')) > 12) {
+                    $sisaSewa = intval($request->sisaDurasi);
+                    $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
+                    $kurangBayar = round((($sisaSewa / $totalSewa) * $hargaKamarBaru) - (($sisaSewa / $totalSewa) * $hargaKamarLama), 0);
+                    $pembulatan = 0;
+                    if (substr($kurangBayar, -3) < 500 && substr($kurangBayar, -3) > 0) {
+                        $pembulatan = 500 - substr($kurangBayar, -3);
+                    } elseif (substr($kurangBayar, -3) > 500 && substr($kurangBayar, -3) < 0) {
+                        $pembulatan = 1000 - substr($kurangBayar, -3);
+                    }
+                } else {
+                    $sisaSewa = intval($request->sisaDurasi);
+                    $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
+                    $kurangBayar = 0;
+                    $pembulatan = 0;
                 }
 
                 $updateDataKamar = [

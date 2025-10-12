@@ -99,7 +99,7 @@
                                                 <div>Rekening : {{ $rent->rekening }}</div>
                                             @elseif ($rent->is_deposit)
                                                 Deposit
-                                            @elseif ($rent->is_upgrade && $rent->jumlah != 0)
+                                            @elseif ($rent->is_upgrade)
                                                 Upgrade Kamar
                                             @elseif ($rent->is_downgrade)
                                                 Downgrade Kamar
@@ -116,7 +116,7 @@
                                                 @php
                                                     $totalPemasukan += $rent->jumlah;
                                                 @endphp
-                                            @elseif ($rent->is_upgrade && $rent->jumlah != 0)
+                                            @elseif ($rent->is_upgrade)
                                                 {{ Number::currency($rent->jumlah, in: 'IDR', locale: 'id') }}
                                                 @php
                                                     $totalPemasukan += $rent->jumlah;
