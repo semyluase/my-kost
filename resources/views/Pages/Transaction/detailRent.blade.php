@@ -212,7 +212,7 @@
                                                                 {{ Carbon::parse($rent->end_date)->isoFormat('DD MMMM YYYY') }}
                                                             </p>
                                                         </td>
-                                                        <td>{{ Str::replaceEnd(',00', '', Number::currency($rent->price, 'Rp.', 'id')) }}
+                                                        <td>{{ Str::replaceEnd(',00', '', Number::currency($rent->total_harga_sewa, 'Rp.', 'id')) }}
                                                         </td>
                                                     </tr>
                                                     @php
@@ -298,7 +298,7 @@
     </div>
     @push('myscript')
         <script>
-            const price = {{ $rent->price }}
+            const price = {{ $rent->total_harga_sewa }}
         </script>
         <script src="{{ asset('assets/js/Pages/Transaction/detail/app.js') }}?{{ rand() }}"></script>
     @endpush

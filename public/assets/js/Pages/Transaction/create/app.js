@@ -47,6 +47,19 @@ const fnTransaction = {
                 startDate: startDateRent,
                 lang: "id-ID",
             }),
+            endRentPicker: new Litepicker({
+                element: document.querySelector("#end-rent"),
+                buttonText: {
+                    previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                    nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+                },
+                format: "DD-MM-YYYY",
+                singleMode: true,
+                startDate: endRentDate,
+                lang: "id-ID",
+            }),
             tanggalLahir: new Litepicker({
                 element: document.querySelector("#tanggal-lahir"),
                 buttonText: {
@@ -100,6 +113,14 @@ const fnTransaction = {
                 processing: true,
             }),
         },
+    },
+
+    onLoad: () => {
+        endRentDate.value = moment(
+            fnTransaction.init.datePicker.startRentPicker.getDate().toJSDate()
+        )
+            .add(1, "day")
+            .format("DD-MM-YYYY");
     },
 
     onSelectMember: async (noHp) => {
@@ -179,6 +200,8 @@ const fnTransaction = {
             });
     },
 };
+
+fnTransaction.onLoad();
 
 fnTransaction.init.buttons.btnViewMember.addEventListener("click", () => {
     fnTransaction.init.modals.modalViewMember.show();
@@ -275,6 +298,11 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
                         .getDate()
                         .toJSDate()
                 ).format("YYYY-MM-DD"),
+                endRentDate: moment(
+                    fnTransaction.init.datePicker.endRentPicker
+                        .getDate()
+                        .toJSDate()
+                ).format("YYYY-MM-DD"),
                 durasi: durasi,
                 _token: fnTransaction.init.buttons.btnSave.dataset.csrf,
             });
@@ -303,6 +331,11 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
                 room: room,
                 startRentDate: moment(
                     fnTransaction.init.datePicker.startRentPicker
+                        .getDate()
+                        .toJSDate()
+                ).format("YYYY-MM-DD"),
+                endRentDate: moment(
+                    fnTransaction.init.datePicker.endRentPicker
                         .getDate()
                         .toJSDate()
                 ).format("YYYY-MM-DD"),

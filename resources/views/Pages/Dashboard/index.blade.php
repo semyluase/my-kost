@@ -23,7 +23,11 @@
     <!-- Page body -->
     <div class="page-body">
         <div class="container-xl">
+            <div class="row justify-content-between mb-3">
+                @livewire('Dashboard.Counter.CounterRoom')
+            </div>
             <div class="row row-deck row-cards">
+                <h3 class="card-title">Service</h3>
                 @livewire('Dashboard.Counter.CounterOrder')
                 @livewire('Dashboard.Counter.CounterLaundry')
                 @livewire('Dashboard.Counter.CounterCleaning')

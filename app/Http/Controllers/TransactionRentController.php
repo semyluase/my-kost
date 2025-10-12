@@ -95,14 +95,6 @@ class TransactionRentController extends Controller
             ->first();
 
         $rent = null;
-        // if ($member) {
-        //     $rent = TransactionRent::where('room_id', $room->id)
-        //         ->where('member_id', $member->id)
-        //         ->where('end_date', '>', Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD"))
-        //         ->where('is_checkout_abnormal', false)
-        //         ->where('is_checkout_normal', false)
-        //         ->first();
-        // }
 
         $dataUser = array();
         $dataMember = array();
@@ -166,26 +158,34 @@ class TransactionRentController extends Controller
             switch ($request->durasi) {
                 case 'mingguan':
                     $price = $room->category->prices[1]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(6)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'weekly';
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalPrice = $price;
                     break;
 
                 case 'bulanan':
                     $price = $room->category->prices[2]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(29)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'monthly';
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalPrice = $price;
                     break;
 
                 case 'tahunan':
                     $price = $room->category->prices[3]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->addDays(364)->isoFormat("YYYY-MM-DD");
                     $durasi = 'yearly';
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalPrice = $price;
                     break;
 
                 default:
                     $price = $room->category->prices[0]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addDay(1)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->endRentDate)->addDay(1)->isoFormat("YYYY-MM-DD");
                     $durasi = 'daily';
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalPrice = $price * $totalHari;
                     break;
             }
 
@@ -197,6 +197,8 @@ class TransactionRentController extends Controller
                 'end_date'  =>  $endDateRent,
                 'price' =>  $price,
                 'duration'  =>  $durasi,
+                'total_sewa'  =>  $totalHari,
+                'total_harga_sewa'  =>  $totalPrice,
                 'no_invoice'    =>  $noInvoice
             ];
         }
@@ -550,7 +552,11 @@ class TransactionRentController extends Controller
 
         $room = Room::with(['rent', 'rent.member', 'rent.member.user'])->where('slug', $request->slug)->first();
 
-        $bank = Bank::find($request->bank)->first();
+        $bank = null;
+
+        if ($request->bank) {
+            $bank = Bank::find($request->bank)->first();
+        }
         // dd($room);
         $dataUpdateDeposit = [
             'pengembalian'  =>  $request->pengembalian,
@@ -575,7 +581,7 @@ class TransactionRentController extends Controller
                         'is_check_out'   =>  true,
                         'jumlah'    =>  $request->pengembalian,
                         'rekening'    =>  $request->noRek,
-                        'bank'  =>  $bank->nama,
+                        'bank'  =>  $bank ? $bank->nama : "",
                     ]
                 );
                 DB::commit();
@@ -672,10 +678,10 @@ class TransactionRentController extends Controller
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Detail
                                         Pembayaran</a>';
                         }
-                    } else {
-                        $btnAction .= '<a href="' . url('/transactions/rent-rooms/create') . '?room=' . $value->slug . '"
-                                    class="badge badge-outline text-primary fw-semibold badge-pill">Sewa Kamar</a>';
                     }
+
+                    $btnAction .= '<a href="' . url('/transactions/rent-rooms/create') . '?room=' . $value->slug . '"
+                            class="badge badge-outline text-primary fw-semibold badge-pill">Sewa Kamar</a>';
 
                     $btnAction .= '</div>';
 
@@ -739,7 +745,7 @@ class TransactionRentController extends Controller
                 'room_id'   =>  $room->id,
                 'tgl'   =>  Carbon::now('Asia/Jakarta'),
                 'is_check_in'   =>  true,
-                'jumlah'    =>  $dataRent->price,
+                'jumlah'    =>  $dataRent->total_harga_sewa,
                 'created_at'    =>  Carbon::now('Asia/Jakarta'),
                 'updated_at'    =>  Carbon::now('Asia/Jakarta'),
                 'home_id'   =>  Auth::user()->home_id,

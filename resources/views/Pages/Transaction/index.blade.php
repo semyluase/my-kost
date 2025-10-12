@@ -71,7 +71,10 @@
         </div>
     </div>
     @include('Pages.Transaction.partials.index.modal.listMember')
+    @include('Pages.Transaction.partials.index.modal.detailRoomTransaction')
     @push('myscript')
+        <script src="{{ asset('assets/vendor/momentJS/moment.min.js') }}?{{ rand() }}"></script>
+        <script src="{{ asset('assets/vendor/fullCalendar/index.global.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/js/Pages/Transaction/app.js') }}?{{ rand() }}"></script>
     @endpush

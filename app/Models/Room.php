@@ -38,6 +38,11 @@ class Room extends Model
         return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("end_date", '>=', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))->where('is_change_room', false)->where('is_checkout_abnormal', false)->where('is_checkout_normal', false);
     }
 
+    function rentToday()
+    {
+        return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("end_date", '>=', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))->where('is_change_room', false)->where('is_checkout_abnormal', false)->where('is_checkout_normal', false);
+    }
+
     function oldRent()
     {
         return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("end_date", '>=', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))->where('is_change_room', true)->where('is_checkout_abnormal', false)->where('is_checkout_normal', false);

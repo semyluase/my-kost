@@ -13,10 +13,10 @@
                     @php
                         $total = $counterTotal != 0 ? ($counterComplete / $counterTotal) * 100 : 0;
                     @endphp
-                    <div class="progress-bar bg-success" style="width: {{ $total }}" role="progressbar"
+                    <div class="progress-bar bg-success" style="width: {{ $total }}%" role="progressbar"
                         aria-valuenow="{{ $counterComplete }}" aria-valuemin="0" aria-valuemax="{{ $counterTotal }}"
-                        aria-label="{{ $total }} Selesai">
-                        <span class="visually-hidden">{{ $total }} Selesai</span>
+                        aria-label="{{ $total }}% Selesai">
+                        <span class="visually-hidden">{{ $total }}% Selesai</span>
                     </div>
                 </div>
             </div>
