@@ -101,18 +101,26 @@
                                 @switch($data->duration)
                                     @case('daily')
                                         Harian
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
+                                        Hari
                                     @break
 
                                     @case('weekly')
                                         Mingguan
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInWeeks(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
+                                        Minggu
                                     @break
 
                                     @case('monthly')
                                         Bulanan
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInMonths(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
+                                        Bulan
                                     @break
 
                                     @case('yearly')
                                         Bulanan
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInyears(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
+                                        Tahun
                                     @break
 
                                     @default
@@ -139,13 +147,13 @@
                                         @if ($data->oldRoom->oldRent->is_upgrade)
                                             {{ Number::currency($data->kurang_bayar, in: 'IDR', locale: 'id') }}
                                         @else
-                                            {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                            {{ Number::currency($data->total_harga_sewa, in: 'IDR', locale: 'id') }}
                                         @endif
                                     @else
-                                        {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                        {{ Number::currency($data->total_harga_sewa, in: 'IDR', locale: 'id') }}
                                     @endif
                                 @else
-                                    {{ Number::currency($data->room->category->prices->where('type', $data->duration)->first()->price, in: 'IDR', locale: 'id') }}
+                                    {{ Number::currency($data->total_harga_sewa, in: 'IDR', locale: 'id') }}
                                 @endif
                             </td>
                             @if ($deposit)
