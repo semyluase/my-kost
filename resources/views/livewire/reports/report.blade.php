@@ -88,7 +88,19 @@
                                     <tr>
                                         <td>{{ $rent->room->number_room }}</td>
                                         <td>{{ $rent->room->category->name }}</td>
-                                        <td>Sewa Kamar</td>
+                                        <td>
+                                            @if ($rent->is_check_in)
+                                                Check In
+                                            @elseif ($rent->is_check_out)
+                                                Check Out
+                                            @elseif ($rent->is_deposit)
+                                                Deposit
+                                            @elseif ($rent->is_upgrade)
+                                                Upgrade Kamar
+                                            @elseif ($rent->is_downgrade)
+                                                Downgrade Kamar
+                                            @endif
+                                        </td>
                                         <td>{{ Carbon::parse($rent->tgl)->isoFormat('LL') }}</td>
                                         <td>
                                             @if ($rent->is_check_in)

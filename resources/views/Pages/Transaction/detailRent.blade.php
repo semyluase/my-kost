@@ -93,19 +93,19 @@
                                                             <td>
                                                                 @switch($rent->duration)
                                                                     @case('daily')
-                                                                        Harian
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
                                                                     @break
 
                                                                     @case('monthly')
-                                                                        Bulanan
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
                                                                     @break
 
                                                                     @case('weekly')
-                                                                        Mingguan
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
                                                                     @break
 
                                                                     @default
-                                                                        tahunan
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
                                                                 @endswitch
                                                                 <p>
                                                                     {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}
@@ -191,19 +191,23 @@
                                                         <td>
                                                             @switch($rent->duration)
                                                                 @case('daily')
-                                                                    Harian
+                                                                    {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
+                                                                    Malam
                                                                 @break
 
                                                                 @case('monthly')
-                                                                    Bulanan
+                                                                    {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
+                                                                    Malam
                                                                 @break
 
                                                                 @case('weekly')
-                                                                    Mingguan
+                                                                    {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
+                                                                    Malam
                                                                 @break
 
                                                                 @default
-                                                                    Tahunan
+                                                                    {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
+                                                                    Malam
                                                             @endswitch
                                                             <p>
                                                                 {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}

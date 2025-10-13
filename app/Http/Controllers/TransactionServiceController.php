@@ -381,11 +381,12 @@ class TransactionServiceController extends Controller
             'no_room'   =>  $room->number_room,
             'price_cleaning' => $priceCleaning->price,
             'tipe_pembayaran'   =>  $request->typePayment,
-            'pembayaran'   =>  $request->totalbayar,
+            'pembayaran'   =>  $priceCleaning->price,
             'kembalian'   =>  $request->kembalian,
             'is_cleaning'    =>  true,
             'is_payment'    =>  true,
             'is_verify'    =>  true,
+            'cleaning_id'   =>  $priceCleaning->id,
             'user_id'   =>  $room->rent->member->user_id,
         ];
 

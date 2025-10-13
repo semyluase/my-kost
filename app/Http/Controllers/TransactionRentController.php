@@ -690,6 +690,11 @@ class TransactionRentController extends Controller
                     $btnAction .= '<a href="' . url('/transactions/rent-rooms/create') . '?room=' . $value->slug . '"
                             class="badge badge-outline text-primary fw-semibold badge-pill">Sewa Kamar</a>';
 
+                    if ($value->rent) {
+                        $btnAction .= '<button onclick="fnTransactionRoom.detailRoom(\'' . $value->slug . '\')"
+                                        class="badge badge-outline text-success fw-semibold badge-pill">Detail
+                                        Sewa</button>';
+                    }
                     $btnAction .= '</div>';
 
                     $status = '<span class="badge bg-blue-lt">Tersedia</span>';
@@ -872,5 +877,10 @@ class TransactionRentController extends Controller
             'no_invoice'    =>  $dataRent->no_invoice,
             'is_rent'   =>  true,
         ]);
+    }
+
+    function detailRoomTransaction(Request $request, Room $room)
+    {
+        dd($room);
     }
 }

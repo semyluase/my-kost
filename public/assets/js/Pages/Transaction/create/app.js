@@ -116,11 +116,15 @@ const fnTransaction = {
     },
 
     onLoad: () => {
-        endRentDate.value = moment(
-            fnTransaction.init.datePicker.startRentPicker.getDate().toJSDate()
-        )
-            .add(1, "day")
-            .format("DD-MM-YYYY");
+        fnTransaction.init.datePicker.endRentPicker.setStartDate(
+            moment(
+                fnTransaction.init.datePicker.startRentPicker
+                    .getDate()
+                    .toJSDate()
+            )
+                .add(1, "day")
+                .format("DD-MM-YYYY")
+        );
     },
 
     onSelectMember: async (noHp) => {
@@ -223,43 +227,51 @@ durasiInput.forEach((item) => {
     item.addEventListener("click", () => {
         switch (item.value) {
             case "harian":
-                endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker
-                        .getDate()
-                        .toJSDate()
-                )
-                    .add(1, "day")
-                    .format("DD-MM-YYYY");
+                fnTransaction.init.datePicker.endRentPicker.setStartDate(
+                    moment(
+                        fnTransaction.init.datePicker.startRentPicker
+                            .getDate()
+                            .toJSDate()
+                    )
+                        .add(1, "day")
+                        .format("DD-MM-YYYY")
+                );
                 break;
 
             case "mingguan":
-                endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker
-                        .getDate()
-                        .toJSDate()
-                )
-                    .add(1, "week")
-                    .format("DD-MM-YYYY");
+                fnTransaction.init.datePicker.endRentPicker.setStartDate(
+                    moment(
+                        fnTransaction.init.datePicker.startRentPicker
+                            .getDate()
+                            .toJSDate()
+                    )
+                        .add(7, "day")
+                        .format("DD-MM-YYYY")
+                );
                 break;
 
             case "bulanan":
-                endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker
-                        .getDate()
-                        .toJSDate()
-                )
-                    .add(1, "month")
-                    .format("DD-MM-YYYY");
+                fnTransaction.init.datePicker.endRentPicker.setStartDate(
+                    moment(
+                        fnTransaction.init.datePicker.startRentPicker
+                            .getDate()
+                            .toJSDate()
+                    )
+                        .add(30, "day")
+                        .format("DD-MM-YYYY")
+                );
                 break;
 
             case "tahunan":
-                endRentDate.value = moment(
-                    fnTransaction.init.datePicker.startRentPicker
-                        .getDate()
-                        .toJSDate()
-                )
-                    .add(1, "year")
-                    .format("DD-MM-YYYY");
+                fnTransaction.init.datePicker.endRentPicker.setStartDate(
+                    moment(
+                        fnTransaction.init.datePicker.startRentPicker
+                            .getDate()
+                            .toJSDate()
+                    )
+                        .add(365, "day")
+                        .format("DD-MM-YYYY")
+                );
                 break;
         }
     });

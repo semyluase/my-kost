@@ -101,26 +101,26 @@
                                 @switch($data->duration)
                                     @case('daily')
                                         Harian
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
-                                        Hari
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        Malam
                                     @break
 
                                     @case('weekly')
                                         Mingguan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInWeeks(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
-                                        Minggu
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        Malam
                                     @break
 
                                     @case('monthly')
                                         Bulanan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInMonths(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
-                                        Bulan
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        Malam
                                     @break
 
                                     @case('yearly')
-                                        Bulanan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInyears(Carbon::parse($data->end_date) . '12:00:00.000') + 1 }}
-                                        Tahun
+                                        Tahunan
+                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        Malam
                                     @break
 
                                     @default

@@ -13,6 +13,9 @@ const fnTransactionRoom = {
             modalListMember: new bootstrap.Modal(
                 document.querySelector("#modal-list-member")
             ),
+            modalDetailTransactionRoom: new bootstrap.Modal(
+                document.querySelector("#modal-detail-room-transaction")
+            ),
         },
         tables: {
             tbRoom: new $("#tb-room").DataTable({
@@ -48,40 +51,28 @@ const fnTransactionRoom = {
         fnTransactionRoom.init.modals.modalListMember.show();
     },
 
-    detailRoom:async(slug)=>{
+    detailRoom: async (slug) => {
         const calendarRoom = new FullCalendar.Calendar(
-                document.querySelector("#calendar-room"),
-                {
-                    initialView: "dayGridMonth",
-                    locale: "id",
-                    selectable: true,
-                    eventSources: [
-                        {
-                            url: `${baseUrl}/transactions/rent-rooms/detail-rooms/${slug}`,
-                        },
-                    ],
-                    datesSet: (info) => {
-                        startDate = moment(info.start).format("YYYY-MM-DD");
-                        endDate = moment(info.end).format("YYYY-MM-DD");
+            document.querySelector("#calendar-room"),
+            {
+                initialView: "dayGridMonth",
+                locale: "id",
+                selectable: true,
+                eventSources: [
+                    {
+                        url: `${baseUrl}/transactions/rent-rooms/detail-rooms/${slug}`,
                     },
-                    select: (info) => {
-                        modalTitle.innerHTML =
-                            "Plan Export " +
-                            moment(info.startStr).format("DD MMMM YYYY");
-
-                        tanggalStartModal.value = moment(info.startStr).format(
-                            "YYYY-MM-DD"
-                        );
-
-                        tanggalEndModal.value = moment(info.startStr).format(
-                            "YYYY-MM-DD"
-                        );
-
-                        fnPlanExport.init.modals.modalUploadPlan.show();
-                    },
-                }
-            ).render()
-    }
+                ],
+                datesSet: (info) => {
+                    startDate = moment(info.start).format("YYYY-MM-DD");
+                    endDate = moment(info.end).format("YYYY-MM-DD");
+                },
+                // select: (info) => {
+                //     fnPlanExport.init.modals.modalUploadPlan.show();
+                // },
+            }
+        ).render();
+    },
 };
 
 fnTransactionRoom.onLoad();
