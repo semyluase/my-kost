@@ -584,7 +584,7 @@ class TransactionRentController extends Controller
             'is_checkout_abnormal'    =>  Carbon::now('Asia/Jakarta')->notEqualTo(Carbon::parse($room->rent->end_date)),
         ];
 
-        if (Deposite::where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
+        if (Deposite::where('rent_id', $room->rent->id)->where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
             if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
                 LogTransactionRent::create(
                     [
@@ -754,6 +754,7 @@ class TransactionRentController extends Controller
 
         $deposit = Deposite::where('user_id', $dataRent->member->user->id)
             ->where('room_id', $dataRent->room_id)
+            ->where('rent_id', $dataRent->id)
             ->where('is_checkout', false)
             ->first();
 
@@ -805,6 +806,7 @@ class TransactionRentController extends Controller
             if (!$deposit) {
                 Deposite::create([
                     'room_id'   =>  $room->id,
+                    'rent_id'   =>  $dataRent->id,
                     'user_id'   =>  $dataRent->member->user->id,
                     'jumlah'    =>  preg_replace('/[^0-9]/', '', $request->deposit)
                 ]);

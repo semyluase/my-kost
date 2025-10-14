@@ -222,6 +222,7 @@
                                                     @php
                                                         $deposit = Deposite::where('room_id', $rent->room->id)
                                                             ->where('user_id', $rent->member->user->id)
+                                                            ->where('rent_id', $rent->id)
                                                             ->where('is_checkout', false)
                                                             ->first();
                                                     @endphp
