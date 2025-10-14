@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions/rent-rooms/search-member', [TransactionRentController::class, 'searchMember']);
     Route::get('/transactions/rent-rooms/generate-pdf', [TransactionRentController::class, 'generatePdf']);
     Route::get('/transactions/rent-rooms/detail-rooms/{room}', [TransactionRentController::class, 'detailRoomTransaction']);
+    Route::get('/transactions/rent-rooms/calendar-views', [TransactionRentController::class, 'calendarView']);
     Route::post('/transactions/rent-rooms/detail-rents/{room}', [TransactionRentController::class, 'saveDetailPayment']);
     Route::post('/transactions/rent-rooms/upload-identity', [UserIdentityController::class, 'uploadIdentity']);
     Route::post('/transactions/rent-rooms/upload-foto-orang', [UserIdentityController::class, 'uploadFotoOrang']);
@@ -160,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/utils/dropdowns/get-roles', [DropdownController::class, 'getRole']);
     Route::get('/utils/dropdowns/get-room', [DropdownController::class, 'getRoom']);
     Route::get('/utils/dropdowns/get-room-by-category', [DropdownController::class, 'getRoomByCategory']);
+    Route::get('/utils/dropdowns/get-all-room-by-category', [DropdownController::class, 'getAllRoomByCategory']);
     Route::get('/utils/dropdowns/get-member', [DropdownController::class, 'getMember']);
     Route::get('/utils/dropdowns/get-bank', [DropdownController::class, 'getBank']);
     Route::get('/utils/dropdowns/get-category-laundry', [DropdownController::class, 'getCategoryLaundry']);

@@ -44,25 +44,81 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-3">
-                                    <select name="category-room" id="category-room" class="form-select choices"></select>
+                            <div class="row mb-3 justify-content-end d-none">
+                                <div class="col-md-auto me-0">
+                                    <div class="btn-group" role="group">
+                                        <input type="radio" class="btn-check" name="btn-view" id="btn-view-1"
+                                            value="table-view" autocomplete="off" checked>
+                                        <label for="btn-view-1" class="btn btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-table">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path
+                                                    d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" />
+                                                <path d="M3 10h18" />
+                                                <path d="M10 3v18" />
+                                            </svg>
+                                        </label>
+                                        <input type="radio" class="btn-check" name="btn-view" id="btn-view-2"
+                                            value="calendar-view" autocomplete="off">
+                                        <label for="btn-view-2" class="btn btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-grid-pattern">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path
+                                                    d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+                                                <path d="M10 8v8" />
+                                                <path d="M14 8v8" />
+                                                <path d="M8 10h8" />
+                                                <path d="M8 14h8" />
+                                            </svg>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table" id="tb-room" style="width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>No. Kamar</th>
-                                            <th>Kos</th>
-                                            <th>Kategori</th>
-                                            <th>Penyewa</th>
-                                            <th>Tanggal Sewa</th>
-                                            <th>Status</th>
-                                            <th>#</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                            <div id="table-view" class="mb-3">
+                                <div class="row mb-3">
+                                    <div class="col-3">
+                                        <select name="category-room" id="category-room"
+                                            class="form-select choices"></select>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table" id="tb-room" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Kamar</th>
+                                                <th>Kos</th>
+                                                <th>Kategori</th>
+                                                <th>Penyewa</th>
+                                                <th>Tanggal Sewa</th>
+                                                <th>Status</th>
+                                                <th>#</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="calendar-view" class="d-none">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <select name="category-calendar" id="category-calendar"
+                                            class="form-select choices"></select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="room-calendar" id="room-calendar"
+                                            class="form-select choices"></select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div id="calendar-section"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

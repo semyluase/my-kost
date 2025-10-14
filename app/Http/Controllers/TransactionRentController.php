@@ -336,7 +336,7 @@ class TransactionRentController extends Controller
             $hargaKamarBaru = $dataKamarBaru->category->prices->where('type', $dataKamar->rent->duration)->first()->price;
 
             if ($hargaKamarLama < $hargaKamarBaru) {
-                if (Carbon::parse($dataKamar->rent->start_date)->startOfDay()->addHours(12)->diffInHours(Carbon::now('Asia/Jakarta')) > 12) {
+                if (Carbon::parse($dataKamar->rent->start_date)->startOfDay()->addHours(12)->lessThan(Carbon::now("Asia/Jakarta"))) {
                     $sisaSewa = intval($request->sisaDurasi);
                     $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
                     $kurangBayar = round((($sisaSewa / $totalSewa) * $hargaKamarBaru) - (($sisaSewa / $totalSewa) * $hargaKamarLama), 0);
@@ -881,6 +881,50 @@ class TransactionRentController extends Controller
 
     function detailRoomTransaction(Request $request, Room $room)
     {
-        dd($room);
+        $now = Carbon::now("Asia/Jakarta")->isoFormat("YYYY-MM-DD");
+        $transaction = TransactionRent::with(['member.user'])
+            // ->whereRaw("'$now' BETWEEN start_date and end_date")
+            ->where('room_id', $room->id)
+            ->where('is_change_room', false)
+            ->where('is_checkout_normal', false)
+            ->where('is_checkout_abnormal', false)
+            ->get();
+
+        return response()->json(view('Pages.Transaction.partials.index.section.detail', [
+            'room'  =>  $room,
+            'transactions'  =>  $transaction,
+        ])->render());
+    }
+
+    function calendarView(Request $request)
+    {
+        $room = Room::where('slug', $request->room)
+            ->first();
+
+        $startDate = Carbon::parse($request->start)->isoFormat("YYYY-MM-DD");
+        $endDate = Carbon::parse($request->end)->isoFormat("YYYY-MM-DD");
+
+        $transaction = TransactionRent::with(['member.user'])->where('start_date', '>=', $startDate)
+            ->where('end_date', '<=', $endDate)
+            ->filterByRoom($room ? $room->id : null)
+            ->where('is_change_room', false)
+            ->where('is_checkout_normal', false)
+            ->where('is_checkout_abnormal', false)
+            ->get();
+
+        $results = array();
+
+        if ($transaction) {
+            foreach ($transaction as $key => $value) {
+                $results[] = [
+                    'title' =>  $transaction->room->number_room . " (" . ($value->member->user ? $value->member->user->name : "") . ")",
+                    'start' =>  Carbon::parse($value->start_date)->isoFormat("YYYY-MM-DD"),
+                    'end' =>  Carbon::parse($value->end_date)->isoFormat("YYYY-MM-DD"),
+                    'color' =>  Carbon::parse($value->start_date)->greaterThanOrEqualTo(Carbon::now('Asia/Jakarta')) ? "#4451C4" : "#54D485"
+                ];
+            }
+        }
+
+        return response()->json($results);
     }
 }

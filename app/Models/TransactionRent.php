@@ -28,4 +28,11 @@ class TransactionRent extends Model
     {
         return $this->belongsTo(Room::class, 'old_room_id', 'id');
     }
+
+    function scopeFilterByRoom($query, $roomID)
+    {
+        $query->when($roomID ?? false, fn($query, $room) => ($query->where('room_id', $room)));
+
+        return $query;
+    }
 }

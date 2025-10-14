@@ -68,4 +68,11 @@ class Room extends Model
 
         return $query;
     }
+
+    function scopeFilterAllRoomByCategory($query, $categoryID)
+    {
+        $query->when($categoryID ?? false, fn($query, $category) => ($query->where('category_id', $category)));
+
+        return $query;
+    }
 }
