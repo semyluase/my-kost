@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendEmailInvoice;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Email;
 use App\Models\Member;
 use App\Models\Category;
 use App\Models\Deposite;
-use App\Models\Log\TransactionRent as LogTransactionRent;
 use App\Models\Master\Bank;
 use Illuminate\Support\Str;
+use App\Models\Member\TopUp;
 use Illuminate\Http\Request;
+use App\Jobs\SendEmailInvoice;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 use App\Models\TransactionRent;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\TMP\UserIdentity;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use function App\Helper\makePhoneNumber;
 use Illuminate\Support\Facades\Validator;
 use function App\Helper\generateCounterInvoice;
+use App\Models\Log\TransactionRent as LogTransactionRent;
 
 class TransactionRentController extends Controller
 {
@@ -149,6 +150,10 @@ class TransactionRentController extends Controller
         if (collect($dataMember)->count() > 0) {
             if (!$member) {
                 $member = Member::create($dataMember);
+                TopUp::create([
+                    'user_id'   =>  $user->id,
+                    'credit'    =>  0,
+                ]);
             } else {
                 Member::find($member->id)->update($dataMember);
             }
