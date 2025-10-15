@@ -174,8 +174,6 @@ const fnHome = {
                         response.shared_facility.forEach((share) => {
                             if (sf.value == share.facility.id) {
                                 sf.checked = true;
-                            } else {
-                                sf.checked = false;
                             }
                         });
                     } else {
@@ -189,8 +187,6 @@ const fnHome = {
                             if (rl.rule) {
                                 if (r.value == rl.rule.id) {
                                     r.checked = true;
-                                } else {
-                                    r.checked = false;
                                 }
                             } else {
                                 r.checked = false;
