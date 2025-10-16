@@ -128,6 +128,35 @@ const fnTransactionRoom = {
                 document.querySelector("#detail-section").innerHTML = response;
             });
     },
+
+    cancelRoom: async (id, csrf) => {
+        blockUI();
+
+        const results = await onSaveJson(
+            `${baseUrl}/transactions/rent-rooms/canceled`,
+            JSON.stringify({
+                id: id,
+                _token: csrf,
+            }),
+            "post"
+        );
+
+        unBlockUI();
+
+        if (results.data.status) {
+            swal.fire("Berhasil", results.data.message, "success").then(
+                async (result) => {
+                    if (result.isConfirmed) {
+                        fnTransactionRoom.init.modals.modalDetailTransactionRoom.hide();
+
+                        fnTransactionRoom.detailRoom(results.data.slug);
+                    }
+                }
+            );
+        } else {
+            swal.fire("Terjadi kesalahan", results.data.message, "error");
+        }
+    },
 };
 
 fnTransactionRoom.onLoad();

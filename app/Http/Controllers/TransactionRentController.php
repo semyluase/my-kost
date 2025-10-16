@@ -626,6 +626,35 @@ class TransactionRentController extends Controller
         ]);
     }
 
+    function storeCanceled(Request $request)
+    {
+        DB::beginTransaction();
+
+        $transaction = TransactionRent::with(['room'])->where('id', $request->id)->first();
+
+        if (TransactionRent::where('id', $request->id)->delete()) {
+            DB::commit();
+
+            return response()->json([
+                'data'  =>  [
+                    'status'    =>  true,
+                    'message'   =>  "Sewa berhasil dibatalkan",
+                    'slug'  =>  $transaction->room->slug,
+                ]
+            ]);
+        }
+
+        DB::rollBack();
+
+        return response()->json([
+            'data'  =>  [
+                'status'    =>  false,
+                'message'   =>  "Sewa tidak berhasil dibatalkan",
+                'slug'  =>  null,
+            ]
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -686,7 +715,7 @@ class TransactionRentController extends Controller
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Pindah
                                         Kamar</a>';
                         } else {
-                            $btnAction .= '<a href="' . url('') . '/transactions/rent-rooms/detail-rents/' . $value->slug . '"
+                            $btnAction .= '<a href="' . url('') . '/transactions/rent-rooms/detail-rents/' . $value->slug . '?transaksi=' . $value->rent->id . '"
                                         class="badge badge-outline text-primary fw-semibold badge-pill">Detail
                                         Pembayaran</a>';
                         }
@@ -749,6 +778,7 @@ class TransactionRentController extends Controller
         DB::beginTransaction();
 
         $dataRent = TransactionRent::with(['member', 'oldRoom', 'oldRoom.oldRent'])->where('room_id', $room->id)
+            ->where('id', $request->idTransaksi)
             ->latest()
             ->first();
 
@@ -890,7 +920,6 @@ class TransactionRentController extends Controller
     {
         $now = Carbon::now("Asia/Jakarta")->isoFormat("YYYY-MM-DD");
         $transaction = TransactionRent::with(['member.user'])
-            // ->whereRaw("'$now' BETWEEN start_date and end_date")
             ->where('room_id', $room->id)
             ->where('is_change_room', false)
             ->where('is_checkout_normal', false)

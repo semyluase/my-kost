@@ -87,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/transactions/rent-rooms/upload-foto-orang', [UserIdentityController::class, 'uploadFotoOrang']);
     Route::post('/transactions/rent-rooms/change-room', [TransactionRentController::class, 'storeChangeRoom']);
     Route::post('/transactions/rent-rooms/checkout', [TransactionRentController::class, 'storeCheckout']);
+    Route::post('/transactions/rent-rooms/canceled', [TransactionRentController::class, 'storeCanceled']);
     Route::resource('/transactions/rent-rooms', TransactionRentController::class);
 
     Route::get('/members/details/{member}', [MemberController::class, 'detail']);

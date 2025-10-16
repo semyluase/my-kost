@@ -491,7 +491,7 @@ class HomeController extends Controller
 
                         $rules = collect($value->rule)->chunk(10);
 
-                        $no = 1;
+                        $noRule = 1;
                         if ($rules) {
                             foreach ($rules as $key => $chunkRule) {
                                 foreach ($chunkRule as $key => $valueRule) {
@@ -499,12 +499,12 @@ class HomeController extends Controller
                                         $homeRules .= '<div class="col-6">
                                         <div class="row g-3 align-items-center">
                                           <div class="col">
-                                            <div class="text-reset d-block text-truncate">' . $no . '. ' . $valueRule->rule->name . '</div>
+                                            <div class="text-reset d-block text-truncate">' . $noRule . '. ' . $valueRule->rule->name . '</div>
                                           </div>
                                         </div>
                                       </div>';
 
-                                        $no++;
+                                        $noRule++;
                                     }
                                 }
                             }

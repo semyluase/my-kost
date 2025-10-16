@@ -85,6 +85,8 @@ fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
                     JSON.stringify({
                         status: fnDetailSewa.init.buttons.btnSave.dataset
                             .status,
+                        idTransaksi:
+                            fnDetailSewa.init.buttons.btnSave.dataset.id,
                         deposit: depositInput.value,
                         _token: fnDetailSewa.init.buttons.btnSave.dataset.csrf,
                     }),

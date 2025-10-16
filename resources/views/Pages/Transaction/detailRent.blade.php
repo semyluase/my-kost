@@ -280,7 +280,7 @@
                                     <button class="btn btn-primary ms-auto" data-csrf="{{ csrf_token() }}"
                                         data-room="{{ $rent->room->slug }}"
                                         data-status="{{ $rent->oldRoom ? ($rent->oldRoom->oldRent->is_upgrade ? 'upgrade' : 'downgrade') : 'checkin' }}"
-                                        id="btn-save">
+                                        id="btn-save" data-id="{{ request()->transaksi }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
