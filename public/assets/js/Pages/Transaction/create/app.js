@@ -96,7 +96,6 @@ const fnTransaction = {
                 success: function (file, response) {
                     // var data = JSON.parse(response);
                     tokenFotoOrang = response.token;
-                    console.log(tokenFotoOrang);
                 },
             }),
         },
@@ -366,7 +365,7 @@ fnTransaction.init.buttons.btnSave.addEventListener("click", async () => {
     unBlockUI();
 
     if (results.data.status) {
-        window.location.href = `${baseUrl}/transactions/rent-rooms/detail-rents/${results.data.noKamar}`;
+        window.location.href = `${baseUrl}/transactions/rent-rooms/detail-rents/${results.data.noKamar}?transaksi=${results.data.idRent}`;
     } else {
         swalWithBootstrapButtons.fire(
             "Something wrong",

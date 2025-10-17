@@ -69,6 +69,11 @@
                         {{ Carbon::parse($value->start_date)->diffInDays($value->end_date) }} Malam
                     </td>
                     <td>
+                        @if (!$value->is_approve)
+                            <a href="{{ url('') }}/transactions/rent-rooms/detail-rents/{{ $value->room->slug }}?transaksi={{ $value->id }}"
+                                class="btn btn-primary">Detail
+                                Pembayaran</a>
+                        @endif
                         @if (Carbon::parse($value->end_date)->startOfDay()->addHours(12)->greaterThan(Carbon::now('Asia/Jakarta')->startOfDay()->addHours(12)))
                             <button class="btn btn-outline btn-danger"
                                 onclick="fnTransactionRoom.cancelRoom('{{ $value->id }}','{{ csrf_token() }}')">

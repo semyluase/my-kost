@@ -179,7 +179,7 @@ class TransactionRentController extends Controller
 
                 case 'tahunan':
                     $price = $room->category->prices[3]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->addDays(364)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'yearly';
                     $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
                     $totalPrice = $price;
@@ -187,7 +187,7 @@ class TransactionRentController extends Controller
 
                 default:
                     $price = $room->category->prices[0]->price;
-                    $endDateRent = Carbon::parse($request->endRentDate)->addDay(1)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'daily';
                     $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
                     $totalPrice = $price * $totalHari;
@@ -220,6 +220,7 @@ class TransactionRentController extends Controller
                     'status'    =>  true,
                     'message'   =>  'Transaksi sewa kamar berhasil disimpan',
                     'noKamar'   =>  $room->slug,
+                    'idRent'    =>  $rent->id,
                 ]
             ]);
         }
