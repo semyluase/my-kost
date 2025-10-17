@@ -42,6 +42,7 @@ class SendEmailInvoice extends Command
 
                 $deposit = Deposite::where('user_id', $dataRent->member->user->id)
                     ->where('room_id', $dataRent->room_id)
+                    ->where('rent_id', $dataRent->id)
                     ->where('is_checkout', false)
                     ->first();
 

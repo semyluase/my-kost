@@ -101,25 +101,25 @@
                                 @switch($data->duration)
                                     @case('daily')
                                         Harian
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        {{ $data->total_sewa }}
                                         Malam
                                     @break
 
                                     @case('weekly')
                                         Mingguan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        {{ $data->total_sewa }}
                                         Malam
                                     @break
 
                                     @case('monthly')
                                         Bulanan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        {{ $data->total_sewa }}
                                         Malam
                                     @break
 
                                     @case('yearly')
                                         Tahunan
-                                        {{ Carbon::parse($data->start_date . '12:00:00.000')->diffInDays(Carbon::parse($data->end_date) . '12:00:00.000') }}
+                                        {{ $data->total_sewa }}
                                         Malam
                                     @break
 
