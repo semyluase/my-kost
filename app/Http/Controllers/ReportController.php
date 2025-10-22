@@ -117,6 +117,13 @@ class ReportController extends Controller
                     $sheet->setCellValue("H$row", $value->jumlah);
                 }
 
+                if ($value->is_credit) {
+                    $sheet->setCellValue("D$row", "Saldo Dompet Digital");
+                    $sheet->setCellValue("F$row", "Pengembalian Saldo");
+                    $sheet->setCellValue("G$row", 0);
+                    $sheet->setCellValue("H$row", $value->jumlah);
+                }
+
                 if ($value->is_upgrade) {
                     $sheet->setCellValue("D$row", "Sewa Kamar");
                     $sheet->setCellValue("F$row", "Upgrade Kamar");

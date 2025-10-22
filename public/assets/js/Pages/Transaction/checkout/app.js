@@ -1,5 +1,6 @@
 const noRekInput = document.querySelector("#no-rek");
 const pengembalianInput = document.querySelector("#pengembalian");
+const creditInput = document.querySelector("#credit");
 const jenisPengembalianRadio = document.querySelectorAll("#jenis-pengembalian");
 
 let url, data, method, nomorKamar;
@@ -48,6 +49,7 @@ fnCheckout.init.buttons.btnSave.addEventListener("click", async () => {
                 : fnCheckout.init.dropdowns.bankDropdown.getValue(true),
         noRek: noRekInput.value,
         pengembalian: pengembalianInput.value,
+        credit: creditInput.value,
         _token: fnCheckout.init.buttons.btnSave.dataset.csrf,
     });
 

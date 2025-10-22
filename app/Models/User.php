@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Member\TopUp;
 use App\Models\TMP\UserIdentity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,6 +48,11 @@ class User extends Authenticatable
     function foto()
     {
         return $this->belongsTo(UserIdentity::class, 'foto_identity', 'id');
+    }
+
+    function credit()
+    {
+        return $this->belongsTo(TopUp::class, 'id', 'user_id');
     }
 
     /**

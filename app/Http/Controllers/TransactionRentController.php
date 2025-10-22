@@ -51,12 +51,20 @@ class TransactionRentController extends Controller
 
     public function checkout(Request $request)
     {
-        $room = Room::with(['category', 'rent', 'rent.member', 'rent.member.user', 'rent.member.user.deposite'])->where('slug', $request->room)->first();
+        $room = Room::with(['category', 'rent', 'rent.member', 'rent.member.user', 'rent.member.user.deposite', 'rent.member.user.credit'])->where('slug', $request->room)->first();
+
+        $dataRent = TransactionRent::where('member_id', $room->rent->member->id)
+            ->where('is_change_room', false)
+            ->where('is_checkout_normal', false)
+            ->where('is_checkout_abnormal', false)
+            ->where('end_date', '>=', Carbon::now('Asia/Jakarta'))
+            ->get();
 
         return view('Pages.Transaction.checkout', [
             'title' =>  'Transaction - Checkout',
             'pageTitle' =>  'Transaction - Checkout',
             'room'  =>  $room,
+            'dataTransaksi' =>  $dataRent,
         ]);
     }
 
@@ -570,9 +578,10 @@ class TransactionRentController extends Controller
         if ($request->bank) {
             $bank = Bank::find($request->bank)->first();
         }
-        // dd($room);
+
         $dataUpdateDeposit = [
             'pengembalian'  =>  $request->pengembalian,
+            'pengembalian_saldo'  =>  $request->credit,
             'tanggal'   =>  Carbon::now('Asia/Jakarta')->addDay(),
             'jenis_pengembalian'  =>  $request->jenis_pengembalian,
             'bank'  =>  $request->bank,
@@ -585,6 +594,7 @@ class TransactionRentController extends Controller
             'is_checkout_abnormal'    =>  Carbon::now('Asia/Jakarta')->notEqualTo(Carbon::parse($room->rent->end_date)),
         ];
 
+        // dd($room->rent->id);
         if (Deposite::where('rent_id', $room->rent->id)->where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
             if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
                 LogTransactionRent::create(
@@ -595,8 +605,27 @@ class TransactionRentController extends Controller
                         'jumlah'    =>  $request->pengembalian,
                         'rekening'    =>  $request->noRek,
                         'bank'  =>  $bank ? $bank->nama : "",
-                    ]
+                    ],
                 );
+
+                if ($request->credit > 0) {
+                    LogTransactionRent::create(
+                        [
+                            'room_id'   =>  $room->id,
+                            'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                            'is_credit'   =>  true,
+                            'jumlah'    =>  $request->credit,
+                            'rekening'    =>  $request->noRek,
+                            'bank'  =>  $bank ? $bank->nama : "",
+                        ],
+                    );
+
+                    Topup::where('user_id', $room->rent->member->user->id)->update([
+                        'credit'    =>  0,
+                    ]);
+                }
+
+
                 DB::commit();
 
                 return response()->json([

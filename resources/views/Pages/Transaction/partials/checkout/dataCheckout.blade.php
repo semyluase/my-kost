@@ -54,6 +54,22 @@
                         <td>{{ Carbon::now('Asia/Jakarta')->addDay()->isoFormat('DD MMMM YYYY') }}</td>
                         <td><input type="text" class="form-control" id="pengembalian"></td>
                     </tr>
+                    @php
+                        $saldo = 0;
+                        // dd(collect($dataTransaksi)->count());
+                        if (collect($dataTransaksi)->count() == 1) {
+                            if ($room->rent->member->user->credit->credit > 0) {
+                                $saldo = $room->rent->member->user->credit->credit;
+                            }
+                        }
+                    @endphp
+                    <tr>
+                        <td>Saldo Dompet Digital</td>
+                        <td>{{ Number::currency($saldo, 'Rp.', 'id') }}</td>
+                        <td>{{ Carbon::now('Asia/Jakarta')->addDay()->isoFormat('DD MMMM YYYY') }}</td>
+                        <td><input type="text" class="form-control bg-gray-400" readonly id="credit"
+                                value="{{ $saldo }}"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>

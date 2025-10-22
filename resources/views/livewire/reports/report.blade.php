@@ -99,6 +99,8 @@
                                                 Upgrade Kamar
                                             @elseif ($rent->is_downgrade)
                                                 Downgrade Kamar
+                                            @elseif ($rent->is_credit)
+                                                Saldo Dompet Digital
                                             @endif
                                         </td>
                                         <td>{{ Carbon::parse($rent->tgl)->isoFormat('LL') }}</td>
@@ -115,6 +117,8 @@
                                                 Upgrade Kamar
                                             @elseif ($rent->is_downgrade)
                                                 Downgrade Kamar
+                                            @elseif ($rent->is_credit)
+                                                Pengembalian Saldo
                                             @endif
                                         </td>
                                         <td>
@@ -139,6 +143,12 @@
                                         </td>
                                         <td>
                                             @if ($rent->is_check_out)
+                                                {{ Number::currency($rent->jumlah, in: 'IDR', locale: 'id') }}
+
+                                                @php
+                                                    $totalPengeluaran += $rent->jumlah;
+                                                @endphp
+                                            @elseif ($rent->is_credit)
                                                 {{ Number::currency($rent->jumlah, in: 'IDR', locale: 'id') }}
 
                                                 @php
