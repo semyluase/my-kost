@@ -64,6 +64,14 @@ class TransactionServiceController extends Controller
         ]);
     }
 
+    function memberSaldo()
+    {
+        return view('Pages.Services.indexMemberCredit', [
+            'title' =>  "Top Up Saldo",
+            'pageTitle' =>  'Top Up Saldo'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

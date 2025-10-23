@@ -88,4 +88,11 @@ class User extends Authenticatable
 
         return $query;
     }
+
+    function scopeSearchUser($query, array $params)
+    {
+        $query->when($params['search'] ?? false, fn($query, $search) => ($query->where('name', "LIKE", "%$search%")->orWhere('username', "LIKE", "%$search%")));
+
+        return $query;
+    }
 }
