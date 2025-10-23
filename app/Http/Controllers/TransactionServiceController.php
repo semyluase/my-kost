@@ -67,8 +67,8 @@ class TransactionServiceController extends Controller
     function memberSaldo()
     {
         return view('Pages.Services.indexMemberCredit', [
-            'title' =>  "Top Up Saldo",
-            'pageTitle' =>  'Top Up Saldo'
+            'title' =>  "Saldo Member",
+            'pageTitle' =>  'Saldo Member'
         ]);
     }
 
