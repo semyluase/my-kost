@@ -173,7 +173,7 @@ class TransactionRentController extends Controller
                     $price = $room->category->prices[1]->price;
                     $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'weekly';
-                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate));
                     $totalPrice = $price;
                     break;
 
@@ -181,7 +181,7 @@ class TransactionRentController extends Controller
                     $price = $room->category->prices[2]->price;
                     $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'monthly';
-                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate));
                     $totalPrice = $price;
                     break;
 
@@ -189,7 +189,7 @@ class TransactionRentController extends Controller
                     $price = $room->category->prices[3]->price;
                     $endDateRent = Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'yearly';
-                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate));
                     $totalPrice = $price;
                     break;
 
@@ -197,7 +197,7 @@ class TransactionRentController extends Controller
                     $price = $room->category->prices[0]->price;
                     $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'daily';
-                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate)) + 1;
+                    $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate));
                     $totalPrice = $price * $totalHari;
                     break;
             }
