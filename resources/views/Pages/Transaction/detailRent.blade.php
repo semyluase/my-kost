@@ -256,6 +256,18 @@
                                     </div>
                                 @endif
                             </div>
+                            <div class="row mb-3 justify-content-end">
+                                <div class="col-md-4 mb-3">
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="paymentType" id="cash"
+                                            autocomplete="off" checked="" value="cash">
+                                        <label for="cash" type="button" class="btn">Cash</label>
+                                        <input type="radio" class="btn-check" name="paymentType" id="transfer"
+                                            autocomplete="off" value="transfer">
+                                        <label for="transfer" type="button" class="btn">Transfer</label>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-12 d-flex">
                                     <button class="btn btn-primary ms-auto" data-csrf="{{ csrf_token() }}"

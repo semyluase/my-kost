@@ -71,6 +71,7 @@
                                     <th rowspan="2">Kategori</th>
                                     <th rowspan="2">Jenis Transaksi</th>
                                     <th rowspan="2">Tanggal Pemesanan</th>
+                                    <th rowspan="2">Jenis Pembayaran</th>
                                     <th rowspan="2">Status</th>
                                     <th colspan="2">Jumlah</th>
                                 </tr>
@@ -104,6 +105,7 @@
                                             @endif
                                         </td>
                                         <td>{{ Carbon::parse($rent->tgl)->isoFormat('LL') }}</td>
+                                        <td>{{ Str::upper($rent->payment_type) }}</td>
                                         <td>
                                             @if ($rent->is_check_in)
                                                 Check In
@@ -161,7 +163,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9">
+                                        <td colspan="10">
                                             <div class="text-danger text-center h3">Tidak ada data sewa kamar</div>
                                         </td>
                                     </tr>

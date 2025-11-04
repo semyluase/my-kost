@@ -11,7 +11,7 @@
     </div>
     <div class="col-6 mb-3">
         <div class="mb-3">
-            <label class="form-label">Simple selectgroup</label>
+            <label class="form-label">Tipe Pembayaran</label>
             <div class="form-selectgroup">
                 <label class="form-selectgroup-item">
                     <input type="radio" name="jenis-pengembalian" id="jenis-pengembalian" value="cash"

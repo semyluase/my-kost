@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 use function App\Helper\generateCounterTransaction;
@@ -27,6 +28,8 @@ class AddGoods extends Component
     public int $qty = 0;
     public int $price = 0;
     public int $total = 0;
+    public $showModal = false;
+    public $paymentType = "cash";
     public $listeners = ["addGoodsSelect" => 'selectGoods'];
 
     function mount()
@@ -40,14 +43,16 @@ class AddGoods extends Component
             ->first();
         $this->dateTransaction = Carbon::now('Asia/Jakarta')->isoFormat("DD-MM-YYYY");
         $this->status = '1';
+        $this->paymentType = 'cash';
         if ($dataReceipt) {
             $this->dateTransaction = Carbon::parse($dataReceipt->tanggal)->isoFormat("DD-MM-YYYY");
             $this->status = $dataReceipt->status;
+            $this->paymentType = $dataReceipt->tipe_pembayaran;
         }
 
         $this->dispatch('listGoods.render', ["nobukti" => $this->noBukti]);
 
-        return view('livewire.receipt.add-goods');
+        return view('livewire.receipt.add-goods', ['dataReceipt'  =>  $dataReceipt]);
     }
 
     function selectGoods($code, $name, $category)
@@ -89,7 +94,8 @@ class AddGoods extends Component
             'is_receipt'    =>  true,
             "total"    =>  $this->qty * $this->price,
             "home_id"   =>  Auth::user()->home_id,
-            'tgl_request'   =>  Carbon::now("Asia/Jakarta")
+            'tgl_request'   =>  Carbon::now("Asia/Jakarta"),
+            'tipe_pembayaran'   =>  $this->paymentType,
         ];
 
         $detail = [
@@ -261,5 +267,16 @@ class AddGoods extends Component
                 'text' => 'Gagal memposting data transaksi'
             ]);
         }
+    }
+
+    #[On('addGoods.showModal')]
+    function showModal()
+    {
+        $this->showModal = true;
+    }
+
+    function closeModal()
+    {
+        $this->showModal = false;
     }
 }

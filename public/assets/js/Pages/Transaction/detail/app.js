@@ -1,5 +1,8 @@
 const depositInput = document.querySelector("#deposit");
 const totalInput = document.querySelector("#total");
+const paymentTypeRadio = document.querySelectorAll('input[name="paymentType"]');
+
+let paymentType;
 
 const fnDetailSewa = {
     init: {
@@ -80,6 +83,12 @@ fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
         .then(async (result) => {
             if (result.isConfirmed) {
                 blockUI();
+                Array.from(paymentTypeRadio).forEach((item) => {
+                    if (item.checked) {
+                        paymentType = item.value;
+                    }
+                });
+
                 const results = await onSaveJson(
                     `${baseUrl}/transactions/rent-rooms/detail-rents/${fnDetailSewa.init.buttons.btnSave.dataset.room}`,
                     JSON.stringify({
@@ -88,6 +97,7 @@ fnDetailSewa.init.buttons.btnSave.addEventListener("click", async () => {
                         idTransaksi:
                             fnDetailSewa.init.buttons.btnSave.dataset.id,
                         deposit: depositInput.value,
+                        paymentType: paymentType,
                         _token: fnDetailSewa.init.buttons.btnSave.dataset.csrf,
                     }),
                     "post"
