@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Receipt;
 
+use App\Models\Home;
 use App\Models\TransactionHeader;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -13,6 +14,8 @@ class Receipt extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $lenght = 10;
+    public $homeID;
+    public $homeList;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -21,10 +24,17 @@ class Receipt extends Component
         $this->resetPage();
     }
 
+    function mount()
+    {
+        $this->homeID = Auth::user()->home_id;
+    }
+
     public function render()
     {
+        $this->homeList = Home::where('is_active', true)->get();
+
         $receipt = TransactionHeader::where('is_receipt', true)
-            ->where('home_id', Auth::user()->home_id)
+            ->where('home_id', $this->homeID)
             ->orderBy('tanggal', "desc")
             ->get();
 

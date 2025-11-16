@@ -85,7 +85,7 @@ class TransactionHeader extends Model
                     and tth.is_order = true) tb");
     }
 
-    function scopeGetDataReportDetail($query, $startDate, $endDate, $codeItem)
+    function scopeGetDataReportDetail($query, $startDate, $endDate, $codeItem, $homeID)
     {
         return $query->select('*')
             ->fromRaw("(select code_item, name, tanggal, sum(qty_in) as qty_in, harga_beli,
@@ -99,7 +99,7 @@ class TransactionHeader extends Model
                     on ttd.nobukti = tth.nobukti
                     where fs.code_item = '$codeItem'
                     and tth.tanggal between '$startDate' and '$endDate'
-                    and tth.home_id = '" . Auth::user()->home_id . "'
+                    and tth.home_id = '" . $homeID . "'
                     group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli
                     union all
                     select fs.code_item, fs.name, tth.tanggal, 0 as qty_in,
@@ -111,7 +111,7 @@ class TransactionHeader extends Model
                     on ttd.nobukti = tth.nobukti
                     where fs.code_item = '$codeItem'
                     and tth.tanggal between '$startDate' and '$endDate'
-                    and tth.home_id = '" . Auth::user()->home_id . "'
+                    and tth.home_id = '" . $homeID . "'
                     group by fs.code_item, fs.name, tth.tanggal, ttd.harga_beli) a
                     group by  code_item, name, tanggal, harga_beli, harga_jual) tb");
     }
@@ -189,11 +189,9 @@ class TransactionHeader extends Model
         return $query;
     }
 
-    function scopeFilterByBranch($query)
+    function scopeFilterByBranch($query, $homeID)
     {
-        if (Auth::user()->role->slug != 'super-admin') {
-            $query->where('home_id', Auth::user()->home_id);
-        }
+        $query->when($homeID ?? false, fn($query, $homeID) => ($query->where('home_id', $homeID)));
 
         return $query;
     }

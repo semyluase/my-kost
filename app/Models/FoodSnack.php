@@ -62,4 +62,15 @@ class FoodSnack extends Model
                         on fs.code_item = a.code_item
                         group by fs.id, fs.code_item, fs.name, fs.category, fs.price) tb");
     }
+
+    function scopeGetDataStock($query, $homeID)
+    {
+        return $query->select('*')
+            ->fromRaw("(select fs.code_item, fs.name, co.name as category, ts.qty from food_snacks fs 
+                    left join category_orders co 
+                    on fs.category = co.short_name 
+                    left join tr_stock ts 
+                    on fs.code_item = ts.code_item 
+                    and ts.home_id = $homeID) tb");
+    }
 }

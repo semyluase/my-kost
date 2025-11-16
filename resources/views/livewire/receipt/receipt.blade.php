@@ -16,6 +16,19 @@
         </div>
     </div>
     <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <select wire:model.live="homeID" class="form-select"
+                    {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'readonly' }}>
+                    <option value="">Pilih Alamat</option>
+                    @if ($homeList)
+                        @foreach ($homeList as $h)
+                            <option value="{{ $h->id }}">{{ $h->name }}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">

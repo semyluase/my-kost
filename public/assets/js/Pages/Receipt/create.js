@@ -17,6 +17,12 @@ const fnReceipt = {
                     shouldSort: false,
                 }
             ),
+            identitasKosReportDropdown: new Choices(
+                document.querySelector("#identitas-kos"),
+                {
+                    shouldSort: false,
+                }
+            ),
         },
         modals: {
             modalGenerataReport: new bootstrap.Modal(
@@ -49,6 +55,13 @@ fnReceipt.init.buttons.btnBuatLaporan.addEventListener("click", async () => {
         ""
     );
 
+    await createDropdown(
+        `${baseUrl}/utils/dropdowns/get-homes`,
+        fnReceipt.init.dropdowns.identitasKosReportDropdown,
+        "",
+        ""
+    );
+
     fnReceipt.init.modals.modalGenerataReport.show();
 });
 
@@ -63,6 +76,8 @@ fnReceipt.init.buttons.btnGenerateReport.addEventListener("click", () => {
         ).format(
             "YYYY-MM-DD"
         )}&item=${fnReceipt.init.dropdowns.barangReportDropdown.getValue(
+            true
+        )}&home=${fnReceipt.init.dropdowns.identitasKosReportDropdown.getValue(
             true
         )}`,
         "_blank"

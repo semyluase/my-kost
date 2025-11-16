@@ -24,6 +24,19 @@
                     </svg></span>
             </div>
         </div>
+        <div class="col-md-3">
+            <select wire:model.live="homeID"
+                class="form-select {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'bg-gray-500' }}"
+                {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'readonly' }}
+                id="homeID">
+                <option value="">Pilih Alamat</option>
+                @if ($homeList)
+                    @foreach ($homeList as $h)
+                        <option value="{{ $h->id }}">{{ $h->name }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
         <div class="col-3">
             <button class="btn btn-primary" onclick="searchData()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -316,12 +329,15 @@
             lang: "id-ID",
         })
 
+        let selectedHomeID = document.querySelector('#homeID');
+
         const searchData = () => {
             Livewire.dispatch('report.searchReport', {
                 startDate: `${moment(tanggalOrder
                         .getStartDate().toJSDate()).format("YYYY-MM-DD")}`,
                 endDate: `${moment(tanggalOrder
-                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`
+                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`,
+                homeID: selectedHomeID.value
             })
         }
 
@@ -330,14 +346,15 @@
                 startDate: `${moment(tanggalOrder
                         .getStartDate().toJSDate()).format("YYYY-MM-DD")}`,
                 endDate: `${moment(tanggalOrder
-                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`
+                        .getEndDate().toJSDate()).format("YYYY-MM-DD")}`,
+                homeID: selectedHomeID.value
             })
         }
 
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('report.generateExcel', async event => {
                 await fetch(
-                        `${baseUrl}/reports/generate-data?s=${event[0].startDate}&e=${event[0].endDate}`
+                        `${baseUrl}/reports/generate-data?s=${event[0].startDate}&e=${event[0].endDate}&home=${event[0].homeID}`
                     )
                     .then(response => {
                         if (!response.ok) {

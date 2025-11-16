@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Receipt;
 
+use App\Models\Home;
 use App\Models\Stock;
 use App\Models\TransactionDetail;
 use App\Models\TransactionHeader;
@@ -24,23 +25,28 @@ class AddGoods extends Component
     public $category;
     public $dateTransaction;
     public $status;
+    public $homeID;
     public int $stock = 0;
     public int $qty = 0;
     public int $price = 0;
     public int $total = 0;
     public $showModal = false;
+    public $homeList;
     public $paymentType = "cash";
     public $listeners = ["addGoodsSelect" => 'selectGoods'];
 
     function mount()
     {
         $this->noBukti = request('nobukti');
+
+        $this->homeList = Home::where('is_active', true)->get();
     }
 
     public function render()
     {
         $dataReceipt = TransactionHeader::where('nobukti', $this->noBukti)
             ->first();
+        $this->homeID = $dataReceipt ? $dataReceipt->home_id : Auth::user()->home_id;
         $this->dateTransaction = Carbon::now('Asia/Jakarta')->isoFormat("DD-MM-YYYY");
         $this->status = '1';
         $this->paymentType = 'cash';
@@ -93,7 +99,7 @@ class AddGoods extends Component
             'user_id'   =>  Auth::id(),
             'is_receipt'    =>  true,
             "total"    =>  $this->qty * $this->price,
-            "home_id"   =>  Auth::user()->home_id,
+            "home_id"   =>  $this->homeID,
             'tgl_request'   =>  Carbon::now("Asia/Jakarta"),
             'tipe_pembayaran'   =>  $this->paymentType,
         ];
@@ -119,7 +125,7 @@ class AddGoods extends Component
                         'message' => 'Berhasil',
                         'text' => 'Data berhasil disimpan'
                     ]);
-
+                    return $this->redirect('/inventories/receipts/create?nobukti=' . $this->noBukti);
                     $this->dispatch("listGoods.refreshList", noBukti: $this->noBukti);
                 } else {
 
@@ -224,13 +230,16 @@ class AddGoods extends Component
         $detailTransaction = TransactionDetail::where('nobukti', $this->noBukti)
             ->get();
 
+        $headerTransaction = TransactionHeader::where('nobukti', $this->noBukti)
+            ->first();
+
         DB::beginTransaction();
 
         $totalUpdate = 0;
         if ($detailTransaction) {
             foreach ($detailTransaction as $key => $value) {
                 $stock = Stock::where('code_item', $value->code_item)
-                    ->where('home_id', Auth::user()->home_id)
+                    ->where('home_id', $headerTransaction->home_id)
                     ->first();
 
                 if (Stock::where('id', $stock->id)->update([

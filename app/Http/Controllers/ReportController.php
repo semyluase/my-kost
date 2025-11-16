@@ -37,9 +37,11 @@ class ReportController extends Controller
         $sheet->setTitle("Rekap Laporan");
 
         $transactions = TransactionHeader::with(['room', 'details'])->whereBetween('tanggal', [$request->s, $request->e])
+            ->where('home_id', $request->home)
             ->get();
 
         $rents = TransactionRent::with(['room'])->whereBetween('tgl', [$request->s, $request->e])
+            ->where('home_id', $request->home)
             ->orderBy('created_at')
             ->get();
 

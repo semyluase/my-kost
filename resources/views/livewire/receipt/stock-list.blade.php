@@ -11,6 +11,17 @@
                 <div class="modal-body">
                     <div class="row mb-3 justify-content-end">
                         <div class="col-md-3">
+                            <select wire:model.live="homeID" class="form-select"
+                                {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'readonly' }}>
+                                <option value="">Pilih Alamat</option>
+                                @if ($homeList)
+                                    @foreach ($homeList as $h)
+                                        <option value="{{ $h->id }}">{{ $h->name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <input type="text" wire:model.live="search" class="form-control">
                         </div>
                     </div>
@@ -31,8 +42,8 @@
                                             <tr>
                                                 <td>{{ $item->code_item }}</td>
                                                 <td>{{ $item->name }}</td>
-                                                <td>{{ $item->categoryOrder ? $item->categoryOrder->name : '-' }}</td>
-                                                <td>{{ $item->stock->qty }}</td>
+                                                <td>{{ $item->category ? $item->category : '-' }}</td>
+                                                <td>{{ $item->qty }}</td>
                                             </tr>
                                         @empty
                                         @endforelse

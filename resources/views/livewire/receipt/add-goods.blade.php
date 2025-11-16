@@ -23,6 +23,17 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col">
+                        <label for="cabang" class="form-label">Cabang</label>
+                        <select wire:model="homeID" class="form-select">
+                            <option value="">Pilih Cabang</option>
+                            @if ($homeList)
+                                @foreach ($homeList as $h)
+                                    <option value="{{ $h->id }}">{{ $h->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div class="col">
                         <label for="nobukti" class="form-label">Tipe Pembayaran</label>
                         <div class="btn-group w-100" role="group">
                             <input type="radio" class="btn-check" wire:model="paymentType" id="cash"

@@ -7,6 +7,12 @@
             </div>
             <div class="modal-body">
                 <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="identitas-kos" class="form-label">Kos</label>
+                        <select name="identitas-kos" id="identitas-kos" class="form-select choices"></select>
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <div class="col-12">
                         <label for="tanggal-report" class="form-label">Tanggal</label>
                         <div class="input-icon mb-2">

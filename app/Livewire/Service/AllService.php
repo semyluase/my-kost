@@ -4,6 +4,7 @@ namespace App\Livewire\Service;
 
 use Akaunting\Money\Money;
 use App\Models\Email;
+use App\Models\Home;
 use App\Models\TransactionDetail;
 use App\Models\TransactionHeader;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -22,6 +23,14 @@ class AllService extends Component
     public $endDate;
     public $checkTransaction = [];
     public $checkAllTransaction = false;
+    public $homeID;
+    public $homeList;
+
+    function mount()
+    {
+        $this->homeList = Home::where('is_active', true)->get();
+        $this->homeID = Auth::user()->home_id;
+    }
 
     #[On('service.render')]
     public function render()
@@ -32,7 +41,7 @@ class AllService extends Component
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
-            ->filterByBranch()
+            ->filterByBranch($this->homeID)
             ->filterByDate($this->startDate, $this->endDate)
             ->orderBy('tgl_request', 'asc')
             ->get();
@@ -63,7 +72,7 @@ class AllService extends Component
             ->filterTransactionType($this->categoryService)
             ->filterTransactionStatus($this->statusService)
             ->filterTransaction($this->search)
-            ->filterByBranch()
+            ->filterByBranch($this->homeID)
             ->filterByDate($this->startDate, $this->endDate)
             ->orderBy('tgl_request', 'asc')
             ->get();
@@ -90,6 +99,7 @@ class AllService extends Component
                 ->whereNotNull('room_id')
                 ->filterTransactionType($this->categoryService)
                 ->filterTransactionStatus($this->statusService)
+                ->filterByBranch($this->homeID)
                 ->filterTransaction($this->search)
                 ->orderBy('tgl_request', 'asc')
                 ->get();

@@ -386,7 +386,7 @@ class ReceiptController extends Controller
             $styling[] = ['col' => "A3:B3", 'style' => styleExcel_Calibry('14', false)];
 
             foreach ($items as $i => $item) {
-                $detailItem = TransactionHeader::getDataReportDetail(Carbon::parse($request->s)->isoFormat('YYYY-MM-DD'), Carbon::parse($request->e)->isoFormat('YYYY-MM-DD'), $item->code_item)->get();
+                $detailItem = TransactionHeader::getDataReportDetail(Carbon::parse($request->s)->isoFormat('YYYY-MM-DD'), Carbon::parse($request->e)->isoFormat('YYYY-MM-DD'), $item->code_item, $request->home)->get();
 
                 $sheet->setCellValue("A$baris", $item->code_item);
                 $sheet->setCellValue("B$baris", $item->name);

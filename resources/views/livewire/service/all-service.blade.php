@@ -50,6 +50,18 @@
         <div class="col-md-8 ms-auto d-print-none">
             <div class="row justify-content-end">
                 <div class="col-md-3 mb-3">
+                    <select wire:model.live="homeID"
+                        class="form-select {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'bg-gray-500' }}"
+                        {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'readonly' }}>
+                        <option value="">Pilih Alamat</option>
+                        @if ($homeList)
+                            @foreach ($homeList as $h)
+                                <option value="{{ $h->id }}">{{ $h->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
                     <select wire:model.live="statusService" class="form-select">
                         <option value="">All Status</option>
                         <option value="1">Terima Order</option>
