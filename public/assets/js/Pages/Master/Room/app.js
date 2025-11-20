@@ -267,7 +267,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
 
                     fnRoom.init.tables.tbRoom.ajax
                         .url(`${baseUrl}/masters/rooms/get-all-data`)
-                        .draw();
+                        .load();
                 }
             });
     } else {

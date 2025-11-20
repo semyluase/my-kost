@@ -17,7 +17,7 @@
     </div>
     <div class="row mb-3">
         @forelse ($users as $user)
-            <div class="col-sm-6 col-lg-3">
+            <div class="col-sm-6 col-lg-3 mb-3">
                 <a href="javascript:;" class="text-dark text-decoration-none"
                     wire:click="$dispatch('detail.showModal',{ userID: '{{ $user->id }}' })">
                     <div class="card">

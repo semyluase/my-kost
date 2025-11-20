@@ -210,6 +210,11 @@ class CategoryController extends Controller
         ]);
     }
 
+    function linkLocation(Request $request)
+    {
+        dd($request->all());
+    }
+
     function uploadPicture(Request $request)
     {
         $category = Category::where('slug', $request->slugUploadCategory)->first();

@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/masters/categories/upload-picture/{category}', [CategoryController::class, 'getDataUpload']);
     Route::get('/masters/categories/view-picture/{category}', [CategoryController::class, 'showPicture']);
     Route::post('/masters/categories/upload-picture', [CategoryController::class, 'uploadPicture']);
+    Route::post('/masters/categories/link-location', [CategoryController::class, 'linkLocation']);
     Route::post('/masters/categories/{category}', [CategoryController::class, 'activatedData']);
     Route::delete('/masters/categories/delete-picture/{category}', [CategoryController::class, 'destroyPicture']);
     Route::resource('/masters/categories', CategoryController::class);
