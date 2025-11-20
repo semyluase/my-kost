@@ -24,7 +24,8 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="cabang" class="form-label">Cabang</label>
-                        <select wire:model="homeID" class="form-select">
+                        <select wire:model="homeID" class="form-select"
+                            {{ auth()->user()->role->slug == 'super-admin' ? '' : 'readonly' }}>
                             <option value="">Pilih Cabang</option>
                             @if ($homeList)
                                 @foreach ($homeList as $h)

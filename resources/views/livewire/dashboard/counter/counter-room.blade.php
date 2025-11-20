@@ -8,7 +8,7 @@
                 ->where('category_id', $category->id)
                 ->get();
 
-            if (auth()->user()->role->slug != 'super-admin' || auth()->user()->role->slug != 'admin') {
+            if (auth()->user()->role->slug != 'super-admin') {
                 $rooms = Room::with(['rentToday'])
                     ->where('category_id', $category->id)
                     ->where('home_id', auth()->user()->home_id)

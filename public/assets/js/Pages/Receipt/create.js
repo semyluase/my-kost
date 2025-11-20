@@ -62,6 +62,11 @@ fnReceipt.init.buttons.btnBuatLaporan.addEventListener("click", async () => {
         ""
     );
 
+    if (lockLocation) {
+        fnReceipt.init.dropdowns.identitasKosReportDropdown.disable();
+    } else {
+        fnReceipt.init.dropdowns.identitasKosReportDropdown.enable();
+    }
     fnReceipt.init.modals.modalGenerataReport.show();
 });
 
