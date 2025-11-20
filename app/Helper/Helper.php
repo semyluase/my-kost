@@ -3,6 +3,7 @@
 namespace App\Helper;
 
 use App\Models\Counter;
+use App\Models\Home;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -41,18 +42,23 @@ function integerToRoman(int $num): string
     return $result;
 }
 
-function generateCounter($type, $category)
+function generateCounter($type, $category, $tanggal)
 {
     $dataCounter = Counter::where('type', $type)
         ->where('category', $category)
         ->where('home_id', Auth::user()->home_id)
+        ->where('tahun', Carbon::parse($tanggal)->isoFormat("YYYY"))
+        ->where('bulan', Carbon::parse($tanggal)->isoFormat("YYYY"))
         ->first();
+
+    $home = Auth::user()->location;
+    dd($home);
 
     if ($dataCounter) {
         Counter::find($dataCounter->id)->update([
             'data' =>  $dataCounter->data + 1
         ]);
-        return $dataCounter->category . '-' . Str::padLeft($dataCounter->data + 1, 5, '0');
+        return $dataCounter->category . '-' . Carbon::parse($tanggal)->isoFormat("YYYY-MM") . '-' . Str::padLeft($dataCounter->data + 1, 5, '0');
     }
 
     Counter::create([
@@ -93,9 +99,37 @@ function generateCounterInvoice()
     return 'INV-' . Carbon::now('Asia/Jakarta')->year . '-' . $month . '-' . Str::padLeft(1, 5, '0');;
 }
 
-function generateCounterTransaction($category)
+function generateCounterTransaction($category, $homeID, $tanggal)
 {
-    return $category . Carbon::now('Asia/Jakarta')->timestamp;
+    $dataCounter = Counter::where('type', 'transaction')
+        ->where('category', $category)
+        ->where('tahun', Carbon::parse($tanggal)->year)
+        ->where('bulan', Carbon::parse($tanggal)->month)
+        ->where('home_id', $homeID)
+        ->first();
+
+    $home = Home::where('id', $homeID)->first();
+
+    $codeHome = Str::upper(Str::afterLast($home->slug, '-'));
+
+    if ($dataCounter) {
+        Counter::find($dataCounter->id)->update([
+            'data' =>  $dataCounter->data + 1
+        ]);
+
+        return $category . '-' . $codeHome . '-' . Carbon::now('Asia/Jakarta')->year . '-' . Carbon::now('Asia/Jakarta')->month . '-' . Str::padLeft($dataCounter->data + 1, 5, '0');
+    }
+
+    Counter::create([
+        'type' =>  'transaction',
+        'category' =>  $category,
+        'data' =>  1,
+        'tahun' =>  Carbon::parse($tanggal)->year,
+        'bulan' =>  Carbon::parse($tanggal)->month,
+        'home_id'   =>  Auth::user()->home_id
+    ]);
+
+    return $category . '-' . $codeHome . '-' . Carbon::now('Asia/Jakarta')->year . '-' . Carbon::now('Asia/Jakarta')->month . '-' . Str::padLeft(1, 5, '0');
 }
 
 function makePhoneNumber($phoneNumber)

@@ -113,7 +113,7 @@ class TransactionServiceController extends Controller
         $payments = Pembayaran::where('is_active', true)
             ->get();
 
-        $home = Home::where('id', auth()->user()->home_id)
+        $home = Home::where('id', Auth::user()->home_id)
             ->first();
 
         return view('Pages.Services.partials.createLaundry', [
@@ -136,7 +136,7 @@ class TransactionServiceController extends Controller
         $categoryCleaning = Cleaning::where('is_active', true)
             ->get();
 
-        $home = Home::where('id', auth()->user()->home_id)
+        $home = Home::where('id', Auth::user()->home_id)
             ->first();
 
         return view('Pages.Services.partials.createCleaning', [
@@ -181,7 +181,7 @@ class TransactionServiceController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti = generateCounterTransaction('LD');
+            $nobukti = generateCounterTransaction('LD', Auth::user()->home_id, Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"));
 
             $mode = 'insert';
         }
@@ -344,7 +344,7 @@ class TransactionServiceController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti = generateCounterTransaction('CL');
+            $nobukti = generateCounterTransaction('CL', Auth::user()->home_id, Carbon::parse($request->tanggal)->isoFormat("YYYY-MM-DD"));
 
             $mode = 'insert';
         }
@@ -520,7 +520,7 @@ class TransactionServiceController extends Controller
             ->where('is_checkout_normal', false)
             ->first();
 
-        $nobukti = generateCounterTransaction('TP');
+        $nobukti = generateCounterTransaction('TP', Auth::user()->home_id, Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"));
 
         $header = [
             'nobukti'   =>  $nobukti,

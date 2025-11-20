@@ -86,8 +86,8 @@ class AddGoods extends Component
 
         $noBukti = "";
         if ($this->noBukti == null) {
-            $this->noBukti = generateCounterTransaction('RC');
-            $noBukti = generateCounterTransaction('RC');
+            $this->noBukti = generateCounterTransaction('RC', $this->homeID, Carbon::parse($this->dateTransaction));
+            $noBukti = generateCounterTransaction('RC', $this->homeID, Carbon::parse($this->dateTransaction));
             $mode = "insert";
         }
 
