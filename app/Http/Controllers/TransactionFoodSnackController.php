@@ -74,7 +74,7 @@ class TransactionFoodSnackController extends Controller
         $mode = 'update';
 
         if ($nobukti == '') {
-            $nobukti  = generateCounterTransaction('FS', Auth::user()->home_id, Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"));
+            $nobukti  = generateCounterTransaction('OR', Auth::user()->home_id, Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"));
 
             $mode = 'insert';
         }

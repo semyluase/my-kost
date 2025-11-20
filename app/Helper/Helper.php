@@ -126,7 +126,7 @@ function generateCounterTransaction($category, $homeID, $tanggal)
         'data' =>  1,
         'tahun' =>  Carbon::parse($tanggal)->year,
         'bulan' =>  Carbon::parse($tanggal)->month,
-        'home_id'   =>  Auth::user()->home_id
+        'home_id'   =>  $homeID
     ]);
 
     return $category . '-' . $codeHome . '-' . Carbon::now('Asia/Jakarta')->year . '-' . Carbon::now('Asia/Jakarta')->month . '-' . Str::padLeft(1, 5, '0');
