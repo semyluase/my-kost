@@ -25,7 +25,7 @@
                             @php
                                 $totalKamar = collect($rooms)->count();
                                 $terisi = count(collect($rooms)->filter(fn($item) => $item->rentToday != null));
-                                $percent = ($terisi / $totalKamar) * 100;
+                                $percent = $totalKamar > 0 ? ($terisi / $totalKamar) * 100 : 0;
                             @endphp
                             <div class="progress-bar bg-success" style="width: {{ $percent }}%" role="progressbar"
                                 aria-valuenow="{{ $terisi }}" aria-valuemin="0"
