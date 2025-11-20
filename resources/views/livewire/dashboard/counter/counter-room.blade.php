@@ -7,6 +7,13 @@
             $rooms = Room::with(['rentToday'])
                 ->where('category_id', $category->id)
                 ->get();
+
+            if (auth()->user()->role->slug != 'super-admin' || auth()->user()->role->slug != 'admin') {
+                $rooms = Room::with(['rentToday'])
+                    ->where('category_id', $category->id)
+                    ->where('home_id', auth()->user()->home_id)
+                    ->get();
+            }
         @endphp
         <div class="col-sm-6 col-lg-3 mb-3">
             <div class="card shadow-sm">
@@ -19,13 +26,22 @@
                             </div>
                         </div>
                         <div class="h1 mb-3">
-                            {{ count(collect($rooms)->filter(fn($item) => $item->rentToday != null)) }}/{{ collect($rooms)->count() }}
+                            @if ($rooms)
+                                {{ count(collect($rooms)->filter(fn($item) => $item->rentToday != null)) }}/{{ collect($rooms)->count() }}
+                            @else
+                                0/0
+                            @endif
                         </div>
                         <div class="progress progress-sm">
                             @php
-                                $totalKamar = collect($rooms)->count();
-                                $terisi = count(collect($rooms)->filter(fn($item) => $item->rentToday != null));
-                                $percent = $totalKamar > 0 ? ($terisi / $totalKamar) * 100 : 0;
+                                $totalKamar = 0;
+                                $terisi = 0;
+                                $percent = 0;
+                                if ($rooms) {
+                                    $totalKamar = collect($rooms)->count();
+                                    $terisi = count(collect($rooms)->filter(fn($item) => $item->rentToday != null));
+                                    $percent = $totalKamar > 0 ? ($terisi / $totalKamar) * 100 : 0;
+                                }
                             @endphp
                             <div class="progress-bar bg-success" style="width: {{ $percent }}%" role="progressbar"
                                 aria-valuenow="{{ $terisi }}" aria-valuemin="0"
