@@ -87,7 +87,7 @@ class AddGoods extends Component
         $noBukti = "";
         if ($this->noBukti == null) {
             $this->noBukti = generateCounterTransaction('RC', $this->homeID, Carbon::parse($this->dateTransaction));
-            $noBukti = generateCounterTransaction('RC', $this->homeID, Carbon::parse($this->dateTransaction));
+            $noBukti = $this->noBukti;
             $mode = "insert";
         }
 
@@ -149,7 +149,7 @@ class AddGoods extends Component
             $dataHeader = TransactionHeader::where('nobukti', $this->noBukti)->first();
 
             if (TransactionDetail::create($detail)) {
-                if (TransactionHeader::where('id', $dataHeader->id)
+                if (TransactionHeader::where('nobukti', $this->noBukti)
                     ->update([
                         'total' =>  $dataHeader->total + ($this->qty * $this->price)
                     ])
