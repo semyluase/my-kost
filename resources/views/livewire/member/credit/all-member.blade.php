@@ -9,7 +9,8 @@
         <div class="col-md-8 ms-auto d-print-none">
             <div class="row justify-content-end">
                 <div class="col-md-3 mb-3">
-                    <input type="text" wire:model.live.debounce.300ms="search" class="form-control" placeholder="Search">
+                    <input type="text" wire:model.live.debounce.300ms="search"
+                        class="form-control border-1 border-primary" placeholder="Search">
                 </div>
             </div>
         </div>
