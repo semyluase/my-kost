@@ -372,8 +372,6 @@ fnCreateFoodSnack.init.buttons.btnSave.addEventListener("click", async () => {
 fnCreateFoodSnack.init.buttons.btnProsesPembayaran.addEventListener(
     "click",
     async () => {
-        console.log(totalHarga);
-
         url = `${baseUrl}/transactions/orders/food-snack/payments`;
 
         Array.from(tipePaymentSelect).forEach((item) => {

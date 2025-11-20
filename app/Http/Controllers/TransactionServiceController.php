@@ -194,14 +194,16 @@ class TransactionServiceController extends Controller
             ->first();
 
         // dd($saldo);
-        if ($saldo) {
-            if ($saldo->credit < $price->price) {
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  "Maaf, Saldo penghuni tidak cukup"
-                    ]
-                ]);
+        if ($request->payment == 'saldo') {
+            if ($saldo) {
+                if ($saldo->credit < $price->price) {
+                    return response()->json([
+                        'data'  =>  [
+                            'status'    =>  false,
+                            'message'   =>  "Maaf, Saldo penghuni tidak cukup"
+                        ]
+                    ]);
+                }
             }
         }
 
@@ -355,14 +357,16 @@ class TransactionServiceController extends Controller
         $saldo = TopUp::where('user_id', $room->rent->member->user->id)
             ->first();
 
-        if ($saldo) {
-            if ($saldo->credit < $request->totalBayar) {
-                return response()->json([
-                    'data'  =>  [
-                        'status'    =>  false,
-                        'message'   =>  'Maaf, Saldo tidak mencukupi untuk transaksi ini'
-                    ]
-                ]);
+        if ($request->typePayment == 'saldo') {
+            if ($saldo) {
+                if ($saldo->credit < $request->totalBayar) {
+                    return response()->json([
+                        'data'  =>  [
+                            'status'    =>  false,
+                            'message'   =>  'Maaf, Saldo tidak mencukupi untuk transaksi ini'
+                        ]
+                    ]);
+                }
             }
         }
 
