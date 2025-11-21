@@ -271,7 +271,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
                 }
             });
     } else {
-        if (results.data.message.name[0]) {
+        if (results.data.message.name) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.name[0],
@@ -281,7 +281,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.slug[0]) {
+        if (results.data.message.slug) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.slug[0],
@@ -291,7 +291,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.location[0]) {
+        if (results.data.message.location) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.location[0],
@@ -301,7 +301,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.category[0]) {
+        if (results.data.message.category) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.category[0],
@@ -311,7 +311,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.facilities[0]) {
+        if (results.data.message.facilities) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.facilities[0],
@@ -321,7 +321,7 @@ fnRoom.init.buttons.btnSave.addEventListener("click", async () => {
             return false;
         }
 
-        if (results.data.message.rules[0]) {
+        if (results.data.message.rules) {
             swalWithBootstrapButtons.fire(
                 "Something Wrong",
                 results.data.message.rules[0],

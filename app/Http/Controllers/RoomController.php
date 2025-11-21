@@ -203,6 +203,7 @@ class RoomController extends Controller
             'slug'  =>  $slug,
         ];
 
+        // dd($room);
         if (Room::find($room->id)->update($data)) {
             DB::commit();
 
