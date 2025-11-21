@@ -52,7 +52,7 @@
                 <div class="col-md-3 mb-3">
                     <select wire:model.live="homeID"
                         class="form-select {{ auth()->user()->role->slug == 'super-admin' || auth()->user()->role->slug == 'admin' ? '' : 'bg-gray-500' }}"
-                        {{ auth()->user()->role->slug == 'super-admin' ? '' : 'readonly' }}>
+                        {{ auth()->user()->role->slug == 'super-admin' ? '' : 'disabled' }}>
                         <option value="">Pilih Alamat</option>
                         @if ($homeList)
                             @foreach ($homeList as $h)
