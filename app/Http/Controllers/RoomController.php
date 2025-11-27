@@ -295,7 +295,7 @@ class RoomController extends Controller
                         $no,
                         $value->number_room,
                         $value->home->name,
-                        $value->category->name,
+                        $value->category ? $value->category->name : "-",
                         $value->rent ? ($value->rent->member->user ? $value->rent->member->user->name : "") : "-",
                         $value->rent ? Carbon::parse($value->rent->start_date)->isoFormat("DD MMMM YYYY") . ' - ' . Carbon::parse($value->rent->end_date)->isoFormat("DD MMMM YYYY") : "-",
                         $status,
