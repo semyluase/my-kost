@@ -385,6 +385,8 @@ class TransactionRentController extends Controller
                     'tanggal_transaksi' => Carbon::now('Asia/Jakarta'),
                     'sisa_hari_sewa'    =>  $sisaSewa,
                     'total_hari_sewa'   =>  $totalSewa,
+                    'total_sewa'   =>  $sisaSewa,
+                    'total_harga_sewa'   =>  $kurangBayar + $pembulatan,
                     'kurang_bayar'  =>  $kurangBayar,
                     'pembulatan'    =>  $pembulatan,
                     'no_invoice'    =>  $noInvoice

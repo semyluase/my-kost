@@ -61,7 +61,8 @@
     @include('Pages.Receipt.partials.modals.modalGenerateReport')
     @push('myscript')
         <script>
-            let lockLocation = {{ auth()->user()->role->slug == 'super-admin' ? false : true }}
+            let lockLocation = "{{ auth()->user()->role->slug == 'super-admin' ? false : true }}"
+            let identitasKos = "{{ auth()->user()->home_id }}"
         </script>
         <script src="{{ asset('assets/vendor/tabler/libs/litepicker/dist/litepicker.js') }}?{{ rand() }}"></script>
         <script src="{{ asset('assets/vendor/choicesjs/scripts/choices.min.js') }}?{{ rand() }}"></script>

@@ -31,9 +31,15 @@
     <div class="datagrid-item">
         <div class="datagrid-title">Sisa Durasi</div>
         <div class="datagrid-content">
-            <input type="number" class="form-control" id="sisa-durasi"
-                value="{{ intval(Carbon::now('Asia/Jakarta')->diffInDays(Carbon::parse($room->rent->end_date))) }}">
-            Hari
+            @if (Carbon::now('Asia/Jakarta')->greaterThan(Carbon::parse($room->rent->start_date)->startOfDay()->addHours(12)))
+                <input type="number" class="form-control" id="sisa-durasi"
+                    value="{{ intval(Carbon::now('Asia/Jakarta')->diffInDays(Carbon::parse($room->rent->end_date))) }}">
+                Hari
+            @else
+                <input type="number" class="form-control" id="sisa-durasi"
+                    value="{{ intval(Carbon::parse($room->rent->start_date)->diffInDays(Carbon::parse($room->rent->end_date))) }}">
+                Hari
+            @endif
         </div>
     </div>
 </div>

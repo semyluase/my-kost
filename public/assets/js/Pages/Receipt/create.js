@@ -59,10 +59,10 @@ fnReceipt.init.buttons.btnBuatLaporan.addEventListener("click", async () => {
         `${baseUrl}/utils/dropdowns/get-homes`,
         fnReceipt.init.dropdowns.identitasKosReportDropdown,
         "",
-        ""
+        parseInt(identitasKos)
     );
 
-    if (lockLocation) {
+    if (lockLocation == 1) {
         fnReceipt.init.dropdowns.identitasKosReportDropdown.disable();
     } else {
         fnReceipt.init.dropdowns.identitasKosReportDropdown.enable();
