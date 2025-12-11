@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schedule;
 //     $this->comment(Inspiring::quote());
 // })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command(SendEmailInvoice::class)->everyMinute()->runInBackground();
-Schedule::command(SendEmailReceipt::class)->everyMinute()->runInBackground();
+Schedule::command(SendEmailInvoice::class)->everyMinute()->appendOutputTo(storage_path('logs/emails.log'));
+Schedule::command(SendEmailReceipt::class)->everyMinute()->appendOutputTo(storage_path('logs/emails.log'));
 Schedule::command(CheckoutRoomCommand::class)->dailyAt('12:00')->runInBackground();
 Schedule::command(TransactionOrderCommand::class)->dailyAt('02:00')->runInBackground();
