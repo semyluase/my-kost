@@ -58,6 +58,7 @@ class InvoiceRoomMail extends Mailable
     {
         return [
             Attachment::fromPath($this->data->attachment)->as($this->data->no_invoice . ".pdf")->withMime('application/pdf'),
+            Attachment::fromPath(public_path('assets/document/Trifena Residence - Perjanjian Sewa.pdf'))->as("Trifena Residence - Perjanjian Sewa.pdf")->withMime('application/pdf'),
         ];
     }
 }
