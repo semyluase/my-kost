@@ -152,6 +152,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/settings/role-menus', RoleMenuController::class);
 
     Route::get('/reports/generate-data', [ReportController::class, 'downloadExcel']);
+    Route::get('/reports/generate-data-checkout', [ReportController::class, 'downloadExcelCheckout']);
     Route::get('/reports', [ReportController::class, 'index']);
 
     Route::get('/settings/users/get-all-data', [UserController::class, 'getAllData']);

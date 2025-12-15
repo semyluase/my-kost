@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\TransactionHeader;
 use App\Models\Log\TransactionRent;
+use App\Models\TransactionRent as ModelsTransactionRent;
+
 use function App\Helper\formatExcel_Idr;
 use Illuminate\Support\Facades\Response;
 
@@ -276,6 +278,96 @@ class ReportController extends Controller
         return Response::make($excelOutput, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="Rekap Laporan ' . Carbon::parse($request->s)->isoFormat("DDMMYYYY") . ' - ' . Carbon::parse($request->e)->isoFormat("DDMMYYYY") . '.xlsx"',
+            'Content-Length' => strlen($excelOutput),
+        ]);
+    }
+
+    function downloadExcelCheckout(Request $request)
+    {
+        $styling = array();
+        $merge = array();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle("Rekap Checkout");
+
+        $transactionRent = ModelsTransactionRent::with(['room'])->whereBetween('end_date', [Carbon::parse($request->s)->isoFormat("YYYY-MM-DD"), Carbon::parse($request->e)->isoFormat("YYYY-MM-DD")])
+            ->whereHas('room', function ($query) use ($request) {
+                $query->where('home_id', $request->home);
+            })
+            ->get();
+
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+
+        $sheet->setCellValue("A1", "REKAP LAPORAN CHECKOUT");
+        $sheet->setCellValue("A2", (Carbon::parse($request->s)->isoFormat("DD MMMM YYYY") . '-' . Carbon::parse($request->e)->isoFormat("DD MMMM YYYY")));
+
+        $merge[] = "A1:E1";
+        $merge[] = "A2:E2";
+        $styling[] = ['col' => "A1:A2", 'style' => styleExcel_Heading()];
+        $styling[] = ['col' => "A1:A2", 'style' => styleExcel_TextMiddle()];
+        $styling[] = ['col' => "A2:E2", 'style' => styleExcel_TableBorder('bottom')];
+
+        $sheet->setCellValue("A4", "No.");
+        $sheet->setCellValue("B4", "No. Kamar");
+        $sheet->setCellValue("C4", "Nama Penyewa");
+        $sheet->setCellValue("D4", "No. Hp Penyewa");
+        $sheet->setCellValue("E4", "Tanggal Checkout");
+
+        $styling[] = ['col' => "A4:E4", 'style' => styleExcel_Calibry("14pt", true)];
+        $styling[] = ['col' => "A4:E4", 'style' => styleExcel_TextMiddle()];
+        $styling[] = ['col' => "A4:E4", 'style' => styleExcel_TableBorder()];
+
+        $row = 5;
+        $startRowRent = $row;
+        $no = 1;
+
+        if ($transactionRent) {
+            foreach ($transactionRent as $key => $value) {
+                $sheet->setCellValue("A$row", $no);
+                $sheet->setCellValue("B$row", ($value->room ? $value->room->number_room : "-"));
+                $sheet->setCellValue("C$row", ($value->member ? ($value->member->user ? $value->member->user->name : "-") : "-"));
+                $sheet->setCellValueExplicit("D$row", ($value->member ? $value->member->phone_number : "-"), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                $sheet->setCellValue("E$row", Carbon::parse($value->end_date)->isoFormat("DD-MM-YYYY"));
+
+                $no++;
+                $row++;
+            }
+        }
+
+        $styling[] = ['col' => "A$startRowRent:E" . ($row - 1), 'style' => styleExcel_TableBorder()];
+
+        if ($merge) {
+            foreach ($merge as $row) {
+                $spreadsheet->getActiveSheet()->mergeCells($row);
+            }
+        }
+
+        if ($styling) {
+            foreach ($styling as $row) {
+                $sheet->getStyle($row['col'])->applyFromArray($row['style']);
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Tulis ke memory stream
+        $handle = fopen('php://temp', 'r+');
+        $writer->save($handle);
+        rewind($handle);
+
+        // Ambil konten stream
+        $excelOutput = stream_get_contents($handle);
+        fclose($handle);
+
+        // Kirim response sebagai blob
+        return Response::make($excelOutput, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="Rekap Laporan Checkout ' . Carbon::parse($request->s)->isoFormat("DDMMYYYY") . ' - ' . Carbon::parse($request->e)->isoFormat("DDMMYYYY") . '.xlsx"',
             'Content-Length' => strlen($excelOutput),
         ]);
     }
