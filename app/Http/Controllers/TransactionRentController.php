@@ -363,7 +363,7 @@ class TransactionRentController extends Controller
                 } else {
                     $sisaSewa = intval($request->sisaDurasi);
                     $totalSewa = round(Carbon::parse($dataKamar->rent->start_date)->diffInDays(Carbon::parse($dataKamar->rent->end_date), true), 0);
-                    $kurangBayar = round($sisaSewa * ($hargaKamarBaru - $hargaKamarLama), 0);
+                    $kurangBayar = round(($sisaSewa / $totalSewa) * ($hargaKamarBaru - $hargaKamarLama), 0);
                     $pembulatan = 0;
                     if (substr($kurangBayar, -3) < 500 && substr($kurangBayar, -3) > 0) {
                         $pembulatan = 500 - substr($kurangBayar, -3);
