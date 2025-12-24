@@ -93,19 +93,19 @@
                                                             <td>
                                                                 @switch($rent->duration)
                                                                     @case('daily')
-                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
                                                                     @break
 
                                                                     @case('monthly')
-                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
                                                                     @break
 
                                                                     @case('weekly')
-                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
                                                                     @break
 
                                                                     @default
-                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) + 1 }}
+                                                                        {{ Carbon::parse($rent->start_date)->diffInDays(Carbon::parse($rent->end_date)) }}
                                                                 @endswitch
                                                                 <p>
                                                                     {{ Carbon::parse($rent->start_date)->isoFormat('DD MMMM YYYY') }}
@@ -125,6 +125,9 @@
                                                                 <br>
                                                                 Harga Sewa Baru :
                                                                 {{ Number::currency($rent->price, 'Rp.', 'id') }}
+                                                                <br>
+                                                                Selisih Harga Sewa :
+                                                                {{ Number::currency($rent->price - $rent->oldRoom->oldRent->price, 'Rp.', 'id') }}
                                                             </td>
                                                             <td>
                                                                 @php
