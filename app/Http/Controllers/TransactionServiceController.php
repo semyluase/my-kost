@@ -375,7 +375,7 @@ class TransactionServiceController extends Controller
             'room_id'   =>  $room->id,
             'tanggal'   =>  Carbon::parse($request->tanggal),
             'tipe_pembayaran'   =>  $request->typePayment,
-            'pembayaran'   =>  $request->totalBayar,
+            'pembayaran'   =>  $request->typePayment == 'saldo' || $request->typePayment == 'transfer' ? $priceCleaning->price : $request->totalBayar,
             'kembalian'   =>  $request->kembalian,
             'total'   =>  $priceCleaning->price,
             'tgl_request' =>  Carbon::createFromFormat('Y-m-d H:i', Carbon::parse($request->tanggal)->isoFormat("Y-M-D") . " " . $request->jamRequest, 'Asia/Jakarta'),
@@ -407,7 +407,7 @@ class TransactionServiceController extends Controller
                 if (TransactionDetail::create($detail)) {
                     if ($request->typePayment == 'saldo') {
                         TopUp::where('id', $saldo->id)->update([
-                            'credit'    =>  $saldo->credit - $request->totalBayar
+                            'credit'    =>  $saldo->credit - $priceCleaning->price
                         ]);
                     }
 
@@ -552,11 +552,10 @@ class TransactionServiceController extends Controller
             'is_payment'    =>  true,
             'user_id'   =>  $member->id,
         ];
+        $credit = TopUp::where('user_id', $member->id)->first();
 
         if (TransactionHeader::create($header)) {
             if (TransactionDetail::create($detail)) {
-                $credit = TopUp::where('user_id', $member->id)->first();
-
                 if ($credit) {
                     if (TopUp::where('id', $credit->id)->update([
                         'credit'    => $credit->credit + $request->jumlahTopup
@@ -821,7 +820,7 @@ class TransactionServiceController extends Controller
 
     function generatePdfEmail(Request $request)
     {
-        $dataTransaction = TransactionHeader::where('nobukti', $request->nobukti)
+        $dataTransaction = TransactionHeader::with(['details.categoryLaundry'])->where('nobukti', $request->nobukti)
             ->first();
 
         $path = public_path('assets/image/Asset 1.png');

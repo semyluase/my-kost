@@ -161,9 +161,9 @@
                         <tr>
                             <td>{{ $value->categoryCleaning->description }}</td>
                             <td>{{ Carbon::parse($value->tgl_request_cleaning)->isoFormat('DD/MM/YYYY HH:mm') }}</td>
-                            <td>{{ Number::currency($value->harga_cleaning, in: 'IDR', locale: 'id') }}</td>
+                            <td>{{ Number::currency($value->categoryCleaning->price, in: 'IDR', locale: 'id') }}</td>
                             @php
-                                $total += $value->harga_cleaning;
+                                $total += $value->categoryCleaning->price;
                             @endphp
                         </tr>
                     @endforeach

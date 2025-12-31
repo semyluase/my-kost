@@ -20,8 +20,9 @@ class Detail extends Component
     #[On('order.detailOrder')]
     function getDetailOrder($nobukti)
     {
-        $this->order = TransactionHeader::with(['details', 'details.foodSnack'])->where('nobukti', $nobukti)
+        $this->order = TransactionHeader::with(['room', 'details', 'details.foodSnack'])->where('nobukti', $nobukti)
             ->first();
+
         $this->showModalDetail = true;
     }
 

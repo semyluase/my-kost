@@ -58,6 +58,12 @@
                                     </label>
                                     <label class="form-selectgroup-item">
                                         <input type="radio" wire:model="typePaymentOrder"
+                                            wire:click="onUpdatePaymentType()" value="saldo"
+                                            class="form-selectgroup-input">
+                                        <span class="form-selectgroup-label">Saldo</span>
+                                    </label>
+                                    <label class="form-selectgroup-item">
+                                        <input type="radio" wire:model="typePaymentOrder"
                                             wire:click="onUpdatePaymentType()" value="cash"
                                             class="form-selectgroup-input">
                                         <span class="form-selectgroup-label">Cash</span>

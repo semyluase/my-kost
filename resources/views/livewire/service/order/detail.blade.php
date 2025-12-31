@@ -16,7 +16,8 @@
                         <div class="row mb-3 justify-content-between">
                             <div class="col-6">
                                 <label class="form-label">No. Kamar</label>
-                                <div class="h3">{{ $order->details->first()->no_room }}</div>
+                                <div class="h3">
+                                    {{ $order->room ? $order->room->number_room : '' }}</div>
                             </div>
                             <div class="col-6 justify-content-end">
                                 <h2>

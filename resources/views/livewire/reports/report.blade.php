@@ -183,7 +183,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="5">Total</th>
+                                    <th colspan="6">Total</th>
                                     <th>{{ Number::currency($totalPemasukan, in: 'IDR', locale: 'id') }}</th>
                                     <th>{{ Number::currency($totalPengeluaran, in: 'IDR', locale: 'id') }}</th>
                                 </tr>

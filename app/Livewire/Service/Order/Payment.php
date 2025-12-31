@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Service\Order;
 
+use App\Models\Member\TopUp;
 use App\Models\TransactionHeader;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -26,18 +27,18 @@ class Payment extends Component
     #[On('order.showModalPembayaran')]
     function showModalPembayaran($nobukti)
     {
-        $this->order = TransactionHeader::with(['details', 'details.foodSnack'])->where('nobukti', $nobukti)
+        $this->order = TransactionHeader::with(['room', 'details', 'details.foodSnack'])->where('nobukti', $nobukti)
             ->first();
 
         $this->noBukti = $nobukti;
-        $this->noRoomOrder = $this->order->details->first()->no_room;
+        $this->noRoomOrder = $this->order->room->number_room;
         $this->typePaymentOrder = $this->order->tipe_pembayaran;
         if ($this->order->details()) {
             foreach ($this->order->details as $key => $value) {
                 $this->totalPriceOrder += ($value->qty * $value->harga_jual);
             }
         }
-        $this->totalPaymentOrder = $this->order->tipe_pembayaran == 'transfer' ? $this->totalPriceOrder : 0;
+        $this->totalPaymentOrder = $this->order->tipe_pembayaran == 'transfer' || $this->order->tipe_pembayaran == 'saldo' ? $this->totalPriceOrder : 0;
         $this->rechargeOrder = 0;
         $this->showPembayaranModal = true;
     }
@@ -50,7 +51,7 @@ class Payment extends Component
 
     function onUpdatePaymentType()
     {
-        $this->totalPaymentOrder = $this->typePaymentOrder == 'transfer' ? $this->totalPriceOrder : 0;
+        $this->totalPaymentOrder = $this->typePaymentOrder == 'transfer' || $this->typePaymentOrder == 'saldo' ? $this->totalPriceOrder : 0;
     }
 
     function savePembayaran()
@@ -65,6 +66,23 @@ class Payment extends Component
             return false;
         }
 
+        $header = TransactionHeader::where('nobukti', $this->noBukti)
+            ->first();
+
+        $credit = TopUp::where('user_id', $header->user_id)->first();
+
+        if ($this->typePaymentOrder == 'saldo') {
+            if ($credit->credit < $this->totalPaymentOrder) {
+                $this->dispatch('swal-modal', [
+                    'type' => 'error',
+                    'message' => 'Terjadi kesalahan',
+                    'text' => 'Saldo member tidak cukup'
+                ]);
+
+                return false;
+            }
+        }
+
         DB::beginTransaction();
 
         if (TransactionHeader::where('nobukti', $this->noBukti)->update([
@@ -72,6 +90,12 @@ class Payment extends Component
             'pembayaran'    =>  $this->totalPaymentOrder,
             'kembalian' =>  $this->totalPaymentOrder - $this->totalPriceOrder,
         ])) {
+            if ($this->typePaymentOrder == 'saldo') {
+                TopUp::where('user_id', $header->user_id)->update([
+                    'credit'    =>  $credit->credit - $this->totalPaymentOrder
+                ]);
+            }
+
             DB::commit();
 
             $this->dispatch('order-payment.swal-modal', [
