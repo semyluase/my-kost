@@ -33,7 +33,6 @@ class TransactionOrderCommand extends Command
 
         $dataTransaction = TransactionHeader::where('tgl_request', '<=', Carbon::now('Asia/Jakarta')->subDays()->isoFormat("YYYY-MM-DD"))
             ->where('is_receipt', false)
-            ->whereNotIn('status', ['2', '3', '4', '5', '6'])
             ->where('pembayaran', 0)
             ->get();
 

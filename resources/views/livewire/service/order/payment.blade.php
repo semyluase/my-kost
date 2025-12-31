@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-6">
                                 <label for="payment-order" class="form-label">Bayar</label>
-                                <input type="number" wire:model="totalPaymentOrder" wire:keydown="onUpdatePayment()"
+                                <input type="number" wire:model.live.debounce.250ms="totalPaymentOrder"
                                     id="payment-order"
                                     class="form-control {{ $typePaymentOrder == 'transfer' ? 'bg-gray-500' : '' }}"
                                     {{ $typePaymentOrder == 'transfer' ? 'readonly' : '' }}>

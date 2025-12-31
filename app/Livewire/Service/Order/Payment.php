@@ -30,6 +30,8 @@ class Payment extends Component
         $this->order = TransactionHeader::with(['room', 'details', 'details.foodSnack'])->where('nobukti', $nobukti)
             ->first();
 
+        $this->totalPriceOrder = 0;
+
         $this->noBukti = $nobukti;
         $this->noRoomOrder = $this->order->room->number_room;
         $this->typePaymentOrder = $this->order->tipe_pembayaran;
@@ -43,7 +45,12 @@ class Payment extends Component
         $this->showPembayaranModal = true;
     }
 
-    function onUpdatePayment()
+    // function onUpdatePayment()
+    // {
+    //     $chargeOrder = intval($this->totalPaymentOrder) - $this->totalPriceOrder;
+    //     $this->rechargeOrder = $chargeOrder < 0 ? 0 : $chargeOrder;
+    // }
+    function updatedTotalPaymentOrder()
     {
         $chargeOrder = intval($this->totalPaymentOrder) - $this->totalPriceOrder;
         $this->rechargeOrder = $chargeOrder < 0 ? 0 : $chargeOrder;
