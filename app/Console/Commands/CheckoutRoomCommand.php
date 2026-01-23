@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Deposite;
+use App\Models\Log\TransactionRent as LogTransactionRent;
 use App\Models\TransactionRent;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -52,6 +53,18 @@ class CheckoutRoomCommand extends Command
                         if (Deposite::find($deposite->id)->update([
                             'is_checkout'   =>  true
                         ])) {
+                            LogTransactionRent::create(
+                                [
+                                    'room_id'   =>  $value->id,
+                                    'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                                    'is_check_out'   =>  true,
+                                    'jumlah'    =>  0,
+                                    'rekening'    =>  "",
+                                    'home_id'    =>  $value->home_id,
+                                    'payment_type'  =>  "",
+                                    'bank'  =>  "",
+                                ],
+                            );
                             DB::commit();
                         }
                     } else {
