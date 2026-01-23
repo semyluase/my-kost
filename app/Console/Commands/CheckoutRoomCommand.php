@@ -48,9 +48,13 @@ class CheckoutRoomCommand extends Command
                         ->where('is_checkout', false)
                         ->first();
 
-                    if (Deposite::find($deposite->id)->update([
-                        'is_checkout'   =>  true
-                    ])) {
+                    if ($deposite) {
+                        if (Deposite::find($deposite->id)->update([
+                            'is_checkout'   =>  true
+                        ])) {
+                            DB::commit();
+                        }
+                    } else {
                         DB::commit();
                     }
                 }
