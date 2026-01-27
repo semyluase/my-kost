@@ -91,7 +91,7 @@ class Room extends Model
         $date = Carbon::now("Asia/Jakarta")->isoFormat("YYYY-MM-DD");
         if ($homeID != "") {
             return $query->select('*')
-                ->fromRaw("(select count(*) as total from rooms r 
+                ->fromRaw("(select ifnull(count(*),0) as total from rooms r 
                     left join tr_rent tr 
                     on r.id = tr.room_id 
                     where tr.start_date <= '$date'
@@ -104,7 +104,7 @@ class Room extends Model
         }
 
         return $query->select('*')
-            ->fromRaw("(select count(*) as total from rooms r 
+            ->fromRaw("(select ifnull(count(*),0) as total from rooms r 
                             left join tr_rent tr 
                             on r.id = tr.room_id 
                             where tr.start_date <= '$date'
