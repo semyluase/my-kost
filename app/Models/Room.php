@@ -45,7 +45,12 @@ class Room extends Model
 
     function rentToday()
     {
-        return $this->belongsTo(TransactionRent::class, 'id', 'room_id')->where("start_date", ">=", Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))->where("end_date", "<=", Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))->where('is_change_room', false)->where('is_checkout_abnormal', false)->where('is_checkout_normal', false);
+        return $this->belongsTo(TransactionRent::class, 'id', 'room_id')
+            ->where("start_date", ">=", Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))
+            ->where("end_date", "<=", Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))
+            ->where('is_change_room', false)
+            ->where('is_checkout_abnormal', false)
+            ->where('is_checkout_normal', false);
     }
 
     function oldRent()
@@ -79,5 +84,34 @@ class Room extends Model
         $query->when($categoryID ?? false, fn($query, $category) => ($query->where('category_id', $category)));
 
         return $query;
+    }
+
+    function scopeCountDataByCategory($query, $categoryID, $homeID = "")
+    {
+        $date = Carbon::now("Asia/Jakarta")->isoFormat("YYYY-MM-DD");
+        if ($homeID != "") {
+            return $query->select('*')
+                ->fromRaw("(select count(*) as total from rooms r 
+                    left join tr_rent tr 
+                    on r.id = tr.room_id 
+                    where tr.start_date <= '$date'
+                    and tr.end_date >= '$date'
+                    and tr.is_change_room = false
+                    and tr.is_checkout_normal = false
+                    and tr.is_checkout_abnormal = false
+                    and r.category_id = '$categoryID'
+                    and r.home_id = '$homeID') tb");
+        }
+
+        return $query->select('*')
+            ->fromRaw("(select count(*) as total from rooms r 
+                            left join tr_rent tr 
+                            on r.id = tr.room_id 
+                            where tr.start_date <= '$date'
+                            and tr.end_date >= '$date'
+                            and tr.is_change_room = false
+                            and tr.is_checkout_normal = false
+                            and tr.is_checkout_abnormal = false
+                            and r.category_id = '$categoryID') tb");
     }
 }

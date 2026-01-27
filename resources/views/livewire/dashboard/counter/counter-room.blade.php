@@ -4,15 +4,16 @@
     @endphp
     @foreach ($categories as $category)
         @php
-            $rooms = Room::with(['rentToday'])
-                ->where('category_id', $category->id)
-                ->get();
+            $rooms = Room::CountDataByCategory($category->id)->first();
+
+            $totalRooms = Room::where('category_id', $category->id)->count();
 
             if (auth()->user()->role->slug != 'super-admin') {
-                $rooms = Room::with(['rentToday'])
-                    ->where('category_id', $category->id)
+                $rooms = Room::CountDataByCategory($category->id, auth()->user()->home_id)->get();
+
+                $totalRooms = Room::where('category_id', $category->id)
                     ->where('home_id', auth()->user()->home_id)
-                    ->get();
+                    ->count();
             }
         @endphp
         <div class="col-sm-6 col-lg-3 mb-3">
@@ -27,7 +28,7 @@
                         </div>
                         <div class="h1 mb-3">
                             @if ($rooms)
-                                {{ count(collect($rooms)->filter(fn($item) => $item->rentToday != null)) }}/{{ collect($rooms)->count() }}
+                                {{ $rooms->total }}/{{ $totalRooms }}
                             @else
                                 0/0
                             @endif
@@ -38,8 +39,8 @@
                                 $terisi = 0;
                                 $percent = 0;
                                 if ($rooms) {
-                                    $totalKamar = collect($rooms)->count();
-                                    $terisi = count(collect($rooms)->filter(fn($item) => $item->rentToday != null));
+                                    $totalKamar = $totalRooms;
+                                    $terisi = $rooms->total;
                                     $percent = $totalKamar > 0 ? ($terisi / $totalKamar) * 100 : 0;
                                 }
                             @endphp
