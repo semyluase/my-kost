@@ -9,7 +9,7 @@
             $totalRooms = Room::where('category_id', $category->id)->count();
 
             if (auth()->user()->role->slug != 'super-admin') {
-                $rooms = Room::CountDataByCategory($category->id, auth()->user()->home_id)->get();
+                $rooms = Room::CountDataByCategory($category->id, auth()->user()->home_id)->first();
 
                 $totalRooms = Room::where('category_id', $category->id)
                     ->where('home_id', auth()->user()->home_id)
