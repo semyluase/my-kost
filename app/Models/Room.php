@@ -99,6 +99,7 @@ class Room extends Model
                     and tr.is_change_room = false
                     and tr.is_checkout_normal = false
                     and tr.is_checkout_abnormal = false
+                    and tr.is_approve = true
                     and r.category_id = '$categoryID'
                     and r.home_id = '$homeID') tb");
         }
@@ -112,6 +113,7 @@ class Room extends Model
                             and tr.is_change_room = false
                             and tr.is_checkout_normal = false
                             and tr.is_checkout_abnormal = false
+                            and tr.is_approve = true
                             and r.category_id = '$categoryID') tb");
     }
 }
