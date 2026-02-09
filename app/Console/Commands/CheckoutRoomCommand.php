@@ -32,7 +32,7 @@ class CheckoutRoomCommand extends Command
     {
         DB::beginTransaction();
 
-        $dataRents = TransactionRent::where('end_date', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))
+        $dataRents = TransactionRent::with(['room'])->where('end_date', Carbon::now('Asia/Jakarta')->isoFormat("YYYY-MM-DD"))
             ->where('is_checkout_abnormal', false)
             ->where('is_checkout_normal', false)
             ->where('is_upgrade', false)
@@ -60,7 +60,7 @@ class CheckoutRoomCommand extends Command
                                     'is_check_out'   =>  true,
                                     'jumlah'    =>  0,
                                     'rekening'    =>  "",
-                                    'home_id'    =>  $value->home_id,
+                                    'home_id'    =>  $value->room->home_id,
                                     'payment_type'  =>  "",
                                     'bank'  =>  "",
                                 ],
