@@ -55,7 +55,7 @@ class CheckoutRoomCommand extends Command
                         ])) {
                             LogTransactionRent::create(
                                 [
-                                    'room_id'   =>  $value->id,
+                                    'room_id'   =>  $value->room->id,
                                     'tgl'   =>  Carbon::now('Asia/Jakarta'),
                                     'is_check_out'   =>  true,
                                     'jumlah'    =>  0,
@@ -68,6 +68,19 @@ class CheckoutRoomCommand extends Command
                             DB::commit();
                         }
                     } else {
+                        LogTransactionRent::create(
+                            [
+                                'room_id'   =>  $value->room->id,
+                                'tgl'   =>  Carbon::now('Asia/Jakarta'),
+                                'is_check_out'   =>  true,
+                                'jumlah'    =>  0,
+                                'rekening'    =>  "",
+                                'home_id'    =>  $value->room->home_id,
+                                'payment_type'  =>  "",
+                                'bank'  =>  "",
+                            ],
+                        );
+
                         DB::commit();
                     }
                 }
