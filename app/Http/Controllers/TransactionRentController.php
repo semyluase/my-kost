@@ -606,7 +606,6 @@ class TransactionRentController extends Controller
             'payment_type'  =>  $request->jenisPengembalian,
         ];
 
-        // dd($room->rent->id);
         if (Deposite::where('rent_id', $room->rent->id)->where('room_id', $room->id)->where('user_id', $room->rent->member->user->id)->update($dataUpdateDeposit)) {
             if (TransactionRent::where('id', $room->rent->id)->update($dataUpdateRent)) {
                 LogTransactionRent::create(

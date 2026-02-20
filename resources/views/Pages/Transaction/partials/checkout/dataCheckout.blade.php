@@ -52,7 +52,7 @@
                         <td>Deposit</td>
                         <td>{{ Number::currency($room->rent->member->user->deposite->jumlah, 'Rp.', 'id') }}</td>
                         <td>{{ Carbon::now('Asia/Jakarta')->addDay()->isoFormat('DD MMMM YYYY') }}</td>
-                        <td><input type="text" class="form-control" id="pengembalian"></td>
+                        <td><input type="number" class="form-control" id="pengembalian"></td>
                     </tr>
                     @php
                         $saldo = 0;
