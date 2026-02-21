@@ -37,7 +37,7 @@ class Payment extends Component
         $this->roomCleaning = $cleaning->no_room;
         $this->tanggalCleaning = Carbon::parse($cleaning->tgl_request_cleaning)->isoFormat("DD-MM-YYYY HH:mm");
         $this->typePaymentCleaning = $cleaning->tipe_pembayaran ? $cleaning->tipe_pembayaran : 'transfer';
-        $this->priceCleaning = $cleaning->harga_cleaning;
+        $this->priceCleaning = ($cleaning->harga_cleaning == 0 || $cleaning->harga_cleaning == null) ? $cleaning->categoryCleaning->price : $cleaning->harga_cleaning;
         $this->paymentCleaning = 0;
         $this->rechargeCleaning = 0;
         $this->showPembayaranCleaningModal = true;
@@ -65,6 +65,7 @@ class Payment extends Component
 
         if (TransactionDetail::where('nobukti', $this->nobuktiCleaning)->update([
             'tipe_pembayaran'   =>   $this->typePaymentCleaning,
+            'harga_cleaning'   =>   $this->priceCleaning,
             'pembayaran'    =>  $this->paymentCleaning,
             'kembalian' =>  $this->paymentCleaning - $this->priceCleaning,
             'is_payment'    =>  true,
@@ -72,6 +73,7 @@ class Payment extends Component
             if (TransactionHeader::where('nobukti', $this->nobuktiCleaning)->update([
                 'tipe_pembayaran'   =>   $this->typePaymentCleaning,
                 'pembayaran'    =>  $this->paymentCleaning,
+                'total'   =>   $this->priceCleaning,
                 'kembalian' =>  $this->paymentCleaning - $this->priceCleaning,
             ])) {
                 DB::commit();
