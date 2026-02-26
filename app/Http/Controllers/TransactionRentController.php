@@ -90,7 +90,19 @@ class TransactionRentController extends Controller
         DB::beginTransaction();
 
         $user = User::where('phone_number', makePhoneNumber($request->noHP))
+            ->orWhere('email', $request->email)
             ->first();
+
+        if ($user) {
+            if ($user->phone_number != makePhoneNumber($request->noHP)) {
+                return response()->json([
+                    'data'  =>  [
+                        'status'    =>  false,
+                        'message'   =>  'Penyewa ini sudah terdaftar dengan No. HP ' . $user->phone_number . ' mohon konfirmasi kembali ke Penyewa!'
+                    ]
+                ]);
+            }
+        }
 
         $member = Member::where('phone_number', makePhoneNumber($request->noHP))
             ->first();
