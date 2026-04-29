@@ -199,7 +199,7 @@ class TransactionRentController extends Controller
 
                 case 'tahunan':
                     $price = $room->category->prices[3]->price;
-                    $endDateRent = Carbon::parse($request->startRentDate)->isoFormat("YYYY-MM-DD");
+                    $endDateRent = Carbon::parse($request->endRentDate)->isoFormat("YYYY-MM-DD");
                     $durasi = 'yearly';
                     $totalHari = Carbon::parse($request->startRentDate)->diffInDays(Carbon::parse($request->endRentDate));
                     $totalPrice = $price;
