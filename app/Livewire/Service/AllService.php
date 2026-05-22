@@ -54,8 +54,8 @@ class AllService extends Component
     #[On('allService.searchData')]
     function searchData($startDate, $endDate)
     {
-        $this->startDate = Carbon::parse($startDate)->isoFormat("YYYY-MM-DD");
-        $this->endDate = Carbon::parse($endDate)->isoFormat("YYYY-MM-DD");
+        $this->startDate = Carbon::parse($startDate)->startOfDay()->isoFormat("YYYY-MM-DD HH:mm:ss");
+        $this->endDate = Carbon::parse($endDate)->endOfDay()->isoFormat("YYYY-MM-DD HH:mm:ss");
 
         $this->render();
     }
