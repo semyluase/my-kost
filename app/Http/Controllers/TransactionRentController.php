@@ -313,19 +313,21 @@ class TransactionRentController extends Controller
 
             if (TransactionRent::create($insertDataKamarBaru)) {
                 if (TransactionRent::find($dataKamar->rent->id)->update($updateDataKamar)) {
-                    if (Deposite::where('id', $deposit->id)->update([
-                        'room_id'   =>  $dataKamarBaru->id
-                    ])) {
-                        DB::commit();
-
-                        return response()->json([
-                            'data'  =>  [
-                                'status'    =>  true,
-                                'message'   =>  'Berhasil simpan transaksi',
-                                'url'   =>  '/transactions/rent-rooms',
-                            ]
+                    if ($deposit) {
+                        Deposite::where('id', $deposit->id)->update([
+                            'room_id'   =>  $dataKamarBaru->id
                         ]);
                     }
+
+                    DB::commit();
+
+                    return response()->json([
+                        'data'  =>  [
+                            'status'    =>  true,
+                            'message'   =>  'Berhasil simpan transaksi',
+                            'url'   =>  '/transactions/rent-rooms',
+                        ]
+                    ]);
 
                     DB::rollback();
 
